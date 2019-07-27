@@ -8,7 +8,15 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.dev.e_auctions.Interface.RestApi;
+import com.dev.e_auctions.Model.User;
 import com.rengwuxian.materialedittext.MaterialEditText;
+
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class SignIn extends AppCompatActivity {
 
@@ -34,6 +42,14 @@ public class SignIn extends AppCompatActivity {
                 mDialog.show();
 
                 //Some code here for log in
+                Retrofit retrofit = new Retrofit.Builder()
+                        .baseUrl("https://my-json-server.typicode.com/")
+                        .addConverterFactory(GsonConverterFactory.create())
+                        .build();
+
+                RestApi restApi = retrofit.create(RestApi.class);
+
+                Call<List<User>>
 
                 //To diasappear progressDialog
                 mDialog.dismiss();
