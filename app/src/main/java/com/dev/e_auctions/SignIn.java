@@ -68,7 +68,7 @@ public class SignIn extends AppCompatActivity {
 
                         List<User> responseUser = response.body();
                         for (User currentUser : responseUser){
-                            Log.d("Rest Response", currentUser.getEmail());
+                            Log.e("MITSOS", "O mitsos zei");
                             Toast.makeText(SignIn.this, currentUser.getEmail() , Toast.LENGTH_SHORT).show();
                         }
 
