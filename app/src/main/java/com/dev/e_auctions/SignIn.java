@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -15,6 +16,8 @@ import com.rengwuxian.materialedittext.MaterialEditText;
 import java.util.List;
 
 import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -43,22 +46,50 @@ public class SignIn extends AppCompatActivity {
 
                 //Some code here for log in
                 Retrofit retrofit = new Retrofit.Builder()
-                        .baseUrl("https://my-json-server.typicode.com/")
+                        .baseUrl("https://my-json-server.typicode.com/gkaragiannis/testREST/")
                         .addConverterFactory(GsonConverterFactory.create())
                         .build();
 
                 RestApi restApi = retrofit.create(RestApi.class);
 
-                Call<List<User>>
+                Call<List<User>> call = restApi.getUsers(edtUsername.toString());
 
-                //To diasappear progressDialog
-                mDialog.dismiss();
+                call.enqueue(new Callback<List<User>>() {
+                    @Override
+                    public void onResponse(Call<List<User>> call, Response<List<User>> response) {
+                        //To disappear progressDialog
+                        mDialog.dismiss();
 
-                //floating message
-                Toast.makeText(SignIn.this, "Successfully Log In", Toast.LENGTH_SHORT).show();
+                        if (!response.isSuccessful()){
+                            //floating message
+                            Toast.makeText(SignIn.this, Integer.toString(response.code()), Toast.LENGTH_SHORT).show();
+                            return;
+                        }
 
-                Intent SignInIntent = new Intent(SignIn.this, HomeActivity.class);
-                startActivity(SignInIntent);
+                        List<User> responseUser = response.body();
+                        for (User currentUser : responseUser){
+                            Log.d("Rest Response", currentUser.getEmail());
+                            Toast.makeText(SignIn.this, currentUser.getEmail() , Toast.LENGTH_SHORT).show();
+                        }
+
+                        //floating message
+                        // Toast.makeText(SignIn.this, "Successfully Log In", Toast.LENGTH_SHORT).show();
+
+                        Intent SignInIntent = new Intent(SignIn.this, HomeActivity.class);
+                        startActivity(SignInIntent);
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<User>> call, Throwable t) {
+                        //To diasappear progressDialog
+                        mDialog.dismiss();
+
+                        //floating message
+                        Toast.makeText(SignIn.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+
             }
         });
     }

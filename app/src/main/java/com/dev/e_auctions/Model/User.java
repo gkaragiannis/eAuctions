@@ -3,104 +3,157 @@ package com.dev.e_auctions.Model;
 import java.util.Date;
 
 public class User {
-    private String Username;
-    private String Name;
-    private String Surname;
-    private String Gender;
-    private Date DateOfBirth;
-    private Integer TaxId;
-    private String Email;
-    private String Phone;
-    private Address UserAddress;
+    private int id;
+    private String username;
+    private String name;
+    private String surname;
+    private String gender;
+    private String date_of_birth;
+    private int tax_id;
+    private String email;
+    private String phone_number;
+    private String address;
+    private int street_Number;
+    private int postal_Code;
+    private String location;
+    private String country;
 
-    public User(){
 
+    public User() {
     }
 
-    public User (String username, String name, String surname, String gender,
-                 Date dateOfBirth, Integer taxId, String email, String phone, Address userAddress){
-        this.setUsername(username);
-        this.setName(name);
-        this.setSurname(surname);
-        this.setGender(gender);
-        this.setDateOfBirth(dateOfBirth);
-        this.setTaxId(taxId);
-        this.setEmail(email);
-        this.setPhone(phone);
-        this.setUserAddress(userAddress);
+    public User(int id, String username, String name, String surname, String gender, String date_of_birth, int tax_id, String email, String phone_number, String address, int street_Number, int postal_Code, String location, String country) {
+        this.id = id;
+        this.username = username;
+        this.name = name;
+        this.surname = surname;
+        this.gender = gender;
+        this.date_of_birth = date_of_birth;
+        this.tax_id = tax_id;
+        this.email = email;
+        this.phone_number = phone_number;
+        this.address = address;
+        this.street_Number = street_Number;
+        this.postal_Code = postal_Code;
+        this.location = location;
+        this.country = country;
     }
+
 
     //Setters
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public void setUsername(String username) {
-        this.Username = username;
+        this.username = username;
     }
 
     public void setName(String name) {
-        this.Name = name;
+        this.name = name;
     }
 
     public void setSurname(String surname) {
-        this.Surname = surname;
+        this.surname = surname;
     }
 
     public void setGender(String gender) {
-        this.Gender = gender;
+        this.gender = gender;
     }
 
-    public void setDateOfBirth(Date dateOfBirth) {
-        this.DateOfBirth = dateOfBirth;
+    public void setDate_of_birth(String date_of_birth) {
+        this.date_of_birth = date_of_birth;
     }
 
-    public void setTaxId(Integer taxId) {
-        this.TaxId = taxId;
+    public void setTax_id(int tax_id) {
+        this.tax_id = tax_id;
     }
 
     public void setEmail(String email) {
-        this.Email = email;
+        this.email = email;
     }
 
-    public void setPhone(String phone) {
-        this.Phone = phone;
+    public void setPhone_number(String phone_number) {
+        this.phone_number = phone_number;
     }
 
-    public void setUserAddress(Address userAddress) {
-        this.UserAddress = userAddress;
+    public void setAddress(String address) {
+        this.address = address;
     }
+
+    public void setStreet_Number(int street_Number) {
+        this.street_Number = street_Number;
+    }
+
+    public void setPostal_Code(int postal_Code) {
+        this.postal_Code = postal_Code;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
 
     //Getters
+
+    public int getId() {
+        return id;
+    }
+
     public String getUsername() {
-        return this.Username;
+        return username;
     }
 
     public String getName() {
-        return this.Name;
+        return name;
     }
 
     public String getSurname() {
-        return this.Surname;
+        return surname;
     }
 
     public String getGender() {
-        return this.Gender;
+        return gender;
     }
 
-    public Date getDateOfBirth() {
-        return this.DateOfBirth;
+    public String getDate_of_birth() {
+        return date_of_birth;
     }
 
-    public Integer getTaxId() {
-        return this.TaxId;
+    public int getTax_id() {
+        return tax_id;
     }
 
     public String getEmail() {
-        return this.Email;
+        return email;
     }
 
-    public String getPhone() {
-        return this.Phone;
+    public String getPhone_number() {
+        return phone_number;
     }
 
-    public Address getUserAddress() {
-        return this.UserAddress;
+    public String getAddress() {
+        return address;
+    }
+
+    public int getStreet_Number() {
+        return street_Number;
+    }
+
+    public int getPostal_Code() {
+        return postal_Code;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public String getCountry() {
+        return country;
     }
 }
