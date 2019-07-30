@@ -59,24 +59,33 @@ public class SignIn extends AppCompatActivity {
                         //To disappear progressDialog
                         mDialog.dismiss();
 
+                        //add extra condition if empty List
                         if (!response.isSuccessful()){
                             //floating message
                             Toast.makeText(SignIn.this, Integer.toString(response.code()), Toast.LENGTH_SHORT).show();
                             return;
                         }
-
-                        List<User> responseUser = response.body();
-                        int i=0;
-                        for (User currentUser : responseUser){
-                            Toast.makeText(SignIn.this, Integer.toString(i) , Toast.LENGTH_SHORT).show();
-                            i++;
+                        else if (response.body().isEmpty()){
+                            Toast.makeText(SignIn.this, "Invalid username", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        else if (response.body().size() != 1 ){
+                            Toast.makeText(SignIn.this, "Unexpected error occurred", Toast.LENGTH_SHORT).show();
+                            return;
                         }
 
-                        //floating message
-                        // Toast.makeText(SignIn.this, "Successfully Log In", Toast.LENGTH_SHORT).show();
+                        User currentUser = response.body().get(0);
 
-                        Intent SignInIntent = new Intent(SignIn.this, HomeActivity.class);
-                        startActivity(SignInIntent);
+                        if (currentUser.getPhone_number().equals(edtPassword.getText())){
+                            //floating message
+                            Toast.makeText(SignIn.this, "Successfully Log In", Toast.LENGTH_SHORT).show();
+
+                            Intent SignInIntent = new Intent(SignIn.this, HomeActivity.class);
+                            startActivity(SignInIntent);
+                        }
+                        else {
+                            Toast.makeText(SignIn.this, "Wrong password", Toast.LENGTH_SHORT).show();
+                        }
 
                     }
 
