@@ -13,12 +13,12 @@ public class User {
     private String email;
     private String phone_number;
     private String address;
-    private int street_Number;
-    private int postal_Code;
+    private int street_number;
+    private int postal_code;
     private String location;
     private String country;
 
-
+/*
     public User() {
     }
 
@@ -33,12 +33,12 @@ public class User {
         this.email = email;
         this.phone_number = phone_number;
         this.address = address;
-        this.street_Number = street_Number;
-        this.postal_Code = postal_Code;
+        this.street_number = street_Number;
+        this.postal_code = postal_Code;
         this.location = location;
         this.country = country;
     }
-
+*/
 
     //Setters
 
@@ -83,11 +83,11 @@ public class User {
     }
 
     public void setStreet_Number(int street_Number) {
-        this.street_Number = street_Number;
+        this.street_number = street_Number;
     }
 
     public void setPostal_Code(int postal_Code) {
-        this.postal_Code = postal_Code;
+        this.postal_code = postal_Code;
     }
 
     public void setLocation(String location) {
@@ -142,11 +142,11 @@ public class User {
     }
 
     public int getStreet_Number() {
-        return street_Number;
+        return street_number;
     }
 
     public int getPostal_Code() {
-        return postal_Code;
+        return postal_code;
     }
 
     public String getLocation() {

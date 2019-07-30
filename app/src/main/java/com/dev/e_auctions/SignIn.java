@@ -4,7 +4,6 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -50,9 +49,9 @@ public class SignIn extends AppCompatActivity {
                         .addConverterFactory(GsonConverterFactory.create())
                         .build();
 
-                RestApi restApi = retrofit.create(RestApi.class);
+                RestApi client = retrofit.create(RestApi.class);
 
-                Call<List<User>> call = restApi.getUsers(edtUsername.toString());
+                Call<List<User>> call = client.getUserByUsername(edtUsername.getText().toString());
 
                 call.enqueue(new Callback<List<User>>() {
                     @Override
@@ -67,9 +66,10 @@ public class SignIn extends AppCompatActivity {
                         }
 
                         List<User> responseUser = response.body();
+                        int i=0;
                         for (User currentUser : responseUser){
-                            Log.e("MITSOS", "O mitsos zei");
-                            Toast.makeText(SignIn.this, currentUser.getEmail() , Toast.LENGTH_SHORT).show();
+                            Toast.makeText(SignIn.this, Integer.toString(i) , Toast.LENGTH_SHORT).show();
+                            i++;
                         }
 
                         //floating message

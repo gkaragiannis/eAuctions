@@ -11,11 +11,12 @@ import retrofit2.http.Query;
 
 public interface RestApi {
 
-    @GET("users")
+    /*@GET("users")
     Call<List<User>> getUsers(
-            @Query("username") String username
-    );
+            //@Query("username") String username
+    );*/
 
-    @GET("users?username={username}")
-    Call<List<User>> getUserByUsername(@Path("username") String username);
+    @GET("users")
+    Call<List<User>> getUserByUsername(@Query("username") String usernameString);
+
 }
