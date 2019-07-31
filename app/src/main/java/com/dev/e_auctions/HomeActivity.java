@@ -65,7 +65,7 @@ public class HomeActivity extends AppCompatActivity
         layoutManager = new LinearLayoutManager(this);
         recyclerMenu.setLayoutManager(layoutManager);
 
-        loadMenuItems();
+        loadMenuItems();// this maybe onResume
 
     }
 

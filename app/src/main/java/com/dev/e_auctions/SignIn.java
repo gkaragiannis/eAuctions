@@ -12,7 +12,16 @@ import com.dev.e_auctions.Interface.RestApi;
 import com.dev.e_auctions.Model.User;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.KeyGenerator;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -30,10 +39,10 @@ public class SignIn extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
 
-        edtUsername = (MaterialEditText) findViewById(R.id.edtUsername);
-        edtPassword = (MaterialEditText) findViewById(R.id.edtPassword);
+        edtUsername = /*(MaterialEditText)*/ findViewById(R.id.edtUsername);
+        edtPassword = /*(MaterialEditText)*/ findViewById(R.id.edtPassword);
 
-        btnSignIn = (Button) findViewById(R.id.btnSignIn);
+        btnSignIn = /*(Button)*/ findViewById(R.id.btnSignIn);
 
         btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -42,6 +51,12 @@ public class SignIn extends AppCompatActivity {
                 final ProgressDialog mDialog = new ProgressDialog(SignIn.this);
                 mDialog.setMessage("Please wait...");
                 mDialog.show();
+
+                if (edtUsername.getText().toString().equals("") || edtPassword.getText().toString().equals("")){
+                    mDialog.dismiss();
+                    Toast.makeText(SignIn.this, "Missing username and/or password", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
                 //Some code here for log in
                 Retrofit retrofit = new Retrofit.Builder()
@@ -75,10 +90,46 @@ public class SignIn extends AppCompatActivity {
                         }
 
                         User currentUser = response.body().get(0);
+/*
+                        byte[] plaintext = edtPassword.getText().toString().getBytes();
+                        KeyGenerator keygen = null;
+                        try {
+                            keygen = KeyGenerator.getInstance("AES");
+                        } catch (NoSuchAlgorithmException e) {
+                            e.printStackTrace();
+                        }
+                        keygen.init(256);
+                        SecretKey key = keygen.generateKey();
+                        Cipher cipher = null;
+                        try {
+                            cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING");
+                        } catch (NoSuchAlgorithmException e) {
+                            e.printStackTrace();
+                        } catch (NoSuchPaddingException e) {
+                            e.printStackTrace();
+                        }
+                        try {
+                            cipher.init(Cipher.ENCRYPT_MODE, key);
+                        } catch (InvalidKeyException e) {
+                            e.printStackTrace();
+                        }
+                        try {
+                            byte[] ciphertext = cipher.doFinal(plaintext);
+                        } catch (BadPaddingException e) {
+                            e.printStackTrace();
+                        } catch (IllegalBlockSizeException e) {
+                            e.printStackTrace();
+                        }
+                        byte[] iv = cipher.getIV();
 
-                        if (currentUser.getPhone_number().equals(edtPassword.getText())){
+                        final ProgressDialog cDialog = new ProgressDialog(SignIn.this);
+                        cDialog.setMessage(cipher.toString());
+                        cDialog.show();
+*/
+
+                        if (currentUser.getPhone_number().equals(edtPassword.getText().toString())){
                             //floating message
-                            Toast.makeText(SignIn.this, "Successfully Log In", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(SignIn.this, "Welcome back " + currentUser.getName(), Toast.LENGTH_SHORT).show();
 
                             Intent SignInIntent = new Intent(SignIn.this, HomeActivity.class);
                             startActivity(SignInIntent);
@@ -91,11 +142,9 @@ public class SignIn extends AppCompatActivity {
 
                     @Override
                     public void onFailure(Call<List<User>> call, Throwable t) {
-                        //To diasappear progressDialog
                         mDialog.dismiss();
-
-                        //floating message
-                        Toast.makeText(SignIn.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(SignIn.this, "Unavailable services", Toast.LENGTH_SHORT).show();
+                        return;
                     }
                 });
 

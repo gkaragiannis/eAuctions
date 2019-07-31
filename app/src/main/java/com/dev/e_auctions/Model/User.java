@@ -3,7 +3,7 @@ package com.dev.e_auctions.Model;
 import java.util.Date;
 
 public class User {
-    private int id;
+    private Integer id;
     private String username;
     private String name;
     private String surname;
@@ -21,9 +21,8 @@ public class User {
 /*
     public User() {
     }
-
-    public User(int id, String username, String name, String surname, String gender, String date_of_birth, int tax_id, String email, String phone_number, String address, int street_Number, int postal_Code, String location, String country) {
-        this.id = id;
+*/
+    public User(String username, String name, String surname, String gender, String date_of_birth, int tax_id, String email, String phone_number, String address, int street_Number, int postal_Code, String location, String country) {
         this.username = username;
         this.name = name;
         this.surname = surname;
@@ -38,7 +37,6 @@ public class User {
         this.location = location;
         this.country = country;
     }
-*/
 
     //Setters
 
