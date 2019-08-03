@@ -90,42 +90,7 @@ public class SignIn extends AppCompatActivity {
                         }
 
                         User currentUser = response.body().get(0);
-/*
-                        byte[] plaintext = edtPassword.getText().toString().getBytes();
-                        KeyGenerator keygen = null;
-                        try {
-                            keygen = KeyGenerator.getInstance("AES");
-                        } catch (NoSuchAlgorithmException e) {
-                            e.printStackTrace();
-                        }
-                        keygen.init(256);
-                        SecretKey key = keygen.generateKey();
-                        Cipher cipher = null;
-                        try {
-                            cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING");
-                        } catch (NoSuchAlgorithmException e) {
-                            e.printStackTrace();
-                        } catch (NoSuchPaddingException e) {
-                            e.printStackTrace();
-                        }
-                        try {
-                            cipher.init(Cipher.ENCRYPT_MODE, key);
-                        } catch (InvalidKeyException e) {
-                            e.printStackTrace();
-                        }
-                        try {
-                            byte[] ciphertext = cipher.doFinal(plaintext);
-                        } catch (BadPaddingException e) {
-                            e.printStackTrace();
-                        } catch (IllegalBlockSizeException e) {
-                            e.printStackTrace();
-                        }
-                        byte[] iv = cipher.getIV();
 
-                        final ProgressDialog cDialog = new ProgressDialog(SignIn.this);
-                        cDialog.setMessage(cipher.toString());
-                        cDialog.show();
-*/
 
                         if (currentUser.getPhone_number().equals(edtPassword.getText().toString())){
                             //floating message

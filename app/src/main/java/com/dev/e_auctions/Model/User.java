@@ -22,11 +22,13 @@ public class User {
     public User() {
     }
 */
+
+
     public User(String username, String name, String surname, String gender, String date_of_birth, int tax_id, String email, String phone_number, String address, int street_Number, int postal_Code, String location, String country) {
         this.username = username;
         this.name = name;
         this.surname = surname;
-        this.gender = gender;
+        //this.gender = gender;
         this.date_of_birth = date_of_birth;
         this.tax_id = tax_id;
         this.email = email;
