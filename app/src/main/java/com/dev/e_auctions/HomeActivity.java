@@ -1,16 +1,15 @@
 package com.dev.e_auctions;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.support.v4.view.GravityCompat;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.view.MenuItem;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 
@@ -18,6 +17,21 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.dev.e_auctions.Interface.RestApi;
+import com.dev.e_auctions.Model.Auction;
+import com.dev.e_auctions.Model.MenuItem;
+import com.dev.e_auctions.ViewHolder.RecyclerViewAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -25,8 +39,9 @@ public class HomeActivity extends AppCompatActivity
 
     TextView txtUsername;
 
-    RecyclerView recyclerMenu;
-    RecyclerView.LayoutManager layoutManager;
+    private RecyclerView recyclerMenu;
+    private RecyclerView.Adapter layoutAdapter;
+    private RecyclerView.LayoutManager layoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +86,54 @@ public class HomeActivity extends AppCompatActivity
 
     private void loadMenuItems() {
         //put here query code to db to obtain menu items
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("https://my-json-server.typicode.com/gkaragiannis/testREST/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        RestApi client = retrofit.create(RestApi.class);
+
+        Call<List<Auction>> request = client.getAllAuctions();
+
+        request.enqueue(new Callback<List<Auction>>() {
+            @Override
+            public void onResponse(Call<List<Auction>> request, Response<List<Auction>> response) {
+                if (!response.isSuccessful()){
+                    //floating message
+                    Toast.makeText(HomeActivity.this, "Not Successful", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                List<Auction> auctionsList = response.body();
+                ArrayList<MenuItem> menuItemList = new ArrayList<>();
+
+                for (Auction auction : auctionsList){
+                    System.out.println(auction.getName());
+                    //MenuItem menuItem = new MenuItem();
+                    //menuItem.setId(auction.getId());
+                    //menuItem.setName(auction.getName());
+                    //menuItem.setImage(auction.getImage());
+
+                    menuItemList.add(new MenuItem(auction.getName(), auction.getImage(), auction.getId()));
+                    //MenuItemViewHolder viewHolder = new MenuItemViewHolder();
+                    //viewHolder.txtMenuItemName.setText("Mitsos");
+                    //viewHolder.txtMenuItemName.setText(auction.getName());
+                    //Picasso.with(getBaseContext()).load(auction.getImage()).into(viewHolder.imgMenuItemView);
+                }
+                layoutAdapter = new RecyclerViewAdapter(menuItemList, getBaseContext());
+                recyclerMenu.setAdapter(layoutAdapter);
+                recyclerMenu.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL,false));
+                return;
+
+            }
+
+            @Override
+            public void onFailure(Call<List<Auction>> request, Throwable t) {
+                Toast.makeText(HomeActivity.this, "Unavailable services", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        });
     }
 
     @Override
@@ -91,7 +154,7 @@ public class HomeActivity extends AppCompatActivity
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(android.view.MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
@@ -107,7 +170,7 @@ public class HomeActivity extends AppCompatActivity
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(android.view.MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 

@@ -8,20 +8,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.dev.e_auctions.Common.Common;
 import com.dev.e_auctions.Interface.RestApi;
 import com.dev.e_auctions.Model.User;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.List;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.KeyGenerator;
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.SecretKey;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -66,11 +58,11 @@ public class SignIn extends AppCompatActivity {
 
                 RestApi client = retrofit.create(RestApi.class);
 
-                Call<List<User>> call = client.getUserByUsername(edtUsername.getText().toString());
+                Call<List<User>> request = client.getUserByUsername(edtUsername.getText().toString());
 
-                call.enqueue(new Callback<List<User>>() {
+                request.enqueue(new Callback<List<User>>() {
                     @Override
-                    public void onResponse(Call<List<User>> call, Response<List<User>> response) {
+                    public void onResponse(Call<List<User>> request, Response<List<User>> response) {
                         //To disappear progressDialog
                         mDialog.dismiss();
 
@@ -97,7 +89,9 @@ public class SignIn extends AppCompatActivity {
                             Toast.makeText(SignIn.this, "Welcome back " + currentUser.getName(), Toast.LENGTH_SHORT).show();
 
                             Intent SignInIntent = new Intent(SignIn.this, HomeActivity.class);
+                            //Common.currentUser = new User("gkarag", );
                             startActivity(SignInIntent);
+                            finish();
                         }
                         else {
                             Toast.makeText(SignIn.this, "Wrong password", Toast.LENGTH_SHORT).show();
@@ -106,7 +100,7 @@ public class SignIn extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onFailure(Call<List<User>> call, Throwable t) {
+                    public void onFailure(Call<List<User>> request, Throwable t) {
                         mDialog.dismiss();
                         Toast.makeText(SignIn.this, "Unavailable services", Toast.LENGTH_SHORT).show();
                         return;

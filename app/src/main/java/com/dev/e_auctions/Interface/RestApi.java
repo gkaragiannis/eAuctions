@@ -1,5 +1,6 @@
 package com.dev.e_auctions.Interface;
 
+import com.dev.e_auctions.Model.Auction;
 import com.dev.e_auctions.Model.User;
 
 import java.util.List;
@@ -20,8 +21,8 @@ public interface RestApi {
     @GET("users")
     Call<List<User>> getUserByUsername(@Query("username") String usernameString);
 
-    //@GET("auctions")
-
+    @GET("auctions")
+    Call<List<Auction>> getAllAuctions();
 
     @POST("users")
     Call<User> createNewUser(@Body User newUser);
