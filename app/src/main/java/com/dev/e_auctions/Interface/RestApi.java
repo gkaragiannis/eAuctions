@@ -21,10 +21,22 @@ public interface RestApi {
     @GET("users")
     Call<List<User>> getUserByUsername(@Query("username") String usernameString);
 
+    @POST("users")
+    Call<User> createNewUser(@Body User newUser);
+
     @GET("auctions")
     Call<List<Auction>> getAllAuctions();
 
-    @POST("users")
-    Call<User> createNewUser(@Body User newUser);
+    @GET("auctions")
+    Call<List<Auction>> getAuctionsById(@Query("id") int id);
+
+    @GET("auctions")
+    Call<List<Auction>> getAuctionsByCategory(@Query("category") String categoryString);
+
+    @GET("auctions")
+    Call<List<Auction>> getAuctionsBySellerId(@Query("seller_id") String tokenString);
+
+    @GET("auctions")
+    Call<List<Auction>> getAuctionsByBidderId(@Query("bidder_id") String tokenString);
 
 }

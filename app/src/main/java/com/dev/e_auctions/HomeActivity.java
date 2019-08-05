@@ -80,12 +80,11 @@ public class HomeActivity extends AppCompatActivity
         layoutManager = new LinearLayoutManager(this);
         recyclerMenu.setLayoutManager(layoutManager);
 
-        loadMenuItems();// this maybe onResume
+        getAllActions();// this maybe onResume
 
     }
 
-    private void loadMenuItems() {
-        //put here query code to db to obtain menu items
+    private void getAllActions() {
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://my-json-server.typicode.com/gkaragiannis/testREST/")
@@ -95,6 +94,10 @@ public class HomeActivity extends AppCompatActivity
         RestApi client = retrofit.create(RestApi.class);
 
         Call<List<Auction>> request = client.getAllAuctions();
+        //Call<List<Auction>> request = client.getAuctionsById(8);
+        //Call<List<Auction>> request = client.getAuctionsByCategory("someCategory");
+        //Call<List<Auction>> request = client.getAuctionsBySellerId("");
+        //Call<List<Auction>> request = client.getAuctionsByBidderId("");
 
         request.enqueue(new Callback<List<Auction>>() {
             @Override
@@ -110,16 +113,8 @@ public class HomeActivity extends AppCompatActivity
 
                 for (Auction auction : auctionsList){
                     System.out.println(auction.getName());
-                    //MenuItem menuItem = new MenuItem();
-                    //menuItem.setId(auction.getId());
-                    //menuItem.setName(auction.getName());
-                    //menuItem.setImage(auction.getImage());
 
                     menuItemList.add(new MenuItem(auction.getName(), auction.getImage(), auction.getId()));
-                    //MenuItemViewHolder viewHolder = new MenuItemViewHolder();
-                    //viewHolder.txtMenuItemName.setText("Mitsos");
-                    //viewHolder.txtMenuItemName.setText(auction.getName());
-                    //Picasso.with(getBaseContext()).load(auction.getImage()).into(viewHolder.imgMenuItemView);
                 }
                 layoutAdapter = new RecyclerViewAdapter(menuItemList, getBaseContext());
                 recyclerMenu.setAdapter(layoutAdapter);
