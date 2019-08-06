@@ -13,20 +13,13 @@
     <string name="cPass">Confirm Password</string>
     <string name="fName">First Name</string>
     <string name="lName">Last Name</string>
-    <string name="gender">Gender</string>
-    <string name="male">Male</string>
-    <string name="female">Female</string>
-    <string name="birth">Birthday</string>
     <string name="tax">TAX Number</string>
     <string name="email">e-mail</string>
     <string name="phone">Phone</string>
     <string name="address">Address</string>
-    <string name="streetNum">Street Number</string>
-    <string name="post">Postal Code</string>
-    <string name="location">Location</string>
+    <string name="city">City</string>
     <string name="country">Country</string>
     <string name="signUpInfo">Please fill in your personal data</string>
-    <string name="GDPR">I agree with GDPR terms</string>
 
     <!-- Home Activity Strings -->
     <string name="title_activity_home">HomeActivity</string>

@@ -26,8 +26,7 @@ import com.rengwuxian.materialedittext.MaterialEditText;
 public class SignUp extends AppCompatActivity {
 
     EditText edtUsername, edtPassword, edtConfirmPass, edtFirstName, edtLastName, edtTaxId,
-            edtEmail, edtPhone, edtAddress, edtStreetNum, edtPostal, edtLocation, edtCountry;
-    CheckBox chkGDPR;
+            edtEmail, edtPhone, edtAddress, edtCity, edtCountry;
     Button btnSignUp;
 
     @Override
@@ -44,11 +43,8 @@ public class SignUp extends AppCompatActivity {
         edtEmail = (EditText) findViewById(R.id.edtEmail);
         edtPhone = (EditText) findViewById(R.id.edtPhone);
         edtAddress = (EditText) findViewById(R.id.edtAddress);
-        edtStreetNum = (EditText) findViewById(R.id.edtStreetNum);
-        edtPostal = (EditText) findViewById(R.id.edtPostal);
-        edtLocation = (EditText) findViewById(R.id.edtLocation);
+        edtCity = (EditText) findViewById(R.id.edtCity);
         edtCountry = (EditText) findViewById(R.id.edtCountry);
-        chkGDPR = (CheckBox) findViewById(R.id.chkGDPR);
         btnSignUp = (Button) findViewById(R.id.btnSignUp);
 
         btnSignUp.setOnClickListener(new View.OnClickListener() {
@@ -59,20 +55,17 @@ public class SignUp extends AppCompatActivity {
                 mDialog.show();
 
                 //Some code here for log in
-                User newUser = new User(
-                        edtUsername.getText().toString(),
+                User newUser = new User(edtUsername.getText().toString(),
+                        edtPassword.getText().toString(),
                         edtFirstName.getText().toString(),
                         edtLastName.getText().toString(),
-                        "Male",
-                        "00/00/0000",
-                        Integer.parseInt(edtTaxId.getText().toString()),
                         edtEmail.getText().toString(),
                         edtPhone.getText().toString(),
+                        edtCountry.getText().toString(),
+                        edtCity.getText().toString(),
                         edtAddress.getText().toString(),
-                        Integer.parseInt(edtStreetNum.getText().toString()),
-                        Integer.parseInt(edtPostal.getText().toString()),
-                        edtLocation.getText().toString(),
-                        edtCountry.getText().toString()
+                        edtTaxId.getText().toString()
+                        //Integer.parseInt(edtTaxId.getText().toString())
                 );
 
                 Retrofit retrofit = new Retrofit.Builder()
@@ -96,7 +89,8 @@ public class SignUp extends AppCompatActivity {
                         mDialog.dismiss();
                         //Toast.makeText(SignUp.this, "Successfully Sign Up", Toast.LENGTH_SHORT).show();
                         Toast.makeText(SignUp.this, Integer.toString(response.code()), Toast.LENGTH_LONG).show();
-
+                        System.out.println("Mitsos");
+                        System.out.println(response.body().getUsername());
                         Intent SignInIntent = new Intent(SignUp.this, HomeActivity.class);
                         startActivity(SignInIntent);
 

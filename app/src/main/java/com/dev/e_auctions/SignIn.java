@@ -84,9 +84,9 @@ public class SignIn extends AppCompatActivity {
                         User currentUser = response.body().get(0);
 
 
-                        if (currentUser.getPhone_number().equals(edtPassword.getText().toString())){
+                        if (currentUser.getPhone().equals(edtPassword.getText().toString())){
                             //floating message
-                            Toast.makeText(SignIn.this, "Welcome back " + currentUser.getName(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(SignIn.this, "Welcome back " + currentUser.getUsername(), Toast.LENGTH_SHORT).show();
 
                             Intent SignInIntent = new Intent(SignIn.this, HomeActivity.class);
                             //Common.currentUser = new User("gkarag", );

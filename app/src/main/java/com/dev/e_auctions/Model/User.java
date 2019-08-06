@@ -1,159 +1,116 @@
 package com.dev.e_auctions.Model;
 
-import java.util.Date;
-
 public class User {
     private Integer id;
     private String username;
-    private String name;
-    private String surname;
-    private String gender;
-    private String date_of_birth;
-    private int tax_id;
+    private String password;
+    private String firstName;
+    private String lastName;
     private String email;
-    private String phone_number;
-    private String address;
-    private int street_number;
-    private int postal_code;
-    private String location;
+    private String phone;
     private String country;
+    private String city;
+    private String address;
+    private String afm;
 
-/*
-    public User() {
-    }
-*/
-
-
-    public User(String username, String name, String surname, String gender, String date_of_birth, int tax_id, String email, String phone_number, String address, int street_Number, int postal_Code, String location, String country) {
+    public User(String username, String password, String firstName, String lastName, String email, String phone, String country, String city, String address, String afm) {
         this.username = username;
-        this.name = name;
-        this.surname = surname;
-        //this.gender = gender;
-        this.date_of_birth = date_of_birth;
-        this.tax_id = tax_id;
+        this.password = password;
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.email = email;
-        this.phone_number = phone_number;
-        this.address = address;
-        this.street_number = street_Number;
-        this.postal_code = postal_Code;
-        this.location = location;
+        this.phone = phone;
         this.country = country;
-    }
-
-    //Setters
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setSurname(String surname) {
-        this.surname = surname;
-    }
-
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
-
-    public void setDate_of_birth(String date_of_birth) {
-        this.date_of_birth = date_of_birth;
-    }
-
-    public void setTax_id(int tax_id) {
-        this.tax_id = tax_id;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setPhone_number(String phone_number) {
-        this.phone_number = phone_number;
-    }
-
-    public void setAddress(String address) {
+        this.city = city;
         this.address = address;
+        this.afm = afm;
     }
 
-    public void setStreet_Number(int street_Number) {
-        this.street_number = street_Number;
-    }
-
-    public void setPostal_Code(int postal_Code) {
-        this.postal_code = postal_Code;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
-    public void setCountry(String country) {
-        this.country = country;
-    }
-
-
-    //Getters
-
-    public int getId() {
+    public Integer getId() {
         return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getUsername() {
         return username;
     }
 
-    public String getName() {
-        return name;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
-    public String getSurname() {
-        return surname;
+    public String getPassword() {
+        return password;
     }
 
-    public String getGender() {
-        return gender;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
-    public String getDate_of_birth() {
-        return date_of_birth;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public int getTax_id() {
-        return tax_id;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public String getEmail() {
         return email;
     }
 
-    public String getPhone_number() {
-        return phone_number;
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
     }
 
     public String getAddress() {
         return address;
     }
 
-    public int getStreet_Number() {
-        return street_number;
+    public void setAddress(String address) {
+        this.address = address;
     }
 
-    public int getPostal_Code() {
-        return postal_code;
+    public String getAfm() {
+        return afm;
     }
 
-    public String getLocation() {
-        return location;
-    }
-
-    public String getCountry() {
-        return country;
+    public void setAfm(String afm) {
+        this.afm = afm;
     }
 }

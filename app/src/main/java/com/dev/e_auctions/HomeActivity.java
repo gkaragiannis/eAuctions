@@ -24,9 +24,11 @@ import com.dev.e_auctions.Model.Auction;
 import com.dev.e_auctions.Model.MenuItem;
 import com.dev.e_auctions.ViewHolder.RecyclerViewAdapter;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.Request;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -80,11 +82,11 @@ public class HomeActivity extends AppCompatActivity
         layoutManager = new LinearLayoutManager(this);
         recyclerMenu.setLayoutManager(layoutManager);
 
-        getAllActions();// this maybe onResume
+        getActions();// this maybe onResume
 
     }
 
-    private void getAllActions() {
+    private void getActions() {
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://my-json-server.typicode.com/gkaragiannis/testREST/")
@@ -94,10 +96,6 @@ public class HomeActivity extends AppCompatActivity
         RestApi client = retrofit.create(RestApi.class);
 
         Call<List<Auction>> request = client.getAllAuctions();
-        //Call<List<Auction>> request = client.getAuctionsById(8);
-        //Call<List<Auction>> request = client.getAuctionsByCategory("someCategory");
-        //Call<List<Auction>> request = client.getAuctionsBySellerId("");
-        //Call<List<Auction>> request = client.getAuctionsByBidderId("");
 
         request.enqueue(new Callback<List<Auction>>() {
             @Override
@@ -112,8 +110,6 @@ public class HomeActivity extends AppCompatActivity
                 ArrayList<MenuItem> menuItemList = new ArrayList<>();
 
                 for (Auction auction : auctionsList){
-                    System.out.println(auction.getName());
-
                     menuItemList.add(new MenuItem(auction.getName(), auction.getImage(), auction.getId()));
                 }
                 layoutAdapter = new RecyclerViewAdapter(menuItemList, getBaseContext());

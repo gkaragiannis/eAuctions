@@ -15,8 +15,6 @@ public interface RestApi {
 
     @GET("users")
     Call<List<User>> getUsers();
-            //@Query("username") String username
-    /*);*/
 
     @GET("users")
     Call<List<User>> getUserByUsername(@Query("username") String usernameString);
