@@ -37,10 +37,6 @@
                     android:icon="@drawable/ic_poll_black_24dp"
                     android:title="@string/participateAuction" />
                 <item
-                    android:id="@+id/nav_saved"
-                    android:icon="@drawable/ic_bookmark_black_24dp"
-                    android:title="@string/savedAuction" />
-                <item
                     android:id="@+id/nav_logout"
                     android:icon="@drawable/ic_exit_to_app_black_24dp"
                     android:title="@string/logout" />

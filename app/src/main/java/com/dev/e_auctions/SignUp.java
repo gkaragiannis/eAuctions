@@ -6,12 +6,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.dev.e_auctions.Common.Common;
 import com.dev.e_auctions.Interface.RestApi;
 import com.dev.e_auctions.Model.User;
 
@@ -55,7 +53,7 @@ public class SignUp extends AppCompatActivity {
                 mDialog.show();
 
                 //Some code here for log in
-                User newUser = new User(edtUsername.getText().toString(),
+                final User user = new User(edtUsername.getText().toString(),
                         edtPassword.getText().toString(),
                         edtFirstName.getText().toString(),
                         edtLastName.getText().toString(),
@@ -65,7 +63,6 @@ public class SignUp extends AppCompatActivity {
                         edtCity.getText().toString(),
                         edtAddress.getText().toString(),
                         edtTaxId.getText().toString()
-                        //Integer.parseInt(edtTaxId.getText().toString())
                 );
 
                 Retrofit retrofit = new Retrofit.Builder()
@@ -75,7 +72,7 @@ public class SignUp extends AppCompatActivity {
 
                 RestApi client = retrofit.create(RestApi.class);
 
-                Call<User> call = client.createNewUser(newUser);
+                Call<User> call = client.createNewUser(user);
 
                 call.enqueue(new Callback<User>() {
                     @Override
@@ -89,10 +86,11 @@ public class SignUp extends AppCompatActivity {
                         mDialog.dismiss();
                         //Toast.makeText(SignUp.this, "Successfully Sign Up", Toast.LENGTH_SHORT).show();
                         Toast.makeText(SignUp.this, Integer.toString(response.code()), Toast.LENGTH_LONG).show();
-                        System.out.println("Mitsos");
-                        System.out.println(response.body().getUsername());
+                        //System.out.println(response.body().getUsername());
+                        Common.currentUser=user;
                         Intent SignInIntent = new Intent(SignUp.this, HomeActivity.class);
                         startActivity(SignInIntent);
+                        finish();
 
                     }
 

@@ -19,6 +19,7 @@ import android.view.Menu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.dev.e_auctions.Common.Common;
 import com.dev.e_auctions.Interface.RestApi;
 import com.dev.e_auctions.Model.Auction;
 import com.dev.e_auctions.Model.MenuItem;
@@ -74,7 +75,7 @@ public class HomeActivity extends AppCompatActivity
         //Set Username on nav_header_home
         View headView = navigationView.getHeaderView(0);
         txtUsername = (TextView)headView.findViewById(R.id.txtUsername);
-        txtUsername.setText("getUsername method from User object@class:HomeActivity@line:58");
+        txtUsername.setText(Common.currentUser.getUsername());
 
         //Load auctions on home main view
         recyclerMenu = (RecyclerView)findViewById(R.id.rvContentHome);
@@ -84,6 +85,64 @@ public class HomeActivity extends AppCompatActivity
 
         getActions();// this maybe onResume
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.home, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(android.view.MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        /*if (id == R.id.action_settings) {
+            return true;
+        }*/
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(android.view.MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+
+        if (id == R.id.nav_search) {
+
+        } else if (id == R.id.nav_category) {
+
+        } else if (id == R.id.nav_new_auction) {
+            Intent AuctionIntent = new Intent(HomeActivity.this, AuctionActivity.class);
+            startActivity(AuctionIntent);
+        } else if (id == R.id.nav_my_auction) {
+
+        } else if (id == R.id.nav_participate_auction) {
+
+        } else if (id == R.id.nav_logout) {
+
+        }
+
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
     }
 
     private void getActions() {
@@ -127,63 +186,4 @@ public class HomeActivity extends AppCompatActivity
         });
     }
 
-    @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.home, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(android.view.MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(android.view.MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-
-        if (id == R.id.nav_search) {
-
-        } else if (id == R.id.nav_category) {
-            Intent AuctionIntent = new Intent(HomeActivity.this, AuctionActivity.class);
-            startActivity(AuctionIntent);
-        } else if (id == R.id.nav_new_auction) {
-
-        } else if (id == R.id.nav_my_auction) {
-
-        } else if (id == R.id.nav_participate_auction) {
-
-        } else if (id == R.id.nav_saved) {
-
-        } else if (id == R.id.nav_logout) {
-
-        }
-
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
-    }
 }

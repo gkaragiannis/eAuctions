@@ -72,24 +72,22 @@ public class SignIn extends AppCompatActivity {
                             Toast.makeText(SignIn.this, Integer.toString(response.code()), Toast.LENGTH_SHORT).show();
                             return;
                         }
-                        else if (response.body().isEmpty()){
-                            Toast.makeText(SignIn.this, "Invalid username", Toast.LENGTH_SHORT).show();
-                            return;
-                        }
                         else if (response.body().size() != 1 ){
-                            Toast.makeText(SignIn.this, "Unexpected error occurred", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(SignIn.this, "Invalid username/password", Toast.LENGTH_SHORT).show();
                             return;
                         }
+                        else if (response.body().size() == 1 ){
 
-                        User currentUser = response.body().get(0);
+                        //User currentUser = response.body().get(0);
+                        Common.currentUser = response.body().get(0);
 
-
-                        if (currentUser.getPhone().equals(edtPassword.getText().toString())){
+                        //if (currentUser.getPhone().equals(edtPassword.getText().toString())){
+                        //if (Common.currentUser.getPhone().equals(edtPassword.getText().toString())){
                             //floating message
-                            Toast.makeText(SignIn.this, "Welcome back " + currentUser.getUsername(), Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(SignIn.this, "Welcome back " + currentUser.getUsername(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(SignIn.this, "Welcome back " + Common.currentUser.getUsername(), Toast.LENGTH_SHORT).show();
 
                             Intent SignInIntent = new Intent(SignIn.this, HomeActivity.class);
-                            //Common.currentUser = new User("gkarag", );
                             startActivity(SignInIntent);
                             finish();
                         }

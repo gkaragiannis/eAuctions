@@ -70,6 +70,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColorHint="@color/hintText"
+                android:textColor="@android:color/white"
                 android:inputType="textPassword"
                 android:textSize="18sp"
                 app:met_baseColor="@android:color/white"
