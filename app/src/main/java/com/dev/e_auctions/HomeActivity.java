@@ -3,6 +3,7 @@ package com.dev.e_auctions;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
@@ -53,8 +54,9 @@ public class HomeActivity extends AppCompatActivity
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("toolbar.setTitle@line:28");
-        setSupportActionBar(toolbar);
+        //setSupportActionBar(toolbar);
 
+        //Search FAB
         FloatingActionButton btnSearch = findViewById(R.id.btnSearch);
         btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,19 +65,27 @@ public class HomeActivity extends AppCompatActivity
                         .setAction("Action", null).show();
             }
         });
+
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        NavigationView navigationView = findViewById(R.id.nav_view);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
+
+        //NavigationView navigationView = findViewById(R.id.nav_view);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
 
         //Set Username on nav_header_home
         View headView = navigationView.getHeaderView(0);
         txtUsername = (TextView)headView.findViewById(R.id.txtUsername);
-        txtUsername.setText(Common.currentUser.getUsername());
+        if (Common.currentUser != null) {
+            txtUsername.setText(Common.currentUser.getUsername());
+        }
+        else{
+            txtUsername.setText("Guest");
+        }
 
         //Load auctions on home main view
         recyclerMenu = (RecyclerView)findViewById(R.id.rvContentHome);
@@ -83,7 +93,9 @@ public class HomeActivity extends AppCompatActivity
         layoutManager = new LinearLayoutManager(this);
         recyclerMenu.setLayoutManager(layoutManager);
 
-        getActions();// this maybe onResume
+        getActions("All");// this maybe onResume
+        //layoutAdapter = new RecyclerViewAdapter(Common.menuItemList, getBaseContext());
+        //recyclerMenu.setAdapter(layoutAdapter);
 
     }
 
@@ -128,24 +140,38 @@ public class HomeActivity extends AppCompatActivity
         if (id == R.id.nav_search) {
 
         } else if (id == R.id.nav_category) {
-
+            getActions("ByCategory");
         } else if (id == R.id.nav_new_auction) {
             Intent AuctionIntent = new Intent(HomeActivity.this, AuctionActivity.class);
             startActivity(AuctionIntent);
         } else if (id == R.id.nav_my_auction) {
-
+            getActions("BySellerId");
         } else if (id == R.id.nav_participate_auction) {
-
+            getActions("ByBidderId");
         } else if (id == R.id.nav_logout) {
-
+            Intent signIn = new Intent(HomeActivity.this, SignIn.class);
+            signIn.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            Common.currentUser = null;
+            finish();
+            startActivity(signIn);
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+
+
     }
 
-    private void getActions() {
+    private void getActions(@NonNull String Query) {
+
+        //Load auctions on home main view
+        /*recyclerMenu = (RecyclerView)findViewById(R.id.rvContentHome);
+        recyclerMenu.setHasFixedSize(true);
+        layoutManager = new LinearLayoutManager(this);
+        recyclerMenu.setLayoutManager(layoutManager);*/
+
+        Call<List<Auction>> request = null;
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://my-json-server.typicode.com/gkaragiannis/testREST/")
@@ -154,7 +180,21 @@ public class HomeActivity extends AppCompatActivity
 
         RestApi client = retrofit.create(RestApi.class);
 
-        Call<List<Auction>> request = client.getAllAuctions();
+        if (Query.equals("All")){
+            request = client.getAllAuctions();
+        }
+        else if (Query.equals("ById")){
+            request = client.getAllAuctions();
+        }
+        else if (Query.equals("ByCategory")){
+            request = client.getAllAuctions();
+        }
+        else if (Query.equals("BySellerId")){
+            request = client.getAllAuctions();
+        }
+        else if (Query.equals("ByBidderId")){
+            request = client.getAllAuctions();
+        }
 
         request.enqueue(new Callback<List<Auction>>() {
             @Override
@@ -171,9 +211,9 @@ public class HomeActivity extends AppCompatActivity
                 for (Auction auction : auctionsList){
                     menuItemList.add(new MenuItem(auction.getName(), auction.getImage(), auction.getId()));
                 }
+
                 layoutAdapter = new RecyclerViewAdapter(menuItemList, getBaseContext());
                 recyclerMenu.setAdapter(layoutAdapter);
-                recyclerMenu.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL,false));
                 return;
 
             }

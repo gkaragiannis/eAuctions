@@ -1,6 +1,7 @@
 package com.dev.e_auctions.ViewHolder;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -9,6 +10,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.dev.e_auctions.AuctionActivity;
+import com.dev.e_auctions.HomeActivity;
 import com.dev.e_auctions.Interface.MenuItemClickListener;
 import com.dev.e_auctions.Model.MenuItem;
 import com.dev.e_auctions.R;
@@ -70,6 +73,16 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         Picasso.with(context).load(currentMenuListItem.getImage()).into(menuItemViewHolder.imgMenuItemView);
         menuItemViewHolder.txtMenuItemName.setText(currentMenuListItem.getName());
+        /*menuItemViewHolder.setMenuItemClickListener(new MenuItemClickListener() {
+            @Override
+            public void onClick(View view, int position, boolean isLongClick) {
+                //Get CategoryId and send to new Activity
+                Intent newActivity = new Intent(context, AuctionActivity.class);
+                //Because CategoryId is key, so we just get the key of this item
+                newActivity.putExtra("CategoryId", adapter.getRef(position).getKey());
+                startActivity(newActivity);
+            }
+        });*/
     }
 
     @Override
