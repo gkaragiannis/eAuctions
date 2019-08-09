@@ -94,8 +94,11 @@ public class HomeActivity extends AppCompatActivity
         recyclerMenu.setLayoutManager(layoutManager);
 
         getActions("All");// this maybe onResume
-        //layoutAdapter = new RecyclerViewAdapter(Common.menuItemList, getBaseContext());
-        //recyclerMenu.setAdapter(layoutAdapter);
+        /*for (MenuItem i : Common.menuItemList){
+            System.out.println(i.getName());
+        }*/
+        layoutAdapter = new RecyclerViewAdapter(Common.menuItemList, recyclerMenu.getContext());
+        recyclerMenu.setAdapter(layoutAdapter);
 
     }
 
@@ -141,13 +144,19 @@ public class HomeActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_category) {
             getActions("ByCategory");
+            layoutAdapter.notifyDataSetChanged();// = new RecyclerViewAdapter(Common.menuItemList, recyclerMenu.getContext());
+            recyclerMenu.setAdapter(layoutAdapter);
         } else if (id == R.id.nav_new_auction) {
             Intent AuctionIntent = new Intent(HomeActivity.this, AuctionActivity.class);
             startActivity(AuctionIntent);
         } else if (id == R.id.nav_my_auction) {
             getActions("BySellerId");
+            layoutAdapter.notifyDataSetChanged();// = new RecyclerViewAdapter(Common.menuItemList, recyclerMenu.getContext());
+            recyclerMenu.setAdapter(layoutAdapter);
         } else if (id == R.id.nav_participate_auction) {
             getActions("ByBidderId");
+            layoutAdapter.notifyDataSetChanged();// = new RecyclerViewAdapter(Common.menuItemList, recyclerMenu.getContext());
+            recyclerMenu.setAdapter(layoutAdapter);
         } else if (id == R.id.nav_logout) {
             Intent signIn = new Intent(HomeActivity.this, SignIn.class);
             signIn.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -184,16 +193,16 @@ public class HomeActivity extends AppCompatActivity
             request = client.getAllAuctions();
         }
         else if (Query.equals("ById")){
-            request = client.getAllAuctions();
+            request = client.getAuctionsById(5);
         }
         else if (Query.equals("ByCategory")){
-            request = client.getAllAuctions();
+            request = client.getAuctionsByCategory("");
         }
         else if (Query.equals("BySellerId")){
-            request = client.getAllAuctions();
+            request = client.getAuctionsBySellerId("1");
         }
         else if (Query.equals("ByBidderId")){
-            request = client.getAllAuctions();
+            request = client.getAuctionsByBidderId("1");
         }
 
         request.enqueue(new Callback<List<Auction>>() {
@@ -206,14 +215,17 @@ public class HomeActivity extends AppCompatActivity
                 }
 
                 List<Auction> auctionsList = response.body();
-                ArrayList<MenuItem> menuItemList = new ArrayList<>();
-
-                for (Auction auction : auctionsList){
-                    menuItemList.add(new MenuItem(auction.getName(), auction.getImage(), auction.getId()));
+                //ArrayList<MenuItem> menuItemList = new ArrayList<>();
+                if (Common.menuItemList.size()!=0){
+                    Common.menuItemList.clear();
                 }
 
-                layoutAdapter = new RecyclerViewAdapter(menuItemList, getBaseContext());
-                recyclerMenu.setAdapter(layoutAdapter);
+                for (Auction auction : auctionsList){
+                    Common.menuItemList.add(new MenuItem(auction.getName(), auction.getImage(), auction.getId()));
+                }
+
+                /*layoutAdapter = new RecyclerViewAdapter(Common.menuItemList, getBaseContext());
+                recyclerMenu.setAdapter(layoutAdapter);*/
                 return;
 
             }

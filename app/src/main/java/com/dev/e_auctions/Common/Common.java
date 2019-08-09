@@ -8,4 +8,5 @@ import java.util.ArrayList;
 
 public class Common {
     public static User currentUser;
+    public static ArrayList<MenuItem> menuItemList = new ArrayList<>();
 }
