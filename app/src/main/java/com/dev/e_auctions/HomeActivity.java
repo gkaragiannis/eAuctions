@@ -1,7 +1,8 @@
 package com.dev.e_auctions;
 
-import android.content.Context;
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -20,6 +21,7 @@ import android.view.Menu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.dev.e_auctions.Client.RestClient;
 import com.dev.e_auctions.Common.Common;
 import com.dev.e_auctions.Interface.RestApi;
 import com.dev.e_auctions.Model.Auction;
@@ -30,22 +32,28 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import okhttp3.Request;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
 
     TextView txtUsername;
+    private ArrayList<MenuItem> menuItemList = new ArrayList<>();
 
     private RecyclerView recyclerMenu;
-    private RecyclerView.Adapter layoutAdapter;
+    private RecyclerView recyclerView;
+    private RecyclerViewAdapter layoutAdapter = new RecyclerViewAdapter(menuItemList, HomeActivity.this);
     private RecyclerView.LayoutManager layoutManager;
+
+
+    private ArrayList<Auction> auctionList;
+
+    public ArrayList<Auction> getAuctionList(){
+        return auctionList;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +64,7 @@ public class HomeActivity extends AppCompatActivity
         toolbar.setTitle("toolbar.setTitle@line:28");
         //setSupportActionBar(toolbar);
 
-        //Search FAB
+        //Create Search FAB
         FloatingActionButton btnSearch = findViewById(R.id.btnSearch);
         btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -66,12 +74,14 @@ public class HomeActivity extends AppCompatActivity
             }
         });
 
+        //????
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
+        //Create Navigation Menu
         //NavigationView navigationView = findViewById(R.id.nav_view);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -92,14 +102,23 @@ public class HomeActivity extends AppCompatActivity
         recyclerMenu.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         recyclerMenu.setLayoutManager(layoutManager);
+        recyclerView = (RecyclerView) HomeActivity.this.findViewById(R.id.rvContentHome);
 
-        getActions("All");// this maybe onResume
-        /*for (MenuItem i : Common.menuItemList){
-            System.out.println(i.getName());
-        }*/
-        layoutAdapter = new RecyclerViewAdapter(Common.menuItemList, recyclerMenu.getContext());
-        recyclerMenu.setAdapter(layoutAdapter);
+//        getActions("All");// this maybe onResume
+//        /*for (MenuItem i : Common.menuItemList){
+//            System.out.println(i.getName());
+//        }*/
+//        layoutAdapter = new RecyclerViewAdapter(Common.menuItemList, recyclerMenu.getContext());
+//        recyclerMenu.setAdapter(layoutAdapter);
+        System.out.println("onCreate");
+        new HttpRequestTask().execute("All");
+    }
 
+    @Override
+    protected void onResume(){
+        super.onResume();
+        System.out.println("onResume");
+        recyclerView.setAdapter(layoutAdapter);
     }
 
     @Override
@@ -143,20 +162,23 @@ public class HomeActivity extends AppCompatActivity
         if (id == R.id.nav_search) {
 
         } else if (id == R.id.nav_category) {
-            getActions("ByCategory");
+            new HttpRequestTask().execute("ByCategory");
+            /*getActions("ByCategory");
             layoutAdapter.notifyDataSetChanged();// = new RecyclerViewAdapter(Common.menuItemList, recyclerMenu.getContext());
-            recyclerMenu.setAdapter(layoutAdapter);
+            recyclerMenu.setAdapter(layoutAdapter);*/
         } else if (id == R.id.nav_new_auction) {
             Intent AuctionIntent = new Intent(HomeActivity.this, AuctionActivity.class);
             startActivity(AuctionIntent);
         } else if (id == R.id.nav_my_auction) {
-            getActions("BySellerId");
+            new HttpRequestTask().execute(new String[]{"BySellerId",Integer.toString(Common.currentUser.getId())});
+            /*getActions("BySellerId");
             layoutAdapter.notifyDataSetChanged();// = new RecyclerViewAdapter(Common.menuItemList, recyclerMenu.getContext());
-            recyclerMenu.setAdapter(layoutAdapter);
+            recyclerMenu.setAdapter(layoutAdapter);*/
         } else if (id == R.id.nav_participate_auction) {
-            getActions("ByBidderId");
+            new HttpRequestTask().execute(new String[]{"ByBidderId",Integer.toString(Common.currentUser.getId())});
+            /*getActions("ByBidderId");
             layoutAdapter.notifyDataSetChanged();// = new RecyclerViewAdapter(Common.menuItemList, recyclerMenu.getContext());
-            recyclerMenu.setAdapter(layoutAdapter);
+            recyclerMenu.setAdapter(layoutAdapter);*/
         } else if (id == R.id.nav_logout) {
             Intent signIn = new Intent(HomeActivity.this, SignIn.class);
             signIn.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -182,12 +204,7 @@ public class HomeActivity extends AppCompatActivity
 
         Call<List<Auction>> request = null;
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://my-json-server.typicode.com/gkaragiannis/testREST/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        RestApi client = retrofit.create(RestApi.class);
+        RestApi client = RestClient.getClient().create(RestApi.class);
 
         if (Query.equals("All")){
             request = client.getAllAuctions();
@@ -238,4 +255,71 @@ public class HomeActivity extends AppCompatActivity
         });
     }
 
+    private class HttpRequestTask extends AsyncTask <String, Void, ArrayList<Auction>>{
+
+        final ProgressDialog mDialog = new ProgressDialog(HomeActivity.this);
+
+        protected void onPreExecute(){
+            mDialog.setMessage("Please wait...");
+            mDialog.show();
+        }
+
+        @Override
+        protected ArrayList<Auction> doInBackground(String... strings) {
+
+            ArrayList<Auction> resultList = new ArrayList<>();
+            Call<List<Auction>> request = null;
+            publishProgress();
+            if (strings[0].equals("All")) {
+                System.out.println("All");
+                request = RestClient.getClient().create(RestApi.class).getAllAuctions();
+            }
+            else if (strings[0].equals("ById")) {
+                request = RestClient.getClient().create(RestApi.class).getAuctionsById(Integer.parseInt(strings[1]));
+            }
+            else if (strings[0].equals("ByCategory")) {
+                request = RestClient.getClient().create(RestApi.class).getAuctionsByCategory("");
+            }
+            else if (strings[0].equals("BySellerId")) {
+                request = RestClient.getClient().create(RestApi.class).getAuctionsBySellerId(strings[1]);
+            }
+            else if (strings[0].equals("ByBidderId")) {
+                request = RestClient.getClient().create(RestApi.class).getAuctionsByBidderId(strings[1]);
+            }
+            try {
+                Response<List<Auction>> response = request.execute();
+                resultList.addAll(response.body());
+            } catch (IOException e){
+                e.printStackTrace();
+            }
+
+            HomeActivity.this.auctionList = resultList;
+            return HomeActivity.this.getAuctionList();
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<Auction> auctionList){
+
+            mDialog.dismiss();
+            if (auctionList != null && auctionList.size() > 0){ //&& auctionList.size() > 0 keep it or not
+                menuItemList = getMenuItems(auctionList);
+                layoutAdapter.updateDataset(menuItemList);
+            }
+            else{
+                Toast.makeText(HomeActivity.this, "Oops! No auctions found!", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    private ArrayList<MenuItem> getMenuItems(List<Auction> auctionsList){
+
+        ArrayList<MenuItem> menuItems = new ArrayList<>();
+        if (auctionsList != null && auctionsList.size() > 0){
+            for (Auction auction : auctionsList){
+                menuItems.add(new MenuItem(auction.getName(), auction.getImage(), auction.getId()));
+            }
+        }
+
+        return menuItems;
+    }
 }

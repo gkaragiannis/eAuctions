@@ -90,4 +90,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         return mMenuItemList.size();
     }
 
+    public void updateDataset(ArrayList<MenuItem> newDataset){
+        mMenuItemList.clear();
+        mMenuItemList.addAll(newDataset);
+        this.notifyDataSetChanged();
+    }
 }
