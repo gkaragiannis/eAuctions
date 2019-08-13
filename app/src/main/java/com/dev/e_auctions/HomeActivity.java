@@ -74,7 +74,7 @@ public class HomeActivity extends AppCompatActivity
             }
         });
 
-        //????
+
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -104,20 +104,12 @@ public class HomeActivity extends AppCompatActivity
         recyclerMenu.setLayoutManager(layoutManager);
         recyclerView = (RecyclerView) HomeActivity.this.findViewById(R.id.rvContentHome);
 
-//        getActions("All");// this maybe onResume
-//        /*for (MenuItem i : Common.menuItemList){
-//            System.out.println(i.getName());
-//        }*/
-//        layoutAdapter = new RecyclerViewAdapter(Common.menuItemList, recyclerMenu.getContext());
-//        recyclerMenu.setAdapter(layoutAdapter);
-        System.out.println("onCreate");
         new HttpRequestTask().execute("All");
     }
 
     @Override
     protected void onResume(){
         super.onResume();
-        System.out.println("onResume");
         recyclerView.setAdapter(layoutAdapter);
     }
 
@@ -163,22 +155,13 @@ public class HomeActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_category) {
             new HttpRequestTask().execute("ByCategory");
-            /*getActions("ByCategory");
-            layoutAdapter.notifyDataSetChanged();// = new RecyclerViewAdapter(Common.menuItemList, recyclerMenu.getContext());
-            recyclerMenu.setAdapter(layoutAdapter);*/
         } else if (id == R.id.nav_new_auction) {
             Intent AuctionIntent = new Intent(HomeActivity.this, AuctionActivity.class);
             startActivity(AuctionIntent);
         } else if (id == R.id.nav_my_auction) {
             new HttpRequestTask().execute(new String[]{"BySellerId",Integer.toString(Common.currentUser.getId())});
-            /*getActions("BySellerId");
-            layoutAdapter.notifyDataSetChanged();// = new RecyclerViewAdapter(Common.menuItemList, recyclerMenu.getContext());
-            recyclerMenu.setAdapter(layoutAdapter);*/
         } else if (id == R.id.nav_participate_auction) {
             new HttpRequestTask().execute(new String[]{"ByBidderId",Integer.toString(Common.currentUser.getId())});
-            /*getActions("ByBidderId");
-            layoutAdapter.notifyDataSetChanged();// = new RecyclerViewAdapter(Common.menuItemList, recyclerMenu.getContext());
-            recyclerMenu.setAdapter(layoutAdapter);*/
         } else if (id == R.id.nav_logout) {
             Intent signIn = new Intent(HomeActivity.this, SignIn.class);
             signIn.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -192,67 +175,6 @@ public class HomeActivity extends AppCompatActivity
         return true;
 
 
-    }
-
-    private void getActions(@NonNull String Query) {
-
-        //Load auctions on home main view
-        /*recyclerMenu = (RecyclerView)findViewById(R.id.rvContentHome);
-        recyclerMenu.setHasFixedSize(true);
-        layoutManager = new LinearLayoutManager(this);
-        recyclerMenu.setLayoutManager(layoutManager);*/
-
-        Call<List<Auction>> request = null;
-
-        RestApi client = RestClient.getClient().create(RestApi.class);
-
-        if (Query.equals("All")){
-            request = client.getAllAuctions();
-        }
-        else if (Query.equals("ById")){
-            request = client.getAuctionsById(5);
-        }
-        else if (Query.equals("ByCategory")){
-            request = client.getAuctionsByCategory("");
-        }
-        else if (Query.equals("BySellerId")){
-            request = client.getAuctionsBySellerId("1");
-        }
-        else if (Query.equals("ByBidderId")){
-            request = client.getAuctionsByBidderId("1");
-        }
-
-        request.enqueue(new Callback<List<Auction>>() {
-            @Override
-            public void onResponse(Call<List<Auction>> request, Response<List<Auction>> response) {
-                if (!response.isSuccessful()){
-                    //floating message
-                    Toast.makeText(HomeActivity.this, "Not Successful", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                List<Auction> auctionsList = response.body();
-                //ArrayList<MenuItem> menuItemList = new ArrayList<>();
-                if (Common.menuItemList.size()!=0){
-                    Common.menuItemList.clear();
-                }
-
-                for (Auction auction : auctionsList){
-                    Common.menuItemList.add(new MenuItem(auction.getName(), auction.getImage(), auction.getId()));
-                }
-
-                /*layoutAdapter = new RecyclerViewAdapter(Common.menuItemList, getBaseContext());
-                recyclerMenu.setAdapter(layoutAdapter);*/
-                return;
-
-            }
-
-            @Override
-            public void onFailure(Call<List<Auction>> request, Throwable t) {
-                Toast.makeText(HomeActivity.this, "Unavailable services", Toast.LENGTH_SHORT).show();
-                return;
-            }
-        });
     }
 
     private class HttpRequestTask extends AsyncTask <String, Void, ArrayList<Auction>>{
@@ -271,11 +193,10 @@ public class HomeActivity extends AppCompatActivity
             Call<List<Auction>> request = null;
             publishProgress();
             if (strings[0].equals("All")) {
-                System.out.println("All");
                 request = RestClient.getClient().create(RestApi.class).getAllAuctions();
             }
             else if (strings[0].equals("ById")) {
-                request = RestClient.getClient().create(RestApi.class).getAuctionsById(Integer.parseInt(strings[1]));
+                request = RestClient.getClient().create(RestApi.class).getAuctionsById(strings[1]);
             }
             else if (strings[0].equals("ByCategory")) {
                 request = RestClient.getClient().create(RestApi.class).getAuctionsByCategory("");

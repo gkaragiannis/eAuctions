@@ -1,6 +1,8 @@
 package com.dev.e_auctions.Interface;
 
 import com.dev.e_auctions.Model.Auction;
+import com.dev.e_auctions.Model.Bid;
+import com.dev.e_auctions.Model.Category;
 import com.dev.e_auctions.Model.User;
 
 import java.util.List;
@@ -14,9 +16,6 @@ import retrofit2.http.Query;
 public interface RestApi {
 
     @GET("users")
-    Call<List<User>> getUsers();
-
-    @GET("users")
     Call<List<User>> getUserByUsername(@Query("username") String usernameString);
 
     @POST("users")
@@ -26,7 +25,7 @@ public interface RestApi {
     Call<List<Auction>> getAllAuctions();
 
     @GET("auctions")
-    Call<List<Auction>> getAuctionsById(@Query("id") int id);
+    Call<List<Auction>> getAuctionsById(@Query("id") String id);
 
     @GET("auctions")
     Call<List<Auction>> getAuctionsByCategory(@Query("category") String categoryString);
@@ -36,5 +35,11 @@ public interface RestApi {
 
     @GET("auctions")
     Call<List<Auction>> getAuctionsByBidderId(@Query("bidder_id") String tokenString);
+
+    @GET("categories")
+    Call<List<Category>> getCategories();
+
+    @POST("bids")
+    Call<Bid> postNewBid(@Body Bid newBid);
 
 }

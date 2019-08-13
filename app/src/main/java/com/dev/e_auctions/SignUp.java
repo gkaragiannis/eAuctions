@@ -77,13 +77,13 @@ public class SignUp extends AppCompatActivity {
                 call.enqueue(new Callback<User>() {
                     @Override
                     public void onResponse(Call<User> call, Response<User> response) {
+                        mDialog.dismiss();
 
                         if (!response.isSuccessful()){
                             Toast.makeText(SignUp.this, Integer.toString(response.code()), Toast.LENGTH_SHORT).show();
                             return;
                         }
 
-                        mDialog.dismiss();
                         //Toast.makeText(SignUp.this, "Successfully Sign Up", Toast.LENGTH_SHORT).show();
                         Toast.makeText(SignUp.this, Integer.toString(response.code()), Toast.LENGTH_LONG).show();
                         //System.out.println(response.body().getUsername());

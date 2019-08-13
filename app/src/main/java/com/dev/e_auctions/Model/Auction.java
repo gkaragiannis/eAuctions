@@ -4,8 +4,8 @@ public class Auction {
     private Integer id;
     private String name;
     private Integer total_bids;
-    private Integer first_bid_id;
-    private Integer last_bid_id;
+    private Float first_bid;
+    private Float last_bid;
     private String created;
     private String ends;
     private Integer seller_id;
@@ -17,12 +17,12 @@ public class Auction {
         this.id = id;
     }
 
-    public Auction(Integer id, String name, Integer total_bids, Integer first_bid_id, Integer last_bid_id, String created, String ends, Integer seller_id, String description, String image) {
+    public Auction(Integer id, String name, Integer total_bids, Float first_bid, Float last_bid, String created, String ends, Integer seller_id, String description, String image) {
         this.id = id;
         this.name = name;
         this.total_bids = total_bids;
-        this.first_bid_id = first_bid_id;
-        this.last_bid_id = last_bid_id;
+        this.first_bid = first_bid;
+        this.last_bid = last_bid;
         this.created = created;
         this.ends = ends;
         this.seller_id = seller_id;
@@ -43,12 +43,12 @@ public class Auction {
         return total_bids;
     }
 
-    public Integer getFirst_bid_id() {
-        return first_bid_id;
+    public Float getFirst_bid() {
+        return first_bid;
     }
 
-    public Integer getLast_bid_id() {
-        return last_bid_id;
+    public Float getLast_bid() {
+        return last_bid.floatValue();
     }
 
     public String getCreated() {
@@ -84,12 +84,12 @@ public class Auction {
         this.total_bids = total_bids;
     }
 
-    public void setFirst_bid_id(Integer first_bid_id) {
-        this.first_bid_id = first_bid_id;
+    public void setFirst_bid(Float first_bid) {
+        this.first_bid = first_bid;
     }
 
-    public void setLast_bid_id(Integer last_bid_id) {
-        this.last_bid_id = last_bid_id;
+    public void setLast_bid(Float last_bid) {
+        this.last_bid = last_bid;
     }
 
     public void setCreated(String created) {

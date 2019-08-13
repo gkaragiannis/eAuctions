@@ -55,9 +55,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         }
     }
 
-    public RecyclerViewAdapter(ArrayList<MenuItem> menuItemList){
+    /*public RecyclerViewAdapter(ArrayList<MenuItem> menuItemList){
         mMenuItemList = menuItemList;
-    }
+    }*/
 
     @NonNull
     @Override
@@ -69,20 +69,21 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     @Override
     public void onBindViewHolder(@NonNull MenuItemViewHolder menuItemViewHolder, int position) {
-        MenuItem currentMenuListItem = mMenuItemList.get(position);
+        final MenuItem currentMenuListItem = mMenuItemList.get(position);
 
         Picasso.with(context).load(currentMenuListItem.getImage()).into(menuItemViewHolder.imgMenuItemView);
         menuItemViewHolder.txtMenuItemName.setText(currentMenuListItem.getName());
-        /*menuItemViewHolder.setMenuItemClickListener(new MenuItemClickListener() {
+        menuItemViewHolder.setMenuItemClickListener(new MenuItemClickListener() {
             @Override
             public void onClick(View view, int position, boolean isLongClick) {
                 //Get CategoryId and send to new Activity
                 Intent newActivity = new Intent(context, AuctionActivity.class);
                 //Because CategoryId is key, so we just get the key of this item
-                newActivity.putExtra("CategoryId", adapter.getRef(position).getKey());
-                startActivity(newActivity);
+                newActivity.putExtra("AuctionId", Integer.toString(currentMenuListItem.getId()));
+                context.startActivity(newActivity);
+                return;
             }
-        });*/
+        });
     }
 
     @Override

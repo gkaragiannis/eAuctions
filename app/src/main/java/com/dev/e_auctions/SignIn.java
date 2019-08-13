@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.dev.e_auctions.Client.RestClient;
 import com.dev.e_auctions.Common.Common;
 import com.dev.e_auctions.Interface.RestApi;
 import com.dev.e_auctions.Model.User;
@@ -50,15 +51,8 @@ public class SignIn extends AppCompatActivity {
                     return;
                 }
 
-                //Some code here for log in
-                Retrofit retrofit = new Retrofit.Builder()
-                        .baseUrl("https://my-json-server.typicode.com/gkaragiannis/testREST/")
-                        .addConverterFactory(GsonConverterFactory.create())
-                        .build();
-
-                RestApi client = retrofit.create(RestApi.class);
-
-                Call<List<User>> request = client.getUserByUsername(edtUsername.getText().toString());
+                //
+                Call<List<User>> request = RestClient.getClient().create(RestApi.class).getUserByUsername(edtUsername.getText().toString());
 
                 request.enqueue(new Callback<List<User>>() {
                     @Override
@@ -78,13 +72,7 @@ public class SignIn extends AppCompatActivity {
                         }
                         else if (response.body().size() == 1 ){
 
-                        //User currentUser = response.body().get(0);
-                        Common.currentUser = response.body().get(0);
-
-                        //if (currentUser.getPhone().equals(edtPassword.getText().toString())){
-                        //if (Common.currentUser.getPhone().equals(edtPassword.getText().toString())){
-                            //floating message
-                            //Toast.makeText(SignIn.this, "Welcome back " + currentUser.getUsername(), Toast.LENGTH_SHORT).show();
+                            Common.currentUser = response.body().get(0);
                             Toast.makeText(SignIn.this, "Welcome back " + Common.currentUser.getUsername(), Toast.LENGTH_SHORT).show();
 
                             Intent SignInIntent = new Intent(SignIn.this, HomeActivity.class);
