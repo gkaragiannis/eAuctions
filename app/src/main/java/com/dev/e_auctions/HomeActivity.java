@@ -195,9 +195,6 @@ public class HomeActivity extends AppCompatActivity
             if (strings[0].equals("All")) {
                 request = RestClient.getClient().create(RestApi.class).getAllAuctions();
             }
-            else if (strings[0].equals("ById")) {
-                request = RestClient.getClient().create(RestApi.class).getAuctionsById(strings[1]);
-            }
             else if (strings[0].equals("ByCategory")) {
                 request = RestClient.getClient().create(RestApi.class).getAuctionsByCategory("");
             }

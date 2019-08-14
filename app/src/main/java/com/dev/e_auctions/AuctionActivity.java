@@ -79,6 +79,7 @@ public class AuctionActivity extends AppCompatActivity {
         startingDate = (TextView) findViewById(R.id.startingDate);
         endDate = (TextView) findViewById(R.id.endDate);
         auctionDesc = (TextView) findViewById(R.id.auctionDesc);
+        //auctionPrice = (TextView) findViewById(R.id.auctionPrice);
 
         btnNewBidValue = (ClickNumberPickerView) findViewById(R.id.btnNewBidValue);
         collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing);
