@@ -1,15 +1,18 @@
 package com.dev.e_auctions;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.os.Build;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,6 +23,9 @@ import com.dev.e_auctions.Model.Auction;
 import com.dev.e_auctions.Model.Bid;
 import com.squareup.picasso.Picasso;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import pl.polak.clicknumberpicker.ClickNumberPickerView;
@@ -30,7 +36,8 @@ import retrofit2.Response;
 public class AuctionActivity extends AppCompatActivity {
 
     ImageView auctionImage;
-    TextView auctionName, startingDate, endDate, auctionPrice, auctionDesc;
+    TextView auctionName, startingDate, endDate, auctionDesc;
+    ProgressBar durationBar;
     ClickNumberPickerView btnNewBidValue;
     CollapsingToolbarLayout collapsingToolbarLayout;
     FloatingActionButton btnBid;
@@ -76,10 +83,10 @@ public class AuctionActivity extends AppCompatActivity {
 
         auctionImage = (ImageView) findViewById(R.id.auctionImage);
         auctionName = (TextView) findViewById(R.id.auctionName);
+        durationBar = (ProgressBar) findViewById(R.id.durationBar);
         startingDate = (TextView) findViewById(R.id.startingDate);
         endDate = (TextView) findViewById(R.id.endDate);
         auctionDesc = (TextView) findViewById(R.id.auctionDesc);
-        //auctionPrice = (TextView) findViewById(R.id.auctionPrice);
 
         btnNewBidValue = (ClickNumberPickerView) findViewById(R.id.btnNewBidValue);
         collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing);
@@ -148,13 +155,33 @@ public class AuctionActivity extends AppCompatActivity {
 
                     Picasso.with(AuctionActivity.this).load(response.body().get(0).getImage()).into(auctionImage);
                     auctionName.setText(response.body().get(0).getName());
-                    endDate.setText(response.body().get(0).getEnds());
                     startingDate.setText(response.body().get(0).getCreated());
-                    System.out.println(response.body().get(0).getLast_bid());
+                    endDate.setText(response.body().get(0).getEnds());
+                    int progress = 0;
+                    try {
+                        progress = getProgress(response.body().get(0).getCreated(),
+                                response.body().get(0).getEnds());
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    durationBar.setProgress(progress);
                     btnNewBidValue.setPickerValue(response.body().get(0).getLast_bid());
                     auctionDesc.setText(response.body().get(0).getDescription());
 
                 }
+            }
+
+            private int getProgress(String created, String ends) throws ParseException {
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+
+                Date startingDate = format.parse(created);
+                Date endDate = format.parse(ends);
+                Date current = new Date();
+
+                long diff1 = endDate.getTime() - startingDate.getTime();
+                long diff2 = current.getTime() - startingDate.getTime();
+
+                return (int) ((diff2*100)/diff1);
             }
 
             @Override
