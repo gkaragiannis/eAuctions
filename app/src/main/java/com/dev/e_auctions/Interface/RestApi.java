@@ -16,7 +16,7 @@ import retrofit2.http.Query;
 public interface RestApi {
 
     @GET("users")
-    Call<List<User>> getUserByUsername(@Query("username") String usernameString);
+    Call<List<User>> getUserByUsername(@Query("username") String usernameString, @Query("password") String passwordString);
 
     @POST("users")
     Call<User> createNewUser(@Body User newUser);

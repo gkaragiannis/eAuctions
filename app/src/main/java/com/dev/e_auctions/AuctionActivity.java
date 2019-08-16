@@ -153,7 +153,7 @@ public class AuctionActivity extends AppCompatActivity {
                 }
                 else{
 
-                    Picasso.with(AuctionActivity.this).load(response.body().get(0).getImage()).into(auctionImage);
+                    Picasso.get().load(response.body().get(0).getImage()).into(auctionImage);
                     auctionName.setText(response.body().get(0).getName());
                     startingDate.setText(response.body().get(0).getCreated());
                     endDate.setText(response.body().get(0).getEnds());

@@ -14,6 +14,10 @@
             android:icon="@drawable/ic_search_black_24dp"
             android:title="@string/search" />
         <item
+            android:id="@+id/nav_auctions"
+            android:icon="@drawable/ic_all_inclusive_black_24dp"
+            android:title="@string/auctions"/>
+        <item
             android:id="@+id/nav_category"
             android:icon="@drawable/ic_style_black_24dp"
             android:title="@string/category" />

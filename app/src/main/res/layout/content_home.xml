@@ -8,12 +8,27 @@
     tools:context=".HomeActivity"
     tools:showIn="@layout/app_bar_home">
 
-    <android.support.v7.widget.RecyclerView
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:weightSum="2">
+
+        <com.mancj.materialsearchbar.MaterialSearchBar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/searchBar"
+            android:visibility="gone"
+            app:mt_navIconEnabled="true"
+            app:mt_navIconDrawable="@drawable/ic_arrow_back_black_24dp"
+            app:mt_speechMode="false"
+            app:mt_maxSuggestionsCount="5"/>
+
+        <android.support.v7.widget.RecyclerView
         android:id="@+id/rvContentHome"
         android:scrollbars="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"/>
 
-    </android.support.v7.widget.RecyclerView>
-
+    </LinearLayout>
 </android.support.constraint.ConstraintLayout>

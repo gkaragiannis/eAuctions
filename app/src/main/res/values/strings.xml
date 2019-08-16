@@ -1,6 +1,11 @@
 <resources>
     <string name="app_name">e-Auctions</string>
-    <string name="slogan">Bid times 1... Bid times 2... Bid times 3... Hammer Price Auction off</string>
+    <string name="slogan">
+        Bid times 1...
+        Bid times 2...
+        Bid times 3...
+        Hammer Price Auction off
+    </string>
 
     <!-- Main Activity Strings -->
     <string name="signIn">Sign In</string>
@@ -32,6 +37,7 @@
 
     <string name="home">Home</string>
     <string name="search">Search</string>
+    <string name="auctions">All Auctions</string>
     <string name="category">Categories</string>
     <string name="newAuction">Create New Auction</string>
     <string name="myAuction">My Auctions</string>
@@ -51,7 +57,7 @@
     <string name="invalid_username">Not a valid username</string>
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
-    
+
     <!-- BitSubmission strings -->
     <string name="AlertDialogMessage">Do you want to submit this bid?</string>
     <string name="PositiveButton">Yes</string>

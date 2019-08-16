@@ -52,7 +52,8 @@ public class SignIn extends AppCompatActivity {
                 }
 
                 //
-                Call<List<User>> request = RestClient.getClient().create(RestApi.class).getUserByUsername(edtUsername.getText().toString());
+                Call<List<User>> request = RestClient.getClient().create(RestApi.class).
+                        getUserByUsername(edtUsername.getText().toString(), edtPassword.getText().toString());
 
                 request.enqueue(new Callback<List<User>>() {
                     @Override

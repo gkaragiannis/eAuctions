@@ -1,4 +1,4 @@
-package com.dev.e_auctions.ViewHolder;
+package com.dev.e_auctions.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,7 +11,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.dev.e_auctions.AuctionActivity;
-import com.dev.e_auctions.HomeActivity;
 import com.dev.e_auctions.Interface.MenuItemClickListener;
 import com.dev.e_auctions.Model.MenuItem;
 import com.dev.e_auctions.R;
@@ -71,7 +70,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     public void onBindViewHolder(@NonNull MenuItemViewHolder menuItemViewHolder, int position) {
         final MenuItem currentMenuListItem = mMenuItemList.get(position);
 
-        Picasso.with(context).load(currentMenuListItem.getImage()).into(menuItemViewHolder.imgMenuItemView);
+        Picasso.get().load(currentMenuListItem.getImage()).into(menuItemViewHolder.imgMenuItemView);
         menuItemViewHolder.txtMenuItemName.setText(currentMenuListItem.getName());
         menuItemViewHolder.setMenuItemClickListener(new MenuItemClickListener() {
             @Override
