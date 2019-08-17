@@ -19,7 +19,7 @@ public interface RestApi {
     Call<List<User>> getUserByUsername(@Query("username") String usernameString, @Query("password") String passwordString);
 
     @POST("users")
-    Call<User> createNewUser(@Body User newUser);
+    Call<User> postNewUser(@Body User newUser);
 
     @GET("auctions")
     Call<List<Auction>> getAllAuctions();
@@ -36,8 +36,14 @@ public interface RestApi {
     @GET("auctions")
     Call<List<Auction>> getAuctionsByBidderId(@Query("bidder_id") String tokenString);
 
+    @POST("auctions")
+    Call<Auction> postNewAuction(@Body Auction newAuction);
+
     @GET("categories")
     Call<List<Category>> getCategories();
+
+    @POST("categories")
+    Call<List<Category>> postCategories(@Body List<Category> categoryList);
 
     @POST("bids")
     Call<Bid> postNewBid(@Body Bid newBid);

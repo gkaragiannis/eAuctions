@@ -46,10 +46,20 @@
     <string name="logout">Log out</string>
     <string name="profile">My Profile</string>
 
+    <!-- New Auction Activity -->
+    <string name="auctionName">Name</string>
+    <string name="auctionStartingDate">Starting Date</string>
+    <string name="auctionEndDate">End Date</string>
+    <string name="auctionDescription">Description</string>
+    <string name="submit">Submit Auction</string>
+    <string name="price">Starting Price</string>
+    <string name="duration">Duration</string>
+    <string name="item">Auction Object</string>
+
     <!-- Test Strings -->
     <string name="mitsos">Mitsos</string>
     <string name="title_activity_login">Sign in</string>
-    <string name="prompt_email">Email</string>
+    <string name="prompt_email">username@domain.location</string>
     <string name="prompt_password">Password</string>
     <string name="action_sign_in">Sign in or register</string>
     <string name="action_sign_in_short">Sign in</string>
@@ -58,7 +68,7 @@
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
 
-    <!-- BitSubmission strings -->
+    <!-- BidSubmission strings -->
     <string name="AlertDialogMessage">Do you want to submit this bid?</string>
     <string name="PositiveButton">Yes</string>
     <string name="NegativeButton">No</string>

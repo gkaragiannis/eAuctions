@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.dev.e_auctions.Client.RestClient;
 import com.dev.e_auctions.Common.Common;
 import com.dev.e_auctions.Interface.RestApi;
 import com.dev.e_auctions.Model.User;
@@ -65,18 +66,12 @@ public class SignUp extends AppCompatActivity {
                         edtTaxId.getText().toString()
                 );
 
-                Retrofit retrofit = new Retrofit.Builder()
-                        .baseUrl("https://my-json-server.typicode.com/gkaragiannis/testREST/")
-                        .addConverterFactory(GsonConverterFactory.create())
-                        .build();
 
-                RestApi client = retrofit.create(RestApi.class);
+                Call<User> request = RestClient.getClient().create(RestApi.class).postNewUser(user);
 
-                Call<User> call = client.createNewUser(user);
-
-                call.enqueue(new Callback<User>() {
+                request.enqueue(new Callback<User>() {
                     @Override
-                    public void onResponse(Call<User> call, Response<User> response) {
+                    public void onResponse(Call<User> request, Response<User> response) {
                         mDialog.dismiss();
 
                         if (!response.isSuccessful()){
@@ -88,14 +83,14 @@ public class SignUp extends AppCompatActivity {
                         Toast.makeText(SignUp.this, Integer.toString(response.code()), Toast.LENGTH_LONG).show();
                         //System.out.println(response.body().getUsername());
                         Common.currentUser=user;
-                        Intent SignInIntent = new Intent(SignUp.this, HomeActivity.class);
-                        startActivity(SignInIntent);
+                        Intent SignUpIntent = new Intent(SignUp.this, HomeActivity.class);
+                        startActivity(SignUpIntent);
                         finish();
 
                     }
 
                     @Override
-                    public void onFailure(Call<User> call, Throwable t) {
+                    public void onFailure(Call<User> request, Throwable t) {
                         mDialog.dismiss();
                         Toast.makeText(SignUp.this, "Unavailable services", Toast.LENGTH_SHORT).show();
                         return;

@@ -23,9 +23,8 @@
             android:title="@string/category" />
     </group>
 
-    <group android:id="@+id/registeredUserMenu"
-        android:checkableBehavior="single"
-        android:visible="true">
+    <group android:id="@+id/memberGroup"
+        android:checkableBehavior="single">
                 <item
                     android:id="@+id/nav_new_auction"
                     android:icon="@drawable/ic_add_box_black_24dp"

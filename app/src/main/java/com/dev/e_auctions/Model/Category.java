@@ -6,6 +6,11 @@ public class Category {
     private String image;
 
     //Constructos
+    public Category(Integer id, String name) {
+        Id = id;
+        this.name = name;
+    }
+
     public Category(Integer id, String name, String image) {
         Id = id;
         this.name = name;

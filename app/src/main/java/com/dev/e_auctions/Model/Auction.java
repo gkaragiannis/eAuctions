@@ -8,21 +8,14 @@ public class Auction {
     private Float last_bid;
     private String created;
     private String ends;
-    private Integer seller_id;
+    private String seller_id;
     private String description;
     private String image;
 
     //Constructors
-    public Auction(Integer id) {
-        this.id = id;
-    }
-
-    public Auction(Integer id, String name, Integer total_bids, Float first_bid, Float last_bid, String created, String ends, Integer seller_id, String description, String image) {
-        this.id = id;
+    public Auction(String name, Float first_bid, String created, String ends, String seller_id, String description, String image) {
         this.name = name;
-        this.total_bids = total_bids;
         this.first_bid = first_bid;
-        this.last_bid = last_bid;
         this.created = created;
         this.ends = ends;
         this.seller_id = seller_id;
@@ -59,7 +52,7 @@ public class Auction {
         return ends;
     }
 
-    public Integer getSeller_id() {
+    public String getSeller_id() {
         return seller_id;
     }
 
@@ -100,7 +93,7 @@ public class Auction {
         this.ends = ends;
     }
 
-    public void setSeller_id(Integer seller_id) {
+    public void setSeller_id(String seller_id) {
         this.seller_id = seller_id;
     }
 

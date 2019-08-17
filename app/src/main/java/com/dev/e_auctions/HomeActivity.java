@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.constraint.Group;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -157,14 +158,15 @@ public class HomeActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-
         //Set Username on nav_header_home
         View headView = navigationView.getHeaderView(0);
         txtUsername = (TextView)headView.findViewById(R.id.txtUsername);
         if (Common.currentUser != null) {
             txtUsername.setText(Common.currentUser.getUsername());
+            navigationView.getMenu().setGroupVisible(R.id.memberGroup, true);
         } else{
             txtUsername.setText("Guest");
+            navigationView.getMenu().setGroupVisible(R.id.memberGroup, false);
         }
 
         //Create Recycler Menu
@@ -239,7 +241,7 @@ public class HomeActivity extends AppCompatActivity
             new HttpRequestCategoriesTask().execute();
             toolbar.setTitle(R.string.category);
         } else if (id == R.id.nav_new_auction) {
-            startActivity(new Intent(HomeActivity.this, AuctionActivity.class));
+            startActivity(new Intent(HomeActivity.this, NewAuctionActivity.class));
         } else if (id == R.id.nav_my_auction) {
             new HttpRequestAuctionsTask().execute(new String[]{"BySellerId",Integer.toString(Common.currentUser.getId())});
             toolbar.setTitle(R.string.myAuction);
