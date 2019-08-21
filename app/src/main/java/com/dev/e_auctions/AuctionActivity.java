@@ -53,25 +53,27 @@ public class AuctionActivity extends AppCompatActivity {
 
         //Initialize View
         btnBid = (FloatingActionButton) findViewById(R.id.btnBid);
-        if (Common.currentUser==null){
+        if (Common.currentUser==null)
             btnBid.setVisibility(View.GONE);
-        }
+        else
+            btnBid.setVisibility(View.VISIBLE);
+
         btnBid.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //pop up to approve new bid "R U Sure?"
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(AuctionActivity.this);
                 alertDialog.setCancelable(true)
-                        .setMessage(R.string.AlertDialogMessage)
+                        .setMessage(R.string.BidSubmission)
                         //on yes post bid
-                        .setPositiveButton(R.string.PositiveButton, new DialogInterface.OnClickListener() {
+                        .setPositiveButton(R.string.YesButton, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 postBid();
                             }
                         })
                         //on no return
-                        .setNegativeButton(R.string.NegativeButton, new DialogInterface.OnClickListener() {
+                        .setNegativeButton(R.string.NoButton, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.cancel();

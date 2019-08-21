@@ -11,4 +11,6 @@
     <color name="hintText">#80ADAFAF</color>
     <color name="overlayBackground">#7F333639</color>
     <color name="actionBar">#0E0D0E</color>
+
+    <color name="transpanert">#00000000</color>
 </resources>

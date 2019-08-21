@@ -69,8 +69,11 @@
     <string name="login_failed">"Login failed"</string>
 
     <!-- BidSubmission strings -->
-    <string name="AlertDialogMessage">Do you want to submit this bid?</string>
-    <string name="PositiveButton">Yes</string>
-    <string name="NegativeButton">No</string>
+    <string name="BidSubmission">Do you want to submit this bid?</string>
+    <string name="SelectCategory">Please select corresponding category(-ies)</string>
+    <string name="YesButton">Yes</string>
+    <string name="NoButton">No</string>
+    <string name="OkButton">OK</string>
+    <string name="CancelButton">CANCEL</string>
 
 </resources>

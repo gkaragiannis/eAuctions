@@ -1,7 +1,9 @@
 package com.dev.e_auctions;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,8 +17,11 @@ import com.dev.e_auctions.Client.RestClient;
 import com.dev.e_auctions.Common.Common;
 import com.dev.e_auctions.Interface.RestApi;
 import com.dev.e_auctions.Model.Auction;
+import com.dev.e_auctions.Model.Category;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -25,8 +30,10 @@ import retrofit2.Response;
 public class NewAuctionActivity extends AppCompatActivity {
 
     private Calendar mCalendar = Calendar.getInstance();
-    private EditText edtTextStartingDate, edtTextEndDate, edtTextName, edtTextDescription;
+    private EditText edtTextName, edtTextDescription, edtTextCategory, edtTextStartingDate, edtTextEndDate;
     private int day, month, year;
+    private boolean[] checkItems; // = new boolean[] {false,false,false,false};
+    private String[] categories; // = new String[] {"Electronics","Furniture","Toys","Sports"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +41,8 @@ public class NewAuctionActivity extends AppCompatActivity {
         setContentView(R.layout.activity_new_auction);
 
         edtTextName = (EditText) findViewById(R.id.newAuctionName);
+        edtTextCategory = (EditText) findViewById(R.id.newAuctionCategory);
+        edtTextCategory.setOnClickListener(CategoryClickListener);
         edtTextDescription = (EditText) findViewById(R.id.newAuctionDescription);
         //Set Calendary elements
         day=mCalendar.get(Calendar.DAY_OF_MONTH);
@@ -86,9 +95,80 @@ public class NewAuctionActivity extends AppCompatActivity {
                         return;
                     }
                 });
+
+
+            }
+        });
+
+        Call<List<Category>> request = RestClient.getClient().create(RestApi.class).getCategories();
+        request.enqueue(new Callback<List<Category>>() {
+            @Override
+            public void onResponse(Call<List<Category>> request, Response<List<Category>> response) {
+
+                if (!response.isSuccessful()){
+                    Toast.makeText(NewAuctionActivity.this, Integer.toString(response.code()), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                categories = new String[response.body().size()];
+                checkItems = new boolean[response.body().size()];
+                int position = 0;
+                for (Category category : response.body()){
+                    categories[position] = category.getName();
+                    checkItems[position] = false;
+                    position++;
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Category>> request, Throwable t) {
+                Toast.makeText(NewAuctionActivity.this, "Unavailable services", Toast.LENGTH_SHORT).show();
+                return;
             }
         });
     }
+
+    View.OnClickListener CategoryClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(NewAuctionActivity.this);
+            alertDialog.setCancelable(false)
+                    .setTitle(R.string.SelectCategory)
+                    .setMultiChoiceItems(categories, checkItems, new DialogInterface.OnMultiChoiceClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                            checkItems[which] = true;
+                        }
+                    })
+                    //on yes post bid
+                    .setPositiveButton(R.string.OkButton, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            String edtTextCategoryValue = null;
+                            for (int position = 0; position < categories.length; position++){
+                                if (checkItems[position]==true){
+                                    if (edtTextCategoryValue==null)
+                                        edtTextCategoryValue = categories[position];
+                                    else
+                                        edtTextCategoryValue = edtTextCategoryValue + " & " + categories[position];
+                                }
+                            }
+                            if (!edtTextCategoryValue.isEmpty())
+                                edtTextCategory.setText(edtTextCategoryValue);
+                        }
+                    })
+                    //on no return
+                    .setNegativeButton(R.string.CancelButton, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    })
+                    .show();
+        }
+    };
 
     View.OnClickListener StartingDateClickListener = new View.OnClickListener() {
         @Override

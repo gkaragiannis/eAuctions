@@ -347,9 +347,9 @@ public class HomeActivity extends AppCompatActivity
         protected ArrayList<Category> doInBackground(Void... voids) {
 
             ArrayList<Category> resultList = new ArrayList<>();
-            Call<List<Category>> request = null;
+
             publishProgress();
-            request = RestClient.getClient().create(RestApi.class).getCategories();
+            Call<List<Category>> request = RestClient.getClient().create(RestApi.class).getCategories();
 
             try {
                 Response<List<Category>> response = request.execute();
@@ -366,7 +366,7 @@ public class HomeActivity extends AppCompatActivity
         protected void onPostExecute(ArrayList<Category> categoryList){
 
             mDialog.dismiss();
-            if (auctionList != null && auctionList.size() > 0){ //&& auctionList.size() > 0 keep it or not
+            if (categoryList != null && categoryList.size() > 0){ //&& auctionList.size() > 0 keep it or not
                 menuItemList = getCategoryListMenuItems();
                 layoutAdapter.updateDataset(getMenuItemList());
             }
