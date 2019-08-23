@@ -51,10 +51,11 @@
     <string name="auctionStartingDate">Starting Date</string>
     <string name="auctionEndDate">End Date</string>
     <string name="auctionDescription">Description</string>
-    <string name="submit">Submit Auction</string>
+    <string name="submitAuction">Submit Auction</string>
     <string name="price">Starting Price</string>
     <string name="duration">Duration</string>
     <string name="item">Auction Object</string>
+    <string name="selectImage">Select Image</string>
 
     <!-- Test Strings -->
     <string name="mitsos">Mitsos</string>

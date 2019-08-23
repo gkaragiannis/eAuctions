@@ -8,68 +8,224 @@
     android:orientation="vertical"
     tools:context=".NewAuctionActivity">
 
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <LinearLayout
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:isScrollContainer="true"
-            android:orientation="vertical"
-            android:scrollbars="vertical">
+            android:gravity="center"
+            android:padding="15dp"
+            android:text="Create New Auction"
+            android:textAlignment="center"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
-            <TextView
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:padding="15dp"
-                android:text="Create New Auction"
-                android:textAlignment="center"
-                android:textColor="@android:color/white"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+                android:layout_centerInParent="true"
+                android:isScrollContainer="true"
+                android:orientation="vertical"
+                android:scrollbars="vertical">
 
-            <android.support.v7.widget.CardView
+                <android.support.v7.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardElevation="5dp"
+                    app:cardUseCompatPadding="true"
+                    app:contentPaddingBottom="15dp"
+                    app:cardCornerRadius="10dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="5dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="7dp"
+                            android:text="@string/item"
+                            android:textColor="@color/colorPrimary"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+
+                        <EditText
+                            android:id="@+id/newAuctionName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/auctionName"
+                            android:inputType="text"
+                            android:textColor="@color/colorPrimary"
+                            android:textColorHint="@color/overlayBackground"
+                            android:textSize="18sp" />
+
+                        <EditText
+                            android:id="@+id/newAuctionCategory"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/category"
+                            android:inputType="text"
+                            android:textColor="@color/colorPrimary"
+                            android:textColorHint="@color/overlayBackground"
+                            android:textSize="18sp"
+                            android:clickable="true"
+                            android:focusable="false"/>
+
+                        <EditText
+                            android:id="@+id/newAuctionDescription"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/auctionDescription"
+                            android:inputType="textMultiLine"
+                            android:textColor="@color/colorPrimary"
+                            android:textColorHint="@color/overlayBackground"
+                            android:textSize="18sp" />
+
+                    </LinearLayout>
+                </android.support.v7.widget.CardView>
+
+                <android.support.v7.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardElevation="5dp"
+                    app:cardUseCompatPadding="true"
+                    app:contentPadding="15dp"
+                    app:cardCornerRadius="10dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:id="@+id/newAuctionImage"
+                            android:layout_width="match_parent"
+                            android:layout_height="250dp"
+                            android:layout_gravity="center"
+                            android:scaleType="centerCrop"
+                            android:visibility="gone"/>
+
+                        <Button
+                            android:id="@+id/btnLoadImage"
+                            android:layout_width="200dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal|bottom"
+                            android:layout_margin="8dp"
+                            android:layout_marginLeft="8dp"
+                            android:layout_marginRight="8dp"
+                            android:background="@color/btnSignUp"
+                            android:ellipsize="end"
+                            android:shadowColor="@android:color/black"
+                            android:text="@string/selectImage"
+                            android:textColor="@android:color/white"  />
+
+                    </LinearLayout>
+
+                </android.support.v7.widget.CardView>
+
+                <android.support.v7.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardElevation="5dp"
+                    app:cardUseCompatPadding="true"
+                    app:contentPaddingBottom="15dp"
+                    app:cardCornerRadius="10dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:weightSum="2">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:padding="12dp"
+                                android:text="@string/price"
+                                android:textColor="@color/colorPrimary"
+                                android:textSize="18sp"
+                                android:textStyle="bold" />
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:padding="12dp"
+                                android:contentDescription="null"
+                                app:srcCompat="@drawable/ic_euro_symbol_24dp" />
+
+                        </LinearLayout>
+
+                        <pl.polak.clicknumberpicker.ClickNumberPickerView
+                            android:id="@+id/btnNewBidValue"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginLeft="8dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginEnd="18dp"
+                            android:layout_marginRight="18dp"
+                            app:max_value="999999999"
+                            app:picker_corner_radius="20"
+                            app:pickers_background_color="@color/colorPrimary"
+                            app:step="0.01"
+                            app:swipe_enabled="false"
+                            app:value_background_color="@color/colorAccent"
+                            app:value_text_color="@android:color/white" />
+
+                    </LinearLayout>
+                </android.support.v7.widget.CardView>
+
+                <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:cardElevation="5dp"
                 app:cardUseCompatPadding="true"
                 app:contentPaddingBottom="15dp"
-                app:cardCornerRadius="10dp">
+                    app:cardCornerRadius="10dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="5dp">
+                    android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="12dp"
+                    android:text="@string/duration"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="7dp"
-                        android:text="@string/item"
-                        android:textColor="@color/colorPrimary"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
-
-                    <EditText
-                        android:id="@+id/newAuctionName"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="@string/auctionName"
-                        android:inputType="text"
-                        android:textColor="@color/colorPrimary"
-                        android:textColorHint="@color/overlayBackground"
-                        android:textSize="18sp" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="2"
+                    android:padding="10dp">
 
                     <EditText
-                        android:id="@+id/newAuctionCategory"
-                        android:layout_width="match_parent"
+                        android:id="@+id/newAuctionStartingDate"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:hint="@string/category"
-                        android:inputType="text"
+                        android:layout_weight="1"
+                        android:hint="@string/auctionStartingDate"
+                        android:inputType="date"
                         android:textColor="@color/colorPrimary"
                         android:textColorHint="@color/overlayBackground"
                         android:textSize="18sp"
@@ -77,149 +233,37 @@
                         android:focusable="false"/>
 
                     <EditText
-                        android:id="@+id/newAuctionDescription"
-                        android:layout_width="match_parent"
+                        android:id="@+id/newAuctionEndDate"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:hint="@string/auctionDescription"
-                        android:inputType="textMultiLine"
+                        android:layout_weight="1"
+                        android:hint="@string/auctionEndDate"
+                        android:inputType="date"
                         android:textColor="@color/colorPrimary"
                         android:textColorHint="@color/overlayBackground"
-                        android:textSize="18sp" />
+                        android:textSize="18sp"
+                        android:clickable="true"
+                        android:focusable="false"/>
 
+                </LinearLayout>
                 </LinearLayout>
             </android.support.v7.widget.CardView>
 
-            <android.support.v7.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardElevation="5dp"
-                app:cardUseCompatPadding="true"
-                app:contentPaddingBottom="15dp"
-                app:cardCornerRadius="10dp">
-
-                <LinearLayout
+                <Button
+                    android:id="@+id/btnSubmitNewAuction"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:weightSum="2">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:padding="12dp"
-                            android:text="@string/price"
-                            android:textColor="@color/colorPrimary"
-                            android:textSize="18sp"
-                            android:textStyle="bold" />
-
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:padding="12dp"
-                            android:contentDescription="null"
-                            app:srcCompat="@drawable/ic_euro_symbol_24dp" />
-
-                    </LinearLayout>
-
-                    <pl.polak.clicknumberpicker.ClickNumberPickerView
-                        android:id="@+id/btnNewBidValue"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginLeft="8dp"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginEnd="18dp"
-                        android:layout_marginRight="18dp"
-                        app:max_value="999999999"
-                        app:picker_corner_radius="20"
-                        app:pickers_background_color="@color/colorPrimary"
-                        app:step="0.01"
-                        app:swipe_enabled="false"
-                        app:value_background_color="@color/colorAccent"
-                        app:value_text_color="@android:color/white" />
-
-                </LinearLayout>
-            </android.support.v7.widget.CardView>
-
-            <android.support.v7.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:cardElevation="5dp"
-            app:cardUseCompatPadding="true"
-            app:contentPaddingBottom="15dp"
-                app:cardCornerRadius="10dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="12dp"
-                android:text="@string/duration"
-                android:textColor="@color/colorPrimary"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:weightSum="2"
-                android:padding="10dp">
-
-                <EditText
-                    android:id="@+id/newAuctionStartingDate"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:hint="@string/auctionStartingDate"
-                    android:inputType="date"
-                    android:textColor="@color/colorPrimary"
-                    android:textColorHint="@color/overlayBackground"
-                    android:textSize="18sp"
-                    android:clickable="true"
-                    android:focusable="false"/>
-
-                <EditText
-                    android:id="@+id/newAuctionEndDate"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:hint="@string/auctionEndDate"
-                    android:inputType="date"
-                    android:textColor="@color/colorPrimary"
-                    android:textColorHint="@color/overlayBackground"
-                    android:textSize="18sp"
-                    android:clickable="true"
-                    android:focusable="false"/>
+                    android:layout_alignParentBottom="true"
+                    android:layout_margin="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:background="@color/btnSignUp"
+                    android:ellipsize="end"
+                    android:shadowColor="@android:color/black"
+                    android:text="@string/submitAuction"
+                    android:textColor="@android:color/white" />
 
             </LinearLayout>
-            </LinearLayout>
-        </android.support.v7.widget.CardView>
-
-            <Button
-                android:id="@+id/btnSubmit"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_margin="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:background="@color/btnSignUp"
-                android:ellipsize="end"
-                android:shadowColor="@android:color/black"
-                android:text="@string/submit"
-                android:textColor="@android:color/white" />
-
-        </LinearLayout>
-    </ScrollView>
-
+        </ScrollView>
+    </LinearLayout>
 </RelativeLayout>
