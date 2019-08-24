@@ -4,13 +4,11 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.constraint.Group;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.support.v4.view.GravityCompat;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -20,7 +18,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
-import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,14 +45,14 @@ public class HomeActivity extends AppCompatActivity
     private List<String> getSuggestionList(){
         return suggestionList;
     }
-    private void setSuggestionList() {
+    /*private void setSuggestionList() {
         suggestionList.clear();
         if (getMenuItemList() != null && getMenuItemList().size() > 0){
             for (MenuItem menuItem : getMenuItemList()){
                 suggestionList.add(menuItem.getName());
             }
         }
-    }
+    }*/
     private ArrayList<MenuItem> menuItemList = new ArrayList<>();
     public ArrayList<MenuItem> getMenuItemList() {
         return menuItemList;
@@ -235,7 +232,7 @@ public class HomeActivity extends AppCompatActivity
             searchBar.enableSearch();
             searchBar.setVisibility(View.VISIBLE);
         } else if (id == R.id.nav_auctions) {
-            new HttpRequestAuctionsTask().execute("All");
+//            new HttpRequestAuctionsTask().execute("All");
             toolbar.setTitle(R.string.auctions);
         } else if (id == R.id.nav_category) {
             new HttpRequestCategoriesTask().execute();
@@ -243,10 +240,10 @@ public class HomeActivity extends AppCompatActivity
         } else if (id == R.id.nav_new_auction) {
             startActivity(new Intent(HomeActivity.this, NewAuctionActivity.class));
         } else if (id == R.id.nav_my_auction) {
-            new HttpRequestAuctionsTask().execute(new String[]{"BySellerId",Integer.toString(Common.currentUser.getId())});
+//            new HttpRequestAuctionsTask().execute(new String[]{"BySellerId",Integer.toString(Common.currentUser.getId())});
             toolbar.setTitle(R.string.myAuction);
         } else if (id == R.id.nav_participate_auction) {
-            new HttpRequestAuctionsTask().execute(new String[]{"ByBidderId",Integer.toString(Common.currentUser.getId())});
+//            new HttpRequestAuctionsTask().execute(new String[]{"ByBidderId",Integer.toString(Common.currentUser.getId())});
             toolbar.setTitle(R.string.participateAuction);
         } else if (id == R.id.nav_logout) {
             Intent signIn = new Intent(HomeActivity.this, SignIn.class);
