@@ -297,6 +297,8 @@ public class HomeActivity extends AppCompatActivity
             ArrayList<Auction> resultList = new ArrayList<>();
             Call<List<Auction>> request = null;
             publishProgress();
+
+            //prepare for call
             if (strings[0].equals("All")) {
                 request = RestClient.getClient().create(RestApi.class).getAllAuctions();
             }
@@ -309,6 +311,8 @@ public class HomeActivity extends AppCompatActivity
             else if (strings[0].equals("ByBidderId")) {
                 request = RestClient.getClient().create(RestApi.class).getAuctionsByBidderId(strings[1]);
             }
+
+            //try execute and get response
             try {
                 Response<List<Auction>> response = request.execute();
                 resultList.addAll(response.body());
