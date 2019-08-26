@@ -9,6 +9,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.dev.e_auctions.APIRequests.SignUpRequest;
+import com.dev.e_auctions.APIResponses.UsersResponse;
 import com.dev.e_auctions.Client.RestClient;
 import com.dev.e_auctions.Common.Common;
 import com.dev.e_auctions.Interface.RestApi;
@@ -54,7 +56,7 @@ public class SignUp extends AppCompatActivity {
                 mDialog.show();
 
                 //Some code here for log in
-                final User user = new User(edtUsername.getText().toString(),
+                final SignUpRequest signUpRequest = new SignUpRequest(edtUsername.getText().toString(),
                         edtPassword.getText().toString(),
                         edtFirstName.getText().toString(),
                         edtLastName.getText().toString(),
@@ -67,30 +69,34 @@ public class SignUp extends AppCompatActivity {
                 );
 
 
-                Call<User> request = RestClient.getClient().create(RestApi.class).postNewUser(user);
+                Call<UsersResponse> call = RestClient.getClient().create(RestApi.class).postSignUp(signUpRequest);
 
-                request.enqueue(new Callback<User>() {
+                call.enqueue(new Callback<UsersResponse>() {
                     @Override
-                    public void onResponse(Call<User> request, Response<User> response) {
+                    public void onResponse(Call<UsersResponse> call, Response<UsersResponse> response) {
                         mDialog.dismiss();
 
                         if (!response.isSuccessful()){
                             Toast.makeText(SignUp.this, Integer.toString(response.code()), Toast.LENGTH_SHORT).show();
                             return;
                         }
-
-                        //Toast.makeText(SignUp.this, "Successfully Sign Up", Toast.LENGTH_SHORT).show();
-                        Toast.makeText(SignUp.this, Integer.toString(response.code()), Toast.LENGTH_LONG).show();
-                        //System.out.println(response.body().getUsername());
-                        Common.currentUser=user;
-                        Intent SignUpIntent = new Intent(SignUp.this, HomeActivity.class);
-                        startActivity(SignUpIntent);
-                        finish();
-
+                        else if (!response.body().getStatusCode().equals("SUCCESS")){
+                            Toast.makeText(SignUp.this, response.body().getStatusMsg(), Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        else {
+                            //Toast.makeText(SignUp.this, "Successfully Sign Up", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(SignUp.this, Integer.toString(response.code()), Toast.LENGTH_LONG).show();
+                            //System.out.println(response.body().getUsername());
+                            Common.token = response.body().getToken();
+                            Intent SignUpIntent = new Intent(SignUp.this, HomeActivity.class);
+                            startActivity(SignUpIntent);
+                            finish();
+                        }
                     }
 
                     @Override
-                    public void onFailure(Call<User> request, Throwable t) {
+                    public void onFailure(Call<UsersResponse> call, Throwable t) {
                         mDialog.dismiss();
                         Toast.makeText(SignUp.this, "Unavailable services", Toast.LENGTH_SHORT).show();
                         return;

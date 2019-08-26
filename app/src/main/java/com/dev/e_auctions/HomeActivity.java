@@ -299,7 +299,7 @@ public class HomeActivity extends AppCompatActivity
             publishProgress();
 
             //prepare for call
-            if (strings[0].equals("All")) {
+            /*if (strings[0].equals("All")) {
                 request = RestClient.getClient().create(RestApi.class).getAllAuctions();
             }
             else if (strings[0].equals("ByCategory")) {
@@ -320,7 +320,7 @@ public class HomeActivity extends AppCompatActivity
                 e.printStackTrace();
             }
 
-            HomeActivity.this.auctionList = resultList;
+            HomeActivity.this.auctionList = resultList;*/
             return HomeActivity.this.getAuctionList();
         }
 
@@ -349,7 +349,7 @@ public class HomeActivity extends AppCompatActivity
 
         @Override
         protected ArrayList<Category> doInBackground(Void... voids) {
-
+/*
             ArrayList<Category> resultList = new ArrayList<>();
 
             publishProgress();
@@ -362,7 +362,7 @@ public class HomeActivity extends AppCompatActivity
                 e.printStackTrace();
             }
 
-            HomeActivity.this.categoryList = resultList;
+            HomeActivity.this.categoryList = resultList;*/
             return HomeActivity.this.getCategoryList();
         }
 
@@ -385,7 +385,7 @@ public class HomeActivity extends AppCompatActivity
         ArrayList<MenuItem> menuItems = new ArrayList<>();
         if (getAuctionList() != null && getAuctionList().size() > 0){
             for (Auction auction : getAuctionList()){
-                menuItems.add(new MenuItem(auction.getName(), auction.getImage(), auction.getId()));
+//                menuItems.add(new MenuItem(auction.getName(), auction.getImage(), auction.getId()));
             }
         }
 

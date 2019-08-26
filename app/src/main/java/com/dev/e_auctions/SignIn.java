@@ -8,6 +8,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.dev.e_auctions.APIRequests.SignInRequest;
+import com.dev.e_auctions.APIResponses.UsersResponse;
 import com.dev.e_auctions.Client.RestClient;
 import com.dev.e_auctions.Common.Common;
 import com.dev.e_auctions.Interface.RestApi;
@@ -51,13 +53,12 @@ public class SignIn extends AppCompatActivity {
                     return;
                 }
 
-                //
-                Call<List<User>> request = RestClient.getClient().create(RestApi.class).
-                        getUserByUsername(edtUsername.getText().toString(), edtPassword.getText().toString());
+                SignInRequest signInRequest = new SignInRequest(edtUsername.getText().toString(), edtPassword.getText().toString());
+                Call<UsersResponse> call = RestClient.getClient().create(RestApi.class).postSignIn(signInRequest);
 
-                request.enqueue(new Callback<List<User>>() {
+                call.enqueue(new Callback<UsersResponse>() {
                     @Override
-                    public void onResponse(Call<List<User>> request, Response<List<User>> response) {
+                    public void onResponse(Call<UsersResponse> call, Response<UsersResponse> response) {
                         //To disappear progressDialog
                         mDialog.dismiss();
 
@@ -67,27 +68,24 @@ public class SignIn extends AppCompatActivity {
                             Toast.makeText(SignIn.this, Integer.toString(response.code()), Toast.LENGTH_SHORT).show();
                             return;
                         }
-                        else if (response.body().size() != 1 ){
-                            Toast.makeText(SignIn.this, "Invalid username/password", Toast.LENGTH_SHORT).show();
+                        else if (!response.body().getStatusCode().equals("SUCCESS")){
+                            Toast.makeText(SignIn.this, response.body().getStatusMsg(), Toast.LENGTH_SHORT).show();
                             return;
                         }
-                        else if (response.body().size() == 1 ){
+                        else {
 
-                            Common.currentUser = response.body().get(0);
-                            Toast.makeText(SignIn.this, "Welcome back " + Common.currentUser.getUsername(), Toast.LENGTH_SHORT).show();
+                            Common.token = response.body().getToken();
+                            Toast.makeText(SignIn.this, "Welcome back " + edtUsername.getText() + " !", Toast.LENGTH_SHORT).show();
 
                             Intent SignInIntent = new Intent(SignIn.this, HomeActivity.class);
                             startActivity(SignInIntent);
                             finish();
                         }
-                        else {
-                            Toast.makeText(SignIn.this, "Wrong password", Toast.LENGTH_SHORT).show();
-                        }
 
                     }
 
                     @Override
-                    public void onFailure(Call<List<User>> request, Throwable t) {
+                    public void onFailure(Call<UsersResponse> call, Throwable t) {
                         mDialog.dismiss();
                         Toast.makeText(SignIn.this, "Unavailable services", Toast.LENGTH_SHORT).show();
                         return;

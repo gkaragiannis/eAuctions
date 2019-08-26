@@ -106,7 +106,7 @@ public class AuctionActivity extends AppCompatActivity {
     }
 
     private void postBid() {
-        final ProgressDialog mDialog = new ProgressDialog(AuctionActivity.this);
+        /*final ProgressDialog mDialog = new ProgressDialog(AuctionActivity.this);
         mDialog.setMessage("Your bid is submitting");
         mDialog.show();
 
@@ -136,11 +136,11 @@ public class AuctionActivity extends AppCompatActivity {
                 Toast.makeText(AuctionActivity.this, "Unavailable services", Toast.LENGTH_SHORT).show();
                 return;
             }
-        });
+        });*/
     }
 
     private void getAuction(){
-        Call<List<Auction>> request = RestClient.getClient().create(RestApi.class).getAuctionsById(auctionId);
+        /*Call<List<Auction>> request = RestClient.getClient().create(RestApi.class).getAuctionsById(auctionId);
 
         request.enqueue(new Callback<List<Auction>>() {
             @Override
@@ -191,6 +191,6 @@ public class AuctionActivity extends AppCompatActivity {
                 Toast.makeText(AuctionActivity.this, "Unavailable services", Toast.LENGTH_SHORT).show();
                 return;
             }
-        });
+        });*/
     }
 }

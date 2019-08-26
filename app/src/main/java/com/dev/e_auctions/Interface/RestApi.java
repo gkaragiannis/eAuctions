@@ -1,10 +1,18 @@
 package com.dev.e_auctions.Interface;
 
+import com.dev.e_auctions.APIRequests.DeleteAuctionRequest;
+import com.dev.e_auctions.APIRequests.NewAcutionRequest;
+import com.dev.e_auctions.APIRequests.NewBidRequest;
+import com.dev.e_auctions.APIRequests.SignInRequest;
+import com.dev.e_auctions.APIRequests.SignUpRequest;
+import com.dev.e_auctions.APIResponses.AllCategoriesResponse;
+import com.dev.e_auctions.APIResponses.AuctionsResponses;
+import com.dev.e_auctions.APIResponses.GeneralResponse;
+import com.dev.e_auctions.APIResponses.UsersResponse;
 import com.dev.e_auctions.Model.Auction;
 import com.dev.e_auctions.Model.Bid;
 import com.dev.e_auctions.Model.Category;
 import com.dev.e_auctions.Model.Image;
-import com.dev.e_auctions.Model.User;
 
 import java.util.List;
 
@@ -17,18 +25,35 @@ import retrofit2.http.Query;
 
 public interface RestApi {
 
-    @GET("users")
-    Call<List<User>> getUserByUsername(@Query("username") String usernameString, @Query("password") String passwordString);
+    @POST("/users/authenticateuser")
+    Call<UsersResponse> postSignIn(@Body SignInRequest signInRequest);
 
-    @POST("users")
-    Call<User> postNewUser(@Body User newUser);
+    @POST("/users/registernewuser")
+    Call<UsersResponse> postSignUp(@Body SignUpRequest signUpRequest);
 
-    @GET("auctions")
-    Call<List<Auction>> getAllAuctions();
+    @GET("/auctions/allauctions")
+    Call<AuctionsResponses> getAllAuctions();
 
-    @GET("auctions")
-    Call<List<Auction>> getAuctionsById(@Query("id") String id);
+    @GET("/auctions/openauctions")
+    Call<AuctionsResponses> getOpenAuctions();
 
+    @POST("/auctions/newauction")
+    Call<GeneralResponse> postNewAuction(@Body NewAcutionRequest newAcutionRequest);
+
+    @GET("/auctions/getauctionbyid")
+    Call<Auction> getAuctionsById(@Query("auctionId") String id);
+
+    @POST("/auctions/deleteauctionbyid")
+    Call<GeneralResponse> postDeleteAuction(@Body DeleteAuctionRequest deleteAuctionRequest);
+
+    @GET("itemcategories/allcategories")
+    Call<AllCategoriesResponse> getCategories();
+
+    @POST("/bids/newbidin")
+    Call<GeneralResponse> postNewBid(@Body NewBidRequest newBidRequest);
+
+
+    //old
     @GET("auctions")
     Call<List<Auction>> getAuctionsByCategory(@Query("category") String categoryString);
 
@@ -38,17 +63,8 @@ public interface RestApi {
     @GET("auctions")
     Call<List<Auction>> getAuctionsByBidderId(@Query("bidder_id") String tokenString);
 
-    @POST("auctions")
-    Call<Auction> postNewAuction(@Body Auction newAuction);
-
-    @GET("categories")
-    Call<List<Category>> getCategories();
-
     @POST("categories")
     Call<List<Category>> postCategories(@Body List<Category> categoryList);
-
-    @POST("bids")
-    Call<Bid> postNewBid(@Body Bid newBid);
 
     @POST("/scripts/uploadImage.php")
     Call<Image>  uploadImage(@Field("title") String title, @Field("image") String image);

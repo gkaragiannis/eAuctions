@@ -77,7 +77,7 @@ public class NewAuctionActivity extends AppCompatActivity {
         });
 
         Button btnSubmitAuction = (Button) findViewById(R.id.btnSubmitNewAuction);
-        btnSubmitAuction.setOnClickListener(new View.OnClickListener() {
+        /*btnSubmitAuction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 final ProgressDialog mDialog = new ProgressDialog(NewAuctionActivity.this);
@@ -105,10 +105,10 @@ public class NewAuctionActivity extends AppCompatActivity {
                             return;
                         }
 
-                        /*Toast.makeText(NewAuctionActivity.this, "Auction submitted successfully", Toast.LENGTH_LONG).show();
+                        *//*Toast.makeText(NewAuctionActivity.this, "Auction submitted successfully", Toast.LENGTH_LONG).show();
                         Intent NewAuctionIntent = new Intent(NewAuctionActivity.this, HomeActivity.class);
                         startActivity(NewAuctionIntent);
-                        finish();*/
+                        finish();*//*
                         createdAuctionId[0] = response.body().getId();
                         return;
                     }
@@ -183,7 +183,7 @@ public class NewAuctionActivity extends AppCompatActivity {
                 Toast.makeText(NewAuctionActivity.this, "Unavailable services", Toast.LENGTH_SHORT).show();
                 return;
             }
-        });
+        });*/
     }
 
     View.OnClickListener CategoryClickListener = new View.OnClickListener() {
