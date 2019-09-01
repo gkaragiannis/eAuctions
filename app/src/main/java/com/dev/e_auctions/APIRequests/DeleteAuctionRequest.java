@@ -1,4 +1,4 @@
-package com.dev.e_auctions.APIRequests;
+package com.dev.e_auctions.apirequests;
 
 public class DeleteAuctionRequest {
 

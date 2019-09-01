@@ -1,71 +1,77 @@
-package com.dev.e_auctions;
+package com.dev.e_auctions.activities;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.constraint.Group;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.support.v4.view.GravityCompat;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.design.widget.NavigationView;
-import android.support.v4.widget.DrawerLayout;
-
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
-import android.view.ViewGroup;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.dev.e_auctions.Client.RestClient;
+import com.dev.e_auctions.Adapter.RecyclerViewAdapter;
 import com.dev.e_auctions.Common.Common;
-import com.dev.e_auctions.Interface.RestApi;
 import com.dev.e_auctions.Model.Auction;
 import com.dev.e_auctions.Model.Category;
 import com.dev.e_auctions.Model.MenuItem;
-import com.dev.e_auctions.Adapter.RecyclerViewAdapter;
+import com.dev.e_auctions.R;
 import com.mancj.materialsearchbar.MaterialSearchBar;
 import com.mancj.materialsearchbar.adapter.SuggestionsAdapter;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
-import retrofit2.Response;
+
+import static com.dev.e_auctions.constants.Constant.AUCTION_APP;
+import static com.dev.e_auctions.constants.Constant.GUEST;
+import static com.dev.e_auctions.constants.Constant.HOME_ACTIVITY;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, MaterialSearchBar.OnSearchActionListener {
 
     private List<String> suggestionList = new ArrayList<>();
-    private List<String> getSuggestionList(){
+
+    private List<String> getSuggestionList() {
         return suggestionList;
     }
+
     private void setSuggestionList() {
         suggestionList.clear();
-        if (getMenuItemList() != null && getMenuItemList().size() > 0){
-            for (MenuItem menuItem : getMenuItemList()){
+        if (getMenuItemList() != null && getMenuItemList().size() > 0) {
+            for (MenuItem menuItem : getMenuItemList()) {
                 suggestionList.add(menuItem.getName());
             }
         }
     }
+
     private ArrayList<MenuItem> menuItemList = new ArrayList<>();
+
     public ArrayList<MenuItem> getMenuItemList() {
         return menuItemList;
     }
+
     private ArrayList<Auction> auctionList;
-    public ArrayList<Auction> getAuctionList(){
+
+    public ArrayList<Auction> getAuctionList() {
         return auctionList;
     }
+
     private ArrayList<Category> categoryList;
-    public ArrayList<Category> getCategoryList(){
+
+    public ArrayList<Category> getCategoryList() {
         return categoryList;
     }
 
@@ -101,8 +107,8 @@ public class HomeActivity extends AppCompatActivity
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 List<String> suggestions = new ArrayList<String>();
-                for (String suggestion : suggestionList){
-                    if (suggestion.toLowerCase().contains(searchBar.getText().toLowerCase())){
+                for (String suggestion : suggestionList) {
+                    if (suggestion.toLowerCase().contains(searchBar.getText().toLowerCase())) {
                         suggestions.add(suggestion);
                     }
                 }
@@ -160,17 +166,20 @@ public class HomeActivity extends AppCompatActivity
 
         //Set Username on nav_header_home
         View headView = navigationView.getHeaderView(0);
-        txtUsername = (TextView)headView.findViewById(R.id.txtUsername);
+        Log.d(AUCTION_APP, HOME_ACTIVITY + "setting the name of the user to the NAV Menu");
+        txtUsername = (TextView) headView.findViewById(R.id.txtUsername);
+        Log.d(AUCTION_APP, HOME_ACTIVITY + "setting the name of the user to the NAV Menu");
+
         if (Common.currentUser != null) {
             txtUsername.setText(Common.currentUser.getUsername());
             navigationView.getMenu().setGroupVisible(R.id.memberGroup, true);
-        } else{
-            txtUsername.setText("Guest");
+        } else {
+            txtUsername.setText(GUEST);
             navigationView.getMenu().setGroupVisible(R.id.memberGroup, false);
         }
 
         //Create Recycler Menu
-        recyclerMenu = (RecyclerView)findViewById(R.id.rvContentHome);
+        recyclerMenu = (RecyclerView) findViewById(R.id.rvContentHome);
         recyclerMenu.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         recyclerMenu.setLayoutManager(layoutManager);
@@ -184,7 +193,7 @@ public class HomeActivity extends AppCompatActivity
     }*/
 
     @Override
-    protected void onResume(){
+    protected void onResume() {
         super.onResume();
         recyclerMenu.setAdapter(layoutAdapter);
         /*setSuggestionList();
@@ -243,13 +252,13 @@ public class HomeActivity extends AppCompatActivity
         } else if (id == R.id.nav_new_auction) {
             startActivity(new Intent(HomeActivity.this, NewAuctionActivity.class));
         } else if (id == R.id.nav_my_auction) {
-            new HttpRequestAuctionsTask().execute(new String[]{"BySellerId",Integer.toString(Common.currentUser.getId())});
+            new HttpRequestAuctionsTask().execute(new String[]{"BySellerId", Integer.toString(Common.currentUser.getId())});
             toolbar.setTitle(R.string.myAuction);
         } else if (id == R.id.nav_participate_auction) {
-            new HttpRequestAuctionsTask().execute(new String[]{"ByBidderId",Integer.toString(Common.currentUser.getId())});
+            new HttpRequestAuctionsTask().execute(new String[]{"ByBidderId", Integer.toString(Common.currentUser.getId())});
             toolbar.setTitle(R.string.participateAuction);
         } else if (id == R.id.nav_logout) {
-            Intent signIn = new Intent(HomeActivity.this, SignIn.class);
+            Intent signIn = new Intent(HomeActivity.this, SignInActivity.class);
             signIn.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             Common.currentUser = null;
             finish();
@@ -282,11 +291,11 @@ public class HomeActivity extends AppCompatActivity
         }
     }
 
-    private class HttpRequestAuctionsTask extends AsyncTask <String, Void, ArrayList<Auction>>{
+    private class HttpRequestAuctionsTask extends AsyncTask<String, Void, ArrayList<Auction>> {
 
         final ProgressDialog mDialog = new ProgressDialog(HomeActivity.this);
 
-        protected void onPreExecute(){
+        protected void onPreExecute() {
             mDialog.setMessage("Please wait...");
             mDialog.show();
         }
@@ -325,24 +334,23 @@ public class HomeActivity extends AppCompatActivity
         }
 
         @Override
-        protected void onPostExecute(ArrayList<Auction> auctionList){
+        protected void onPostExecute(ArrayList<Auction> auctionList) {
 
             mDialog.dismiss();
-            if (auctionList != null && auctionList.size() > 0){ //&& auctionList.size() > 0 keep it or not
+            if (auctionList != null && auctionList.size() > 0) { //&& auctionList.size() > 0 keep it or not
                 menuItemList = getAuctionListMenuItems();
                 layoutAdapter.updateDataset(getMenuItemList());
-            }
-            else{
+            } else {
                 Toast.makeText(HomeActivity.this, "Oops! No auctions found!", Toast.LENGTH_LONG).show();
             }
         }
     }
 
-    private class HttpRequestCategoriesTask extends AsyncTask <Void, Void, ArrayList<Category>>{
+    private class HttpRequestCategoriesTask extends AsyncTask<Void, Void, ArrayList<Category>> {
 
         final ProgressDialog mDialog = new ProgressDialog(HomeActivity.this);
 
-        protected void onPreExecute(){
+        protected void onPreExecute() {
             mDialog.setMessage("Please wait...");
             mDialog.show();
         }
@@ -367,24 +375,23 @@ public class HomeActivity extends AppCompatActivity
         }
 
         @Override
-        protected void onPostExecute(ArrayList<Category> categoryList){
+        protected void onPostExecute(ArrayList<Category> categoryList) {
 
             mDialog.dismiss();
-            if (categoryList != null && categoryList.size() > 0){ //&& auctionList.size() > 0 keep it or not
+            if (categoryList != null && categoryList.size() > 0) { //&& auctionList.size() > 0 keep it or not
                 menuItemList = getCategoryListMenuItems();
                 layoutAdapter.updateDataset(getMenuItemList());
-            }
-            else{
+            } else {
                 Toast.makeText(HomeActivity.this, "Oops! No auctions found!", Toast.LENGTH_LONG).show();
             }
         }
     }
 
-    private ArrayList<MenuItem> getAuctionListMenuItems(){
+    private ArrayList<MenuItem> getAuctionListMenuItems() {
 
         ArrayList<MenuItem> menuItems = new ArrayList<>();
-        if (getAuctionList() != null && getAuctionList().size() > 0){
-            for (Auction auction : getAuctionList()){
+        if (getAuctionList() != null && getAuctionList().size() > 0) {
+            for (Auction auction : getAuctionList()) {
 //                menuItems.add(new MenuItem(auction.getName(), auction.getImage(), auction.getId()));
             }
         }
@@ -392,11 +399,11 @@ public class HomeActivity extends AppCompatActivity
         return menuItems;
     }
 
-    private ArrayList<MenuItem> getCategoryListMenuItems(){
+    private ArrayList<MenuItem> getCategoryListMenuItems() {
 
         ArrayList<MenuItem> menuItems = new ArrayList<>();
-        if (getCategoryList() != null && getCategoryList().size() > 0){
-            for (Category category: getCategoryList()){
+        if (getCategoryList() != null && getCategoryList().size() > 0) {
+            for (Category category : getCategoryList()) {
                 menuItems.add(new MenuItem(category.getName(), category.getImage(), category.getId()));
             }
         }

@@ -1,21 +1,16 @@
-package com.dev.e_auctions.APIResponses;
+package com.dev.e_auctions.apiresponses;
 
 import com.dev.e_auctions.Model.Category;
 
 import java.util.List;
 
-public class AllCategoriesResponse {
+public class AllCategoriesResponse extends GeneralResponse {
 
-    private String statusCode;
-    private String statusMsg;
     private List<Category> categories;
 
-    public String getStatusCode() {
-        return statusCode;
-    }
-
-    public String getStatusMsg() {
-        return statusMsg;
+    public AllCategoriesResponse(String statusCode, String statusMsg, List<Category> categories) {
+        super(statusCode, statusMsg);
+        this.categories = categories;
     }
 
     public List<Category> getCategories() {

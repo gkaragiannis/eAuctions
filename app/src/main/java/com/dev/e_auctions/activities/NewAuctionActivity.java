@@ -1,40 +1,28 @@
-package com.dev.e_auctions;
+package com.dev.e_auctions.activities;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Toast;
 
-import com.dev.e_auctions.Client.RestClient;
-import com.dev.e_auctions.Common.Common;
-import com.dev.e_auctions.Interface.RestApi;
-import com.dev.e_auctions.Model.Auction;
-import com.dev.e_auctions.Model.Category;
+import com.dev.e_auctions.R;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class NewAuctionActivity extends AppCompatActivity {
 
@@ -59,9 +47,9 @@ public class NewAuctionActivity extends AppCompatActivity {
         newAuctionImage = (ImageView) findViewById(R.id.newAuctionImage);
 
         //Set Calendary elements
-        day=mCalendar.get(Calendar.DAY_OF_MONTH);
-        month=mCalendar.get(Calendar.MONTH);
-        year=mCalendar.get(Calendar.YEAR);
+        day = mCalendar.get(Calendar.DAY_OF_MONTH);
+        month = mCalendar.get(Calendar.MONTH);
+        year = mCalendar.get(Calendar.YEAR);
 
         edtTextStartingDate = (EditText) findViewById(R.id.newAuctionStartingDate);
         edtTextStartingDate.setOnClickListener(StartingDateClickListener);
@@ -205,9 +193,9 @@ public class NewAuctionActivity extends AppCompatActivity {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             String edtTextCategoryValue = null;
-                            for (int position = 0; position < categories.length; position++){
-                                if (checkItems[position]==true){
-                                    if (edtTextCategoryValue==null)
+                            for (int position = 0; position < categories.length; position++) {
+                                if (checkItems[position] == true) {
+                                    if (edtTextCategoryValue == null)
                                         edtTextCategoryValue = categories[position];
                                     else
                                         edtTextCategoryValue = edtTextCategoryValue + "," + categories[position];
@@ -260,7 +248,7 @@ public class NewAuctionActivity extends AppCompatActivity {
         }
     };
 
-    private void selectImage(){
+    private void selectImage() {
         Intent intent = new Intent();
         intent.setType("image/*")
                 .setAction(Intent.ACTION_GET_CONTENT);
@@ -270,7 +258,7 @@ public class NewAuctionActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null){
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
             Uri path = data.getData();
 
             try {
@@ -285,7 +273,7 @@ public class NewAuctionActivity extends AppCompatActivity {
         }
     }
 
-    private String imageToString(){
+    private String imageToString() {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
         byte[] imgByte = byteArrayOutputStream.toByteArray();

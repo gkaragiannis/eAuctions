@@ -1,37 +1,21 @@
-package com.dev.e_auctions;
+package com.dev.e_auctions.activities;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.os.Build;
+import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.dev.e_auctions.Client.RestClient;
 import com.dev.e_auctions.Common.Common;
-import com.dev.e_auctions.Interface.RestApi;
-import com.dev.e_auctions.Model.Auction;
-import com.dev.e_auctions.Model.Bid;
-import com.squareup.picasso.Picasso;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
+import com.dev.e_auctions.R;
 
 import pl.polak.clicknumberpicker.ClickNumberPickerView;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class AuctionActivity extends AppCompatActivity {
 
@@ -53,7 +37,7 @@ public class AuctionActivity extends AppCompatActivity {
 
         //Initialize View
         btnBid = (FloatingActionButton) findViewById(R.id.btnBid);
-        if (Common.currentUser==null)
+        if (Common.currentUser == null)
             btnBid.setVisibility(View.GONE);
         else
             btnBid.setVisibility(View.VISIBLE);
@@ -97,10 +81,10 @@ public class AuctionActivity extends AppCompatActivity {
         collapsingToolbarLayout.setCollapsedTitleTextAppearance(R.style.CollapsedAppBar);
 
         //Get auction id from Intent
-        if (getIntent() != null){
+        if (getIntent() != null) {
             auctionId = getIntent().getStringExtra("AuctionId");
         }
-        if (!auctionId.isEmpty()){
+        if (!auctionId.isEmpty()) {
             getAuction();
         }
     }
@@ -139,7 +123,7 @@ public class AuctionActivity extends AppCompatActivity {
         });*/
     }
 
-    private void getAuction(){
+    private void getAuction() {
         /*Call<List<Auction>> request = RestClient.getClient().create(RestApi.class).getAuctionsById(auctionId);
 
         request.enqueue(new Callback<List<Auction>>() {

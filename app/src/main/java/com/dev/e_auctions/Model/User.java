@@ -66,4 +66,23 @@ public class User {
     public Double getSellerRatingVotes() {
         return sellerRatingVotes;
     }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", email='" + email + '\'' +
+                ", phone='" + phone + '\'' +
+                ", country='" + country + '\'' +
+                ", city='" + city + '\'' +
+                ", address='" + address + '\'' +
+                ", bidderRating=" + bidderRating +
+                ", bidderRatingVotes=" + bidderRatingVotes +
+                ", sellerRating=" + sellerRating +
+                ", sellerRatingVotes=" + sellerRatingVotes +
+                '}';
+    }
 }

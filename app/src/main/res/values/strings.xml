@@ -12,7 +12,7 @@
     <string name="signUp">Sign Up</string>
     <string name="guest">Guest</string>
 
-    <!-- SignIn/SignUp Activities Strings -->
+    <!-- SignInActivity/SignUpActivity Activities Strings -->
     <string name="user">Username</string>
     <string name="pass">Password</string>
     <string name="cPass">Confirm Password</string>
@@ -76,5 +76,6 @@
     <string name="NoButton">No</string>
     <string name="OkButton">OK</string>
     <string name="CancelButton">CANCEL</string>
+    <string name="todo">TODO</string>
 
 </resources>

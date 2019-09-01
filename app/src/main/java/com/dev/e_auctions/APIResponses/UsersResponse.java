@@ -1,17 +1,11 @@
-package com.dev.e_auctions.APIResponses;
+package com.dev.e_auctions.apiresponses;
 
-public class UsersResponse {
-
-    private String statusCode;
-    private String statusMsg;
+public class UsersResponse extends GeneralResponse {
     private String token;
 
-    public String getStatusCode() {
-        return statusCode;
-    }
-
-    public String getStatusMsg() {
-        return statusMsg;
+    public UsersResponse(String statusCode, String statusMsg, String token) {
+        super(statusCode, statusMsg);
+        this.token = token;
     }
 
     public String getToken() {
