@@ -100,10 +100,4 @@ public interface RestApi {
 //    Call<ImageApiResponse>  getImage(@Query("auctionId") Long auctionId);
 //
 
-
-    //TODO : needs to be deleted
-    @GET("users/allusers")
-    Call<AllUsersResponse> getAllUsers();
-
-
 }
