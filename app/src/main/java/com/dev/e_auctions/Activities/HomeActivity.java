@@ -21,6 +21,7 @@ import android.view.Menu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.dev.e_auctions.APIResponses.AllCategoriesResponse;
 import com.dev.e_auctions.APIResponses.AuctionsResponse;
 import com.dev.e_auctions.Client.RestClient;
 import com.dev.e_auctions.Common.Common;
@@ -367,20 +368,19 @@ public class HomeActivity extends AppCompatActivity
 
         @Override
         protected ArrayList<Category> doInBackground(Void... voids) {
-/*
             ArrayList<Category> resultList = new ArrayList<>();
 
             publishProgress();
-            Call<List<Category>> request = RestClient.getClient().create(RestApi.class).getCategories();
+            Call<AllCategoriesResponse> request = RestClient.getClient().create(RestApi.class).getCategories();
 
             try {
-                Response<List<Category>> response = request.execute();
-                resultList.addAll(response.body());
+                Response<AllCategoriesResponse> response = request.execute();
+                resultList.addAll(response.body().getCategories());
             } catch (IOException e){
                 e.printStackTrace();
             }
 
-            HomeActivity.this.categoryList = resultList;*/
+            HomeActivity.this.categoryList = resultList;
             return HomeActivity.this.getCategoryList();
         }
 

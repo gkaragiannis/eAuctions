@@ -82,10 +82,10 @@ public class SignUp extends AppCompatActivity {
                             return;
                         }
                         else {
-                            //Toast.makeText(SignUp.this, "Successfully Sign Up", Toast.LENGTH_SHORT).show();
-                            Toast.makeText(SignUp.this, Integer.toString(response.code()), Toast.LENGTH_LONG).show();
-                            //System.out.println(response.body().getUsername());
                             Common.token = response.body().getToken();
+                            Common.currentUser = response.body().getUser();
+                            Toast.makeText(SignUp.this, "Welcome " + edtUsername.getText() + " !", Toast.LENGTH_SHORT).show();
+
                             Intent SignUpIntent = new Intent(SignUp.this, HomeActivity.class);
                             startActivity(SignUpIntent);
                             finish();

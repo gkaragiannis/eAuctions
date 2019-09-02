@@ -25,30 +25,30 @@ import retrofit2.http.Query;
 public interface RestApi {
 
     /*-- USERS --*/
-    @POST("/users/authenticateuser")
+    @POST("users/authenticateuser")
     Call<UsersResponse> postSignIn(@Body SignInRequest signInRequest);
 
-    @POST("/users/registernewuser")
+    @POST("users/registernewuser")
     Call<UsersResponse> postSignUp(@Body SignUpRequest signUpRequest);
 
 
     /*-- AUCTIONS --*/
-    @GET("/auctions/allauctions")
+    @GET("auctions/allauctions")
     Call<AuctionsResponse> getAllAuctions();
 
-    @GET("/auctions/openauctions")
+    @GET("auctions/openauctions")
     Call<AuctionsResponse> getOpenAuctions();
 
-    @POST("/auctions/newauction")
+    @POST("auctions/newauction")
     Call<GeneralResponse> postNewAuction(@Body NewAcutionRequest newAcutionRequest);
 
-    @GET("/auctions/getauctionbyid")
+    @GET("auctions/getauctionbyid")
     Call<AuctionsResponse> getAuctionsById(@Query("auctionId") String id);
 
     @GET("auctions")
     Call<AuctionsResponse> getAuctionsBySellerId(@Query("seller_id") String tokenString);
 
-    @POST("/auctions/deleteauctionbyid")
+    @POST("auctions/deleteauctionbyid")
     Call<GeneralResponse> postDeleteAuction(@Body DeleteAuctionRequest deleteAuctionRequest);
 
 
@@ -58,7 +58,7 @@ public interface RestApi {
 
 
     /*-- BIDS --*/
-    @POST("/bids/newbidin")
+    @POST("bids/newbidin")
     Call<GeneralResponse> postNewBid(@Body NewBidRequest newBidRequest);
 
 
@@ -72,7 +72,7 @@ public interface RestApi {
     @POST("categories")
     Call<List<Category>> postCategories(@Body List<Category> categoryList);
 
-    @POST("/scripts/uploadImage.php")
+    @POST("scripts/uploadImage.php")
     Call<Image>  uploadImage(@Field("title") String title, @Field("image") String image);
 
 }

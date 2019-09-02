@@ -69,8 +69,9 @@ public class SignIn extends AppCompatActivity {
                             return;
                         }
                         else {
-
+                            System.out.println(response.body().toString());
                             Common.token = response.body().getToken();
+                            Common.currentUser = response.body().getUser();
                             Toast.makeText(SignIn.this, "Welcome back " + edtUsername.getText() + " !", Toast.LENGTH_SHORT).show();
 
                             Intent SignInIntent = new Intent(SignIn.this, HomeActivity.class);
