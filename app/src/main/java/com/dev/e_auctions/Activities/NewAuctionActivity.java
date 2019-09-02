@@ -1,8 +1,7 @@
-package com.dev.e_auctions;
+package com.dev.e_auctions.Activities;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -17,24 +16,13 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Toast;
 
-import com.dev.e_auctions.Client.RestClient;
-import com.dev.e_auctions.Common.Common;
-import com.dev.e_auctions.Interface.RestApi;
-import com.dev.e_auctions.Model.Auction;
-import com.dev.e_auctions.Model.Category;
+import com.dev.e_auctions.R;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class NewAuctionActivity extends AppCompatActivity {
 

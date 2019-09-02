@@ -1,11 +1,10 @@
-package com.dev.e_auctions;
+package com.dev.e_auctions.Activities;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -16,17 +15,19 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.dev.e_auctions.APIResponses.AuctionsResponse;
 import com.dev.e_auctions.Client.RestClient;
 import com.dev.e_auctions.Common.Common;
 import com.dev.e_auctions.Interface.RestApi;
-import com.dev.e_auctions.Model.Auction;
 import com.dev.e_auctions.Model.Bid;
+import com.dev.e_auctions.R;
 import com.squareup.picasso.Picasso;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
-import java.util.List;
 
 import pl.polak.clicknumberpicker.ClickNumberPickerView;
 import retrofit2.Call;
@@ -140,35 +141,42 @@ public class AuctionActivity extends AppCompatActivity {
     }
 
     private void getAuction(){
-        /*Call<List<Auction>> request = RestClient.getClient().create(RestApi.class).getAuctionsById(auctionId);
+        Call<AuctionsResponse> request = RestClient.getClient().create(RestApi.class).getAuctionsById(auctionId);
 
-        request.enqueue(new Callback<List<Auction>>() {
+        request.enqueue(new Callback<AuctionsResponse>() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
-            public void onResponse(Call<List<Auction>> request, Response<List<Auction>> response) {
+            public void onResponse(Call<AuctionsResponse> request, Response<AuctionsResponse> response) {
                 if (!response.isSuccessful()){
                     Toast.makeText(AuctionActivity.this, Integer.toString(response.code()), Toast.LENGTH_SHORT).show();
                     return;
                 }
-                else if (response.body().isEmpty() || response.body().size()!=1){
-                    Toast.makeText(AuctionActivity.this, "404 - Not found", Toast.LENGTH_SHORT).show();
+                else if (!response.body().getStatusCode().equals("SUCCESS")){
+                    Toast.makeText(AuctionActivity.this, "Auction not found", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                else if (response.body().getAuctions().isEmpty() || response.body().getAuctions().size()!=1){
+                    Toast.makeText(AuctionActivity.this, "Unexpected Error Occurred", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 else{
 
-                    Picasso.get().load(response.body().get(0).getImage()).into(auctionImage);
-                    auctionName.setText(response.body().get(0).getName());
-                    startingDate.setText(response.body().get(0).getCreated());
-                    endDate.setText(response.body().get(0).getEnds());
+                    Picasso.get().load(response.body().getAuctions().get(0).getImage()).into(auctionImage);
+                    auctionName.setText(response.body().getAuctions().get(0).getNameOfItem());
+                    startingDate.setText(response.body().getAuctions().get(0).getStartedTime());
+                    endDate.setText(response.body().getAuctions().get(0).getEndingTime());
                     int progress = 0;
                     try {
-                        progress = getProgress(response.body().get(0).getCreated(),
-                                response.body().get(0).getEnds());
+                        progress = getProgress(response.body().getAuctions().get(0).getStartedTime(),
+                                response.body().getAuctions().get(0).getEndingTime());
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
                     durationBar.setProgress(progress);
-                    btnNewBidValue.setPickerValue(response.body().get(0).getLast_bid());
-                    auctionDesc.setText(response.body().get(0).getDescription());
+                    //btnNewBidValue.setPickerValue(response.body().getAuctions().get(0).getBids());
+                    response.body().getAuctions().get(0).getBids().sort(Comparator.comparingDouble(Bid::getBidPrice).reversed());
+                    btnNewBidValue.setPickerValue(response.body().getAuctions().get(0).getBids().get(0).getBidPrice().floatValue());
+                    auctionDesc.setText(response.body().getAuctions().get(0).getItemDescription());
 
                 }
             }
@@ -187,10 +195,10 @@ public class AuctionActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<List<Auction>> request, Throwable t) {
+            public void onFailure(Call<AuctionsResponse> request, Throwable t) {
                 Toast.makeText(AuctionActivity.this, "Unavailable services", Toast.LENGTH_SHORT).show();
                 return;
             }
-        });*/
+        });
     }
 }

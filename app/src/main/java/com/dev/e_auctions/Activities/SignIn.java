@@ -1,4 +1,4 @@
-package com.dev.e_auctions;
+package com.dev.e_auctions.Activities;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -13,16 +13,12 @@ import com.dev.e_auctions.APIResponses.UsersResponse;
 import com.dev.e_auctions.Client.RestClient;
 import com.dev.e_auctions.Common.Common;
 import com.dev.e_auctions.Interface.RestApi;
-import com.dev.e_auctions.Model.User;
+import com.dev.e_auctions.R;
 import com.rengwuxian.materialedittext.MaterialEditText;
-
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class SignIn extends AppCompatActivity {
 

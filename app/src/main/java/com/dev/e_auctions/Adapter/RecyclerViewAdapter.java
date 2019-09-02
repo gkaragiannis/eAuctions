@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.dev.e_auctions.AuctionActivity;
+import com.dev.e_auctions.Activities.AuctionActivity;
 import com.dev.e_auctions.Interface.MenuItemClickListener;
 import com.dev.e_auctions.Model.MenuItem;
 import com.dev.e_auctions.R;

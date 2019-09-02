@@ -1,19 +1,19 @@
 package com.dev.e_auctions.Model;
 
 public class Category {
-    private Integer Id;
-    private String name;
-    private String image;
+    private Integer categoryId;
+    private String categoryName;
+    private String categoryImage;
 
-    public Integer getId() {
-        return Id;
+    public Integer getCategoryId() {
+        return categoryId;
     }
 
-    public String getName() {
-        return name;
+    public String getCategoryName() {
+        return categoryName;
     }
 
-    public String getImage() {
-        return image;
+    public String getCategoryImage() {
+        return categoryImage;
     }
 }

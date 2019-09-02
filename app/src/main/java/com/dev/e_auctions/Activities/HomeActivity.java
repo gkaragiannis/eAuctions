@@ -1,16 +1,14 @@
-package com.dev.e_auctions;
+package com.dev.e_auctions.Activities;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.constraint.Group;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.support.v4.view.GravityCompat;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -20,10 +18,10 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
-import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.dev.e_auctions.APIResponses.AuctionsResponse;
 import com.dev.e_auctions.Client.RestClient;
 import com.dev.e_auctions.Common.Common;
 import com.dev.e_auctions.Interface.RestApi;
@@ -31,6 +29,7 @@ import com.dev.e_auctions.Model.Auction;
 import com.dev.e_auctions.Model.Category;
 import com.dev.e_auctions.Model.MenuItem;
 import com.dev.e_auctions.Adapter.RecyclerViewAdapter;
+import com.dev.e_auctions.R;
 import com.mancj.materialsearchbar.MaterialSearchBar;
 import com.mancj.materialsearchbar.adapter.SuggestionsAdapter;
 
@@ -295,14 +294,14 @@ public class HomeActivity extends AppCompatActivity
         protected ArrayList<Auction> doInBackground(String... strings) {
 
             ArrayList<Auction> resultList = new ArrayList<>();
-            Call<List<Auction>> request = null;
+            Call<AuctionsResponse> request = null;
             publishProgress();
 
             //prepare for call
-            /*if (strings[0].equals("All")) {
-                request = RestClient.getClient().create(RestApi.class).getAllAuctions();
+            if (strings[0].equals("All")) {
+                request = RestClient.getClient().create(RestApi.class).getOpenAuctions();
             }
-            else if (strings[0].equals("ByCategory")) {
+            /*else if (strings[0].equals("ByCategory")) {
                 request = RestClient.getClient().create(RestApi.class).getAuctionsByCategory(strings[1]);
             }
             else if (strings[0].equals("BySellerId")) {
@@ -310,17 +309,36 @@ public class HomeActivity extends AppCompatActivity
             }
             else if (strings[0].equals("ByBidderId")) {
                 request = RestClient.getClient().create(RestApi.class).getAuctionsByBidderId(strings[1]);
-            }
+            }*/
 
             //try execute and get response
             try {
-                Response<List<Auction>> response = request.execute();
-                resultList.addAll(response.body());
+                Response<AuctionsResponse> response = request.execute();
+
+                if (!response.isSuccessful()){
+                    //floating message
+                    Toast.makeText(HomeActivity.this, Integer.toString(response.code()), Toast.LENGTH_SHORT).show();
+                    return null;
+                }
+                else if (!response.body().getStatusCode().equals("SUCCESS")){
+                    Toast.makeText(HomeActivity.this, response.body().getStatusMsg(), Toast.LENGTH_SHORT).show();
+                    return null;
+                }
+                else {
+
+                    resultList.addAll(response.body().getAuctions());
+                    /*Common.token = response.body().getToken();
+                    Toast.makeText(SignIn.this, "Welcome back " + edtUsername.getText() + " !", Toast.LENGTH_SHORT).show();
+
+                    Intent SignInIntent = new Intent(SignIn.this, HomeActivity.class);
+                    startActivity(SignInIntent);
+                    finish();*/
+                }
             } catch (IOException e){
                 e.printStackTrace();
             }
 
-            HomeActivity.this.auctionList = resultList;*/
+            HomeActivity.this.auctionList = resultList;
             return HomeActivity.this.getAuctionList();
         }
 
@@ -385,7 +403,7 @@ public class HomeActivity extends AppCompatActivity
         ArrayList<MenuItem> menuItems = new ArrayList<>();
         if (getAuctionList() != null && getAuctionList().size() > 0){
             for (Auction auction : getAuctionList()){
-//                menuItems.add(new MenuItem(auction.getName(), auction.getImage(), auction.getId()));
+                menuItems.add(new MenuItem(auction.getNameOfItem(), auction.getImage(), auction.getId()));
             }
         }
 
@@ -397,7 +415,7 @@ public class HomeActivity extends AppCompatActivity
         ArrayList<MenuItem> menuItems = new ArrayList<>();
         if (getCategoryList() != null && getCategoryList().size() > 0){
             for (Category category: getCategoryList()){
-                menuItems.add(new MenuItem(category.getName(), category.getImage(), category.getId()));
+                menuItems.add(new MenuItem(category.getCategoryName(), category.getCategoryImage(), category.getCategoryId()));
             }
         }
         return menuItems;

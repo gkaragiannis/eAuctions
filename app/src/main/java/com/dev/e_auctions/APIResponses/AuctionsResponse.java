@@ -4,19 +4,19 @@ import com.dev.e_auctions.Model.Auction;
 
 import java.util.List;
 
-public class AuctionsResponses {
+public class AuctionsResponse extends GeneralResponse {
 
-    private String statusCode;
-    private String statusMsg;
+    /*private String statusCode;
+    private String statusMsg;*/
     private List<Auction> auctions;
 
-    public String getStatusCode() {
+    /*public String getStatusCode() {
         return statusCode;
     }
 
     public String getStatusMsg() {
         return statusMsg;
-    }
+    }*/
 
     public List<Auction> getAuctions() {
         return auctions;
