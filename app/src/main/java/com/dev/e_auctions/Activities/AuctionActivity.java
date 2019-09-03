@@ -2,6 +2,7 @@ package com.dev.e_auctions.Activities;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
@@ -12,6 +13,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,11 +39,12 @@ import retrofit2.Response;
 public class AuctionActivity extends AppCompatActivity {
 
     ImageView auctionImage;
-    TextView auctionName, startingDate, endDate, auctionDesc;
+    TextView auctionName, startingDate, endDate, auctionDesc, sellerRatingNum, sellerRatingVotes;
     ProgressBar durationBar;
     ClickNumberPickerView btnNewBidValue;
     CollapsingToolbarLayout collapsingToolbarLayout;
     FloatingActionButton btnBid;
+    RatingBar rtnBar;
 
     String auctionId = "";
 
@@ -90,6 +93,9 @@ public class AuctionActivity extends AppCompatActivity {
         startingDate = (TextView) findViewById(R.id.startingDate);
         endDate = (TextView) findViewById(R.id.endDate);
         auctionDesc = (TextView) findViewById(R.id.auctionDesc);
+        rtnBar = (RatingBar) findViewById(R.id.sellerRating);
+        sellerRatingNum = (TextView) findViewById(R.id.sellerRatingNum);
+        sellerRatingVotes = (TextView) findViewById(R.id.sellerRatingVotes);
 
         btnNewBidValue = (ClickNumberPickerView) findViewById(R.id.btnNewBidValue);
         collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing);
@@ -141,6 +147,11 @@ public class AuctionActivity extends AppCompatActivity {
     }
 
     private void getAuction(){
+        final ProgressDialog mDialog = new ProgressDialog(AuctionActivity.this);
+
+        mDialog.setMessage("Please wait...");
+        mDialog.show();
+
         Call<AuctionsResponse> request = RestClient.getClient().create(RestApi.class).getAuctionsById(auctionId);
 
         request.enqueue(new Callback<AuctionsResponse>() {
@@ -148,14 +159,17 @@ public class AuctionActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<AuctionsResponse> request, Response<AuctionsResponse> response) {
                 if (!response.isSuccessful()){
+                    mDialog.dismiss();
                     Toast.makeText(AuctionActivity.this, Integer.toString(response.code()), Toast.LENGTH_SHORT).show();
                     return;
                 }
                 else if (!response.body().getStatusCode().equals("SUCCESS")){
+                    mDialog.dismiss();
                     Toast.makeText(AuctionActivity.this, "Auction not found", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 else if (response.body().getAuctions().isEmpty() || response.body().getAuctions().size()!=1){
+                    mDialog.dismiss();
                     Toast.makeText(AuctionActivity.this, "Unexpected Error Occurred", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -177,7 +191,11 @@ public class AuctionActivity extends AppCompatActivity {
                     response.body().getAuctions().get(0).getBids().sort(Comparator.comparingDouble(Bid::getBidPrice).reversed());
                     btnNewBidValue.setPickerValue(response.body().getAuctions().get(0).getBids().get(0).getBidPrice().floatValue());
                     auctionDesc.setText(response.body().getAuctions().get(0).getItemDescription());
-
+                    rtnBar.setRating(response.body().getAuctions().get(0).getSeller().getSellerRating().floatValue());
+                    sellerRatingNum.setText(Double.toString(response.body().getAuctions().get(0).getSeller().getSellerRating()));
+                    sellerRatingVotes.setText("out of " + Integer.toString(response.body().getAuctions().get(0).getSeller().getSellerRatingVotes()) + " votes");
+                    mDialog.dismiss();
+                    return;
                 }
             }
 
@@ -196,6 +214,7 @@ public class AuctionActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<AuctionsResponse> request, Throwable t) {
+                mDialog.dismiss();
                 Toast.makeText(AuctionActivity.this, "Unavailable services", Toast.LENGTH_SHORT).show();
                 return;
             }

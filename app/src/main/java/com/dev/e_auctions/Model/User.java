@@ -13,7 +13,7 @@ public class User {
     private Double bidderRating;
     private Integer bidderRatingVotes;
     private Double sellerRating;
-    private Double sellerRatingVotes;
+    private Integer sellerRatingVotes;
 
     public Integer getId() {
         return id;
@@ -63,7 +63,7 @@ public class User {
         return sellerRating;
     }
 
-    public Double getSellerRatingVotes() {
+    public Integer getSellerRatingVotes() {
         return sellerRatingVotes;
     }
 }

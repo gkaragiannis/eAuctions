@@ -46,7 +46,7 @@
     <string name="logout">Log out</string>
     <string name="profile">My Profile</string>
 
-    <!-- New Auction Activity -->
+    <!-- (New) Auction Activity -->
     <string name="auctionName">Name</string>
     <string name="auctionStartingDate">Starting Date</string>
     <string name="auctionEndDate">End Date</string>
@@ -56,6 +56,7 @@
     <string name="duration">Duration</string>
     <string name="item">Auction Object</string>
     <string name="selectImage">Select Image</string>
+    <string name="sellerRating">Seller Rating</string>
 
     <!-- Test Strings -->
     <string name="mitsos">Mitsos</string>
