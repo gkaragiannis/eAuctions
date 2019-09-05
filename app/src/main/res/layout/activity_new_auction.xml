@@ -73,13 +73,13 @@
                             android:id="@+id/newAuctionCategory"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:focusable="true"
                             android:hint="@string/category"
                             android:inputType="text"
                             android:textColor="@color/colorPrimary"
                             android:textColorHint="@color/overlayBackground"
                             android:textSize="18sp"
-                            android:clickable="true"
-                            android:focusable="false"/>
+                            android:clickable="true" />
 
                         <EditText
                             android:id="@+id/newAuctionDescription"
@@ -112,6 +112,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="250dp"
                             android:layout_gravity="center"
+                            android:contentDescription="TODO"
                             android:scaleType="centerCrop"
                             android:visibility="gone"/>
 
@@ -224,26 +225,26 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:focusable="true"
                         android:hint="@string/auctionStartingDate"
                         android:inputType="date"
                         android:textColor="@color/colorPrimary"
                         android:textColorHint="@color/overlayBackground"
                         android:textSize="18sp"
-                        android:clickable="true"
-                        android:focusable="false"/>
+                        android:clickable="true" />
 
                     <EditText
                         android:id="@+id/newAuctionEndDate"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:focusable="true"
                         android:hint="@string/auctionEndDate"
                         android:inputType="date"
                         android:textColor="@color/colorPrimary"
                         android:textColorHint="@color/overlayBackground"
                         android:textSize="18sp"
-                        android:clickable="true"
-                        android:focusable="false"/>
+                        android:clickable="true" />
 
                 </LinearLayout>
                 </LinearLayout>

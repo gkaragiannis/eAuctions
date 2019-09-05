@@ -14,6 +14,7 @@ import com.dev.e_auctions.apiresponses.AuctionResponse;
 import com.dev.e_auctions.apiresponses.AuctionsListResponse;
 import com.dev.e_auctions.apiresponses.AuthenticateUserResponse;
 import com.dev.e_auctions.apiresponses.GeneralResponse;
+import com.dev.e_auctions.apiresponses.ImageApiResponse;
 import com.dev.e_auctions.apiresponses.MessagesResponse;
 import com.dev.e_auctions.apiresponses.UsersResponse;
 
@@ -96,8 +97,8 @@ public interface RestApi {
 //    Call<Image>  uploadImage(@Field("title") String title, @Field("image") String image);
 //
 //
-//    @GET("image/getimages")
-//    Call<ImageApiResponse>  getImage(@Query("auctionId") Long auctionId);
+@GET("image/getimages")
+Call<ImageApiResponse> getImage(@Query("auctionId") Long auctionId);
 //
 
 }

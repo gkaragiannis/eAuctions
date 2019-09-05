@@ -43,6 +43,7 @@
 
         <ImageView
             android:id="@+id/menu_item_image"
+            android:contentDescription="TODO"
             android:scaleType="centerCrop"
             android:src="@drawable/background"
             android:layout_width="match_parent"
