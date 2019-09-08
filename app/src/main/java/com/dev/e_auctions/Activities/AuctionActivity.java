@@ -11,25 +11,31 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.dev.e_auctions.APIResponses.AuctionsResponse;
+import com.dev.e_auctions.APIResponses.AuctionListResponse;
+import com.dev.e_auctions.APIResponses.AuctionResponse;
+import com.dev.e_auctions.Adapter.ExpandableListAdapter;
 import com.dev.e_auctions.Client.RestClient;
 import com.dev.e_auctions.Common.Common;
 import com.dev.e_auctions.Interface.RestApi;
 import com.dev.e_auctions.Model.Bid;
+import com.dev.e_auctions.Model.Category;
 import com.dev.e_auctions.R;
 import com.squareup.picasso.Picasso;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
 import pl.polak.clicknumberpicker.ClickNumberPickerView;
 import retrofit2.Call;
@@ -38,15 +44,19 @@ import retrofit2.Response;
 
 public class AuctionActivity extends AppCompatActivity {
 
-    ImageView auctionImage;
-    TextView auctionName, startingDate, endDate, auctionDesc, sellerRatingNum, sellerRatingVotes;
-    ProgressBar durationBar;
-    ClickNumberPickerView btnNewBidValue;
-    CollapsingToolbarLayout collapsingToolbarLayout;
-    FloatingActionButton btnBid;
-    RatingBar rtnBar;
+    private ImageView auctionImage;
+    private TextView auctionName, startingDate, endDate, auctionDesc, sellerRatingNum, sellerRatingVotes;
+    private ProgressBar durationBar;
+    private ClickNumberPickerView btnNewBidValue;
+    private CollapsingToolbarLayout collapsingToolbarLayout;
+    private FloatingActionButton btnBid;
+    private ExpandableListView categoryListView;
+    private ExpandableListAdapter categoryListAdapter;
+    private RatingBar rtnBar;
 
-    String auctionId = "";
+    private ArrayList<String> categoryListHeader;
+    private HashMap<String, List<String>> categoryListMap;
+    private String auctionId = "";
 
 
     @SuppressLint("RestrictedApi")
@@ -96,12 +106,15 @@ public class AuctionActivity extends AppCompatActivity {
         rtnBar = (RatingBar) findViewById(R.id.sellerRating);
         sellerRatingNum = (TextView) findViewById(R.id.sellerRatingNum);
         sellerRatingVotes = (TextView) findViewById(R.id.sellerRatingVotes);
+        categoryListView = (ExpandableListView)findViewById(R.id.auctionCategoriesELV);
 
         btnNewBidValue = (ClickNumberPickerView) findViewById(R.id.btnNewBidValue);
         collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing);
         //maybe there is no need for next 2 rows
         collapsingToolbarLayout.setExpandedTitleTextAppearance(R.style.ExpandedAppBar);
         collapsingToolbarLayout.setCollapsedTitleTextAppearance(R.style.CollapsedAppBar);
+
+
 
         //Get auction id from Intent
         if (getIntent() != null){
@@ -152,12 +165,12 @@ public class AuctionActivity extends AppCompatActivity {
         mDialog.setMessage("Please wait...");
         mDialog.show();
 
-        Call<AuctionsResponse> request = RestClient.getClient().create(RestApi.class).getAuctionsById(auctionId);
+        Call<AuctionResponse> request = RestClient.getClient().create(RestApi.class).getAuctionsById(auctionId);
 
-        request.enqueue(new Callback<AuctionsResponse>() {
+        request.enqueue(new Callback<AuctionResponse>() {
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
-            public void onResponse(Call<AuctionsResponse> request, Response<AuctionsResponse> response) {
+            public void onResponse(Call<AuctionResponse> request, Response<AuctionResponse> response) {
                 if (!response.isSuccessful()){
                     mDialog.dismiss();
                     Toast.makeText(AuctionActivity.this, Integer.toString(response.code()), Toast.LENGTH_SHORT).show();
@@ -168,35 +181,58 @@ public class AuctionActivity extends AppCompatActivity {
                     Toast.makeText(AuctionActivity.this, "Auction not found", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                else if (response.body().getAuctions().isEmpty() || response.body().getAuctions().size()!=1){
+                else if (response.body().getAuction()==null){
                     mDialog.dismiss();
                     Toast.makeText(AuctionActivity.this, "Unexpected Error Occurred", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 else{
-
-                    Picasso.get().load(response.body().getAuctions().get(0).getImage()).into(auctionImage);
-                    auctionName.setText(response.body().getAuctions().get(0).getNameOfItem());
-                    startingDate.setText(response.body().getAuctions().get(0).getStartedTime());
-                    endDate.setText(response.body().getAuctions().get(0).getEndingTime());
+                    Picasso.get().load(response.body().getAuction().getImage()).into(auctionImage);
+                    auctionName.setText(response.body().getAuction().getNameOfItem());
+                    startingDate.setText(response.body().getAuction().getStartedTime());
+                    endDate.setText(response.body().getAuction().getEndingTime());
                     int progress = 0;
                     try {
-                        progress = getProgress(response.body().getAuctions().get(0).getStartedTime(),
-                                response.body().getAuctions().get(0).getEndingTime());
+                        progress = getProgress(response.body().getAuction().getStartedTime(),
+                                response.body().getAuction().getEndingTime());
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
                     durationBar.setProgress(progress);
                     //btnNewBidValue.setPickerValue(response.body().getAuctions().get(0).getBids());
-                    response.body().getAuctions().get(0).getBids().sort(Comparator.comparingDouble(Bid::getBidPrice).reversed());
-                    btnNewBidValue.setPickerValue(response.body().getAuctions().get(0).getBids().get(0).getBidPrice().floatValue());
-                    auctionDesc.setText(response.body().getAuctions().get(0).getItemDescription());
-                    rtnBar.setRating(response.body().getAuctions().get(0).getSeller().getSellerRating().floatValue());
-                    sellerRatingNum.setText(Double.toString(response.body().getAuctions().get(0).getSeller().getSellerRating()));
-                    sellerRatingVotes.setText("out of " + Integer.toString(response.body().getAuctions().get(0).getSeller().getSellerRatingVotes()) + " votes");
+                    response.body().getAuction().getBids().sort(Comparator.comparingDouble(Bid::getBidPrice).reversed());
+                    btnNewBidValue.setPickerValue(response.body().getAuction().getBids().get(0).getBidPrice().floatValue());
+                    auctionDesc.setText(response.body().getAuction().getItemDescription());
+
+                    initializeCategoryListViewData(response.body().getAuction().getCategories());
+
+                    rtnBar.setRating(response.body().getAuction().getSeller().getSellerRating().floatValue());
+                    sellerRatingNum.setText(Double.toString(response.body().getAuction().getSeller().getSellerRating()));
+                    if (response.body().getAuction().getSeller().getSellerRatingVotes()!=null)
+                        sellerRatingVotes.setText("out of " + Integer.toString(response.body().getAuction().getSeller().getSellerRatingVotes()) + " votes");
+                    else
+                        sellerRatingVotes.setText("0");
                     mDialog.dismiss();
                     return;
                 }
+            }
+
+            private void initializeCategoryListViewData(List<Category> itemCategories) {
+                categoryListHeader = new ArrayList<>();
+                categoryListMap = new HashMap<>();
+
+                categoryListHeader.add("Categories");
+
+                List<String> categories = new ArrayList<>();
+                for (Category category : itemCategories){
+                    categories.add(category.getCategoryName());
+                    System.out.println(category.getCategoryName());
+                }
+
+                categoryListMap.put(categoryListHeader.get(0), categories);
+
+                categoryListAdapter = new ExpandableListAdapter(AuctionActivity.this, categoryListHeader, categoryListMap);
+                categoryListView.setAdapter(categoryListAdapter);
             }
 
             private int getProgress(String created, String ends) throws ParseException {
@@ -213,7 +249,7 @@ public class AuctionActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<AuctionsResponse> request, Throwable t) {
+            public void onFailure(Call<AuctionResponse> request, Throwable t) {
                 mDialog.dismiss();
                 Toast.makeText(AuctionActivity.this, "Unavailable services", Toast.LENGTH_SHORT).show();
                 return;

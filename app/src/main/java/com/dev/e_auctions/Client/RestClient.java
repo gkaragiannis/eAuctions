@@ -17,8 +17,8 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
 public class RestClient {
 
 //    private static String domainURL = "https://my-json-server.typicode.com/gkaragiannis/testREST/";
-//    private static String domainURL = "https://83.212.109.213:8080/";
-    private static String domainURL = "https://gkarag.free.beeceptor.com/";
+    private static String domainURL = "https://83.212.109.213:8080/";
+//    private static String domainURL = "https://gkarag.free.beeceptor.com/";
     private static Retrofit retrofit = null;
 
     public static Retrofit getClient(){

@@ -5,7 +5,6 @@ import java.util.List;
 public class Auction {
     private Integer id;
     private String nameOfItem;
-    private String image;
     private User seller;
     private String startedTime;
     private String endingTime;
@@ -15,6 +14,7 @@ public class Auction {
     private Double initialPrice;
     private List<Bid> bids;
     private List<Category> categories;
+    private String imagePath;
 
     public Integer getId() {
         return id;
@@ -25,7 +25,7 @@ public class Auction {
     }
 
     public String getImage() {
-        return image;
+        return imagePath;
     }
 
     public User getSeller() {

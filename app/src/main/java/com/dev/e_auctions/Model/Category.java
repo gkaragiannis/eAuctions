@@ -3,7 +3,7 @@ package com.dev.e_auctions.Model;
 public class Category {
     private Integer categoryId;
     private String categoryName;
-    private String categoryImage;
+    private String imagePath;
 
     public Integer getCategoryId() {
         return categoryId;
@@ -14,6 +14,6 @@ public class Category {
     }
 
     public String getCategoryImage() {
-        return categoryImage;
+        return imagePath;
     }
 }

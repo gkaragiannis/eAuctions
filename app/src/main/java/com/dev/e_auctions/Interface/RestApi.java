@@ -1,12 +1,14 @@
 package com.dev.e_auctions.Interface;
 
+import com.dev.e_auctions.APIRequests.AuctionByFieldRequest;
 import com.dev.e_auctions.APIRequests.DeleteAuctionRequest;
 import com.dev.e_auctions.APIRequests.NewAcutionRequest;
 import com.dev.e_auctions.APIRequests.NewBidRequest;
 import com.dev.e_auctions.APIRequests.SignInRequest;
 import com.dev.e_auctions.APIRequests.SignUpRequest;
 import com.dev.e_auctions.APIResponses.AllCategoriesResponse;
-import com.dev.e_auctions.APIResponses.AuctionsResponse;
+import com.dev.e_auctions.APIResponses.AuctionListResponse;
+import com.dev.e_auctions.APIResponses.AuctionResponse;
 import com.dev.e_auctions.APIResponses.GeneralResponse;
 import com.dev.e_auctions.APIResponses.UsersResponse;
 import com.dev.e_auctions.Model.Auction;
@@ -34,19 +36,19 @@ public interface RestApi {
 
     /*-- AUCTIONS --*/
     @GET("auctions/allauctions")
-    Call<AuctionsResponse> getAllAuctions();
+    Call<AuctionListResponse> getAllAuctions();
 
     @GET("auctions/openauctions")
-    Call<AuctionsResponse> getOpenAuctions();
+    Call<AuctionListResponse> getOpenAuctions();
 
     @POST("auctions/newauction")
     Call<GeneralResponse> postNewAuction(@Body NewAcutionRequest newAcutionRequest);
 
     @GET("auctions/getauctionbyid")
-    Call<AuctionsResponse> getAuctionsById(@Query("auctionId") String id);
+    Call<AuctionResponse> getAuctionsById(@Query("auctionId") String id);
 
-    @GET("auctions")
-    Call<AuctionsResponse> getAuctionsBySellerId(@Query("seller_id") String tokenString);
+    @POST("/auctions/getauctionsbyfield")
+    Call<AuctionListResponse> getAuctionsByField(@Body AuctionByFieldRequest auctionByFieldRequest);
 
     @POST("auctions/deleteauctionbyid")
     Call<GeneralResponse> postDeleteAuction(@Body DeleteAuctionRequest deleteAuctionRequest);

@@ -4,7 +4,7 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.dev.e_auctions"
-        minSdkVersion 16
+        minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
@@ -25,6 +25,7 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+    //noinspection GradleCompatible
     implementation 'com.android.support:design:+'
     implementation 'com.android.support:appcompat-v7:28.0.0'
     implementation 'com.android.support.constraint:constraint-layout:2.0.0-beta2'
@@ -58,5 +59,7 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.6.1'
 
     implementation 'com.github.mancj:MaterialSearchBar:0.7.1'
+
+    implementation 'com.alespero:expandable-cardview:0.6'
 
 }

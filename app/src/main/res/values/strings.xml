@@ -56,7 +56,11 @@
     <string name="duration">Duration</string>
     <string name="item">Auction Object</string>
     <string name="selectImage">Select Image</string>
-    <string name="sellerRating">Seller Rating</string>
+    <string name="aboutSeller">About Seller</string>
+    <string name="aboutItem">About Item</string>
+    <string name="newBid">New Bid</string>
+    <string name="topBids">Top 5 Bids</string>
+    <string name="Price">Price</string>
 
     <!-- Test Strings -->
     <string name="mitsos">Mitsos</string>

@@ -21,8 +21,9 @@ import android.view.Menu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.dev.e_auctions.APIRequests.AuctionByFieldRequest;
 import com.dev.e_auctions.APIResponses.AllCategoriesResponse;
-import com.dev.e_auctions.APIResponses.AuctionsResponse;
+import com.dev.e_auctions.APIResponses.AuctionListResponse;
 import com.dev.e_auctions.Client.RestClient;
 import com.dev.e_auctions.Common.Common;
 import com.dev.e_auctions.Interface.RestApi;
@@ -243,10 +244,10 @@ public class HomeActivity extends AppCompatActivity
         } else if (id == R.id.nav_new_auction) {
             startActivity(new Intent(HomeActivity.this, NewAuctionActivity.class));
         } else if (id == R.id.nav_my_auction) {
-            new HttpRequestAuctionsTask().execute(new String[]{"BySellerId",Integer.toString(Common.currentUser.getId())});
+            new HttpRequestAuctionsTask().execute("BySellerId");
             toolbar.setTitle(R.string.myAuction);
         } else if (id == R.id.nav_participate_auction) {
-            new HttpRequestAuctionsTask().execute(new String[]{"ByBidderId",Integer.toString(Common.currentUser.getId())});
+            new HttpRequestAuctionsTask().execute("ByBidderId");
             toolbar.setTitle(R.string.participateAuction);
         } else if (id == R.id.nav_logout) {
             Intent signIn = new Intent(HomeActivity.this, SignIn.class);
@@ -295,7 +296,7 @@ public class HomeActivity extends AppCompatActivity
         protected ArrayList<Auction> doInBackground(String... strings) {
 
             ArrayList<Auction> resultList = new ArrayList<>();
-            Call<AuctionsResponse> request = null;
+            Call<AuctionListResponse> request = null;
             publishProgress();
 
             //prepare for call
@@ -304,17 +305,19 @@ public class HomeActivity extends AppCompatActivity
             }
             /*else if (strings[0].equals("ByCategory")) {
                 request = RestClient.getClient().create(RestApi.class).getAuctionsByCategory(strings[1]);
-            }
+            }*/
             else if (strings[0].equals("BySellerId")) {
-                request = RestClient.getClient().create(RestApi.class).getAuctionsBySellerId(strings[1]);
+                AuctionByFieldRequest auctionByFieldRequest = new AuctionByFieldRequest("sellerToken",Common.token);
+                request = RestClient.getClient().create(RestApi.class).getAuctionsByField(auctionByFieldRequest);
             }
             else if (strings[0].equals("ByBidderId")) {
-                request = RestClient.getClient().create(RestApi.class).getAuctionsByBidderId(strings[1]);
-            }*/
+                AuctionByFieldRequest auctionByFieldRequest = new AuctionByFieldRequest("bidderToken",Common.token);
+                request = RestClient.getClient().create(RestApi.class).getAuctionsByField(auctionByFieldRequest);
+            }
 
             //try execute and get response
             try {
-                Response<AuctionsResponse> response = request.execute();
+                Response<AuctionListResponse> response = request.execute();
 
                 if (!response.isSuccessful()){
                     //floating message
@@ -328,12 +331,6 @@ public class HomeActivity extends AppCompatActivity
                 else {
 
                     resultList.addAll(response.body().getAuctions());
-                    /*Common.token = response.body().getToken();
-                    Toast.makeText(SignIn.this, "Welcome back " + edtUsername.getText() + " !", Toast.LENGTH_SHORT).show();
-
-                    Intent SignInIntent = new Intent(SignIn.this, HomeActivity.class);
-                    startActivity(SignInIntent);
-                    finish();*/
                 }
             } catch (IOException e){
                 e.printStackTrace();
@@ -354,6 +351,21 @@ public class HomeActivity extends AppCompatActivity
             else{
                 Toast.makeText(HomeActivity.this, "Oops! No auctions found!", Toast.LENGTH_LONG).show();
             }
+        }
+
+        private ArrayList<MenuItem> getAuctionListMenuItems(){
+
+            ArrayList<MenuItem> menuItems = new ArrayList<>();
+            if (getAuctionList() != null && getAuctionList().size() > 0){
+                for (Auction auction : getAuctionList()){
+                    menuItems.add(new MenuItem(auction.getNameOfItem(), auction.getImage(), auction.getId()));
+                    System.out.println("name: " + auction.getNameOfItem() +
+                            "\n image: " + auction.getImage() +
+                            "\n id: " + auction.getId());
+                }
+            }
+
+            return menuItems;
         }
     }
 
@@ -396,29 +408,16 @@ public class HomeActivity extends AppCompatActivity
                 Toast.makeText(HomeActivity.this, "Oops! No auctions found!", Toast.LENGTH_LONG).show();
             }
         }
-    }
 
-    private ArrayList<MenuItem> getAuctionListMenuItems(){
+        private ArrayList<MenuItem> getCategoryListMenuItems(){
 
-        ArrayList<MenuItem> menuItems = new ArrayList<>();
-        if (getAuctionList() != null && getAuctionList().size() > 0){
-            for (Auction auction : getAuctionList()){
-                menuItems.add(new MenuItem(auction.getNameOfItem(), auction.getImage(), auction.getId()));
+            ArrayList<MenuItem> menuItems = new ArrayList<>();
+            if (getCategoryList() != null && getCategoryList().size() > 0){
+                for (Category category: getCategoryList()){
+                    menuItems.add(new MenuItem(category.getCategoryName(), category.getCategoryImage(), category.getCategoryId()));
+                }
             }
+            return menuItems;
         }
-
-        return menuItems;
     }
-
-    private ArrayList<MenuItem> getCategoryListMenuItems(){
-
-        ArrayList<MenuItem> menuItems = new ArrayList<>();
-        if (getCategoryList() != null && getCategoryList().size() > 0){
-            for (Category category: getCategoryList()){
-                menuItems.add(new MenuItem(category.getCategoryName(), category.getCategoryImage(), category.getCategoryId()));
-            }
-        }
-        return menuItems;
-    }
-
 }

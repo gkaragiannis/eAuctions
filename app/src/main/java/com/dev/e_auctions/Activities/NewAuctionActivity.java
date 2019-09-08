@@ -5,6 +5,7 @@ import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
@@ -16,13 +17,22 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
+import com.dev.e_auctions.APIResponses.AllCategoriesResponse;
+import com.dev.e_auctions.Client.RestClient;
+import com.dev.e_auctions.Interface.RestApi;
+import com.dev.e_auctions.Model.Category;
 import com.dev.e_auctions.R;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Calendar;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class NewAuctionActivity extends AppCompatActivity {
 
@@ -93,10 +103,10 @@ public class NewAuctionActivity extends AppCompatActivity {
                             return;
                         }
 
-                        *//*Toast.makeText(NewAuctionActivity.this, "Auction submitted successfully", Toast.LENGTH_LONG).show();
+                        Toast.makeText(NewAuctionActivity.this, "Auction submitted successfully", Toast.LENGTH_LONG).show();
                         Intent NewAuctionIntent = new Intent(NewAuctionActivity.this, HomeActivity.class);
                         startActivity(NewAuctionIntent);
-                        finish();*//*
+                        finish();
                         createdAuctionId[0] = response.body().getId();
                         return;
                     }
@@ -144,34 +154,34 @@ public class NewAuctionActivity extends AppCompatActivity {
                 finish();
 
             }
-        });
+        });*/
 
-        Call<List<Category>> request = RestClient.getClient().create(RestApi.class).getCategories();
-        request.enqueue(new Callback<List<Category>>() {
+        Call<AllCategoriesResponse> request = RestClient.getClient().create(RestApi.class).getCategories();
+        request.enqueue(new Callback<AllCategoriesResponse>() {
             @Override
-            public void onResponse(Call<List<Category>> request, Response<List<Category>> response) {
+            public void onResponse(Call<AllCategoriesResponse> request, Response<AllCategoriesResponse> response) {
 
                 if (!response.isSuccessful()){
                     Toast.makeText(NewAuctionActivity.this, Integer.toString(response.code()), Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                categories = new String[response.body().size()];
-                checkItems = new boolean[response.body().size()];
+                categories = new String[response.body().getCategories().size()];
+                checkItems = new boolean[response.body().getCategories().size()];
                 int position = 0;
-                for (Category category : response.body()){
-                    categories[position] = category.getName();
+                for (Category category : response.body().getCategories()){
+                    categories[position] = category.getCategoryName();
                     checkItems[position] = false;
                     position++;
                 }
             }
 
             @Override
-            public void onFailure(Call<List<Category>> request, Throwable t) {
+            public void onFailure(Call<AllCategoriesResponse> request, Throwable t) {
                 Toast.makeText(NewAuctionActivity.this, "Unavailable services", Toast.LENGTH_SHORT).show();
                 return;
             }
-        });*/
+        });
     }
 
     View.OnClickListener CategoryClickListener = new View.OnClickListener() {
@@ -201,8 +211,12 @@ public class NewAuctionActivity extends AppCompatActivity {
                                         edtTextCategoryValue = edtTextCategoryValue + "," + categories[position];
                                 }
                             }
-                            if (!edtTextCategoryValue.isEmpty())
+                            if (edtTextCategoryValue!=null)
                                 edtTextCategory.setText(edtTextCategoryValue);
+                            else {
+                                edtTextCategory.setText("Please choose at least one category");
+                                edtTextCategory.setTextColor(Color.parseColor("#FF0000"));
+                            }
                         }
                     })
                     //on no return
