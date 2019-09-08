@@ -57,9 +57,9 @@ public class NewAuctionActivity extends AppCompatActivity {
         newAuctionImage = (ImageView) findViewById(R.id.newAuctionImage);
 
         //Set Calendary elements
-        day=mCalendar.get(Calendar.DAY_OF_MONTH);
-        month=mCalendar.get(Calendar.MONTH);
-        year=mCalendar.get(Calendar.YEAR);
+        day = mCalendar.get(Calendar.DAY_OF_MONTH);
+        month = mCalendar.get(Calendar.MONTH);
+        year = mCalendar.get(Calendar.YEAR);
 
         edtTextStartingDate = (EditText) findViewById(R.id.newAuctionStartingDate);
         edtTextStartingDate.setOnClickListener(StartingDateClickListener);
@@ -195,31 +195,36 @@ public class NewAuctionActivity extends AppCompatActivity {
                     .setMultiChoiceItems(categories, checkItems, new DialogInterface.OnMultiChoiceClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-                            checkItems[which] = true;
+                            if (isChecked)
+                                checkItems[which] = true;
+                            else
+                                checkItems[which] = false;
                         }
                     })
-                    //on yes post bid
+                    //on OK set categories
                     .setPositiveButton(R.string.OkButton, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            String edtTextCategoryValue = null;
+                            String edtTextCategoryValue = new String();
                             for (int position = 0; position < categories.length; position++){
-                                if (checkItems[position]==true){
-                                    if (edtTextCategoryValue==null)
+                                if (checkItems[position] == true){
+                                    if (edtTextCategoryValue.isEmpty())
                                         edtTextCategoryValue = categories[position];
                                     else
                                         edtTextCategoryValue = edtTextCategoryValue + "," + categories[position];
                                 }
                             }
-                            if (edtTextCategoryValue!=null)
+                            if (!edtTextCategoryValue.isEmpty()) {
                                 edtTextCategory.setText(edtTextCategoryValue);
+                                edtTextCategory.setTextColor(getResources().getColor(R.color.colorPrimary));
+                            }
                             else {
                                 edtTextCategory.setText("Please choose at least one category");
                                 edtTextCategory.setTextColor(Color.parseColor("#FF0000"));
                             }
                         }
                     })
-                    //on no return
+                    //on CANCEL return
                     .setNegativeButton(R.string.CancelButton, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
