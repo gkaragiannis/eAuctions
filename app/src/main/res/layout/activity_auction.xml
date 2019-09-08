@@ -43,14 +43,13 @@
     </android.support.design.widget.AppBarLayout>
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/btnBid"
+        android:id="@+id/btnFAB"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:elevation="6dp"
         app:layout_anchor="@id/app_bar_auction"
         app:layout_anchorGravity="bottom|right|end"
         app:pressedTranslationZ="12dp"
-        app:srcCompat="@drawable/ic_gavel_black_24dp"
         app:useCompatPadding="true" />
 
     <android.support.v4.widget.NestedScrollView
