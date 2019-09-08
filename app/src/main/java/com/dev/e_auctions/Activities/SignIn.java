@@ -74,8 +74,8 @@ public class SignIn extends AppCompatActivity {
                             Common.currentUser = response.body().getUser();
                             Toast.makeText(SignIn.this, "Welcome back " + edtUsername.getText() + " !", Toast.LENGTH_SHORT).show();
 
-                            Intent SignInIntent = new Intent(SignIn.this, HomeActivity.class);
-                            startActivity(SignInIntent);
+                            Intent intent = new Intent(SignIn.this, HomeActivity.class);
+                            startActivity(intent);
                             finish();
                         }
 

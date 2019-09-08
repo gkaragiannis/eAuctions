@@ -4,10 +4,12 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -18,8 +20,11 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.dev.e_auctions.APIRequests.DeleteAuctionRequest;
+import com.dev.e_auctions.APIRequests.NewBidRequest;
 import com.dev.e_auctions.APIResponses.AuctionListResponse;
 import com.dev.e_auctions.APIResponses.AuctionResponse;
+import com.dev.e_auctions.APIResponses.GeneralResponse;
 import com.dev.e_auctions.Adapter.ExpandableListAdapter;
 import com.dev.e_auctions.Client.RestClient;
 import com.dev.e_auctions.Common.Common;
@@ -29,6 +34,7 @@ import com.dev.e_auctions.Model.Category;
 import com.dev.e_auctions.R;
 import com.squareup.picasso.Picasso;
 
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -49,15 +55,15 @@ public class AuctionActivity extends AppCompatActivity {
     private ProgressBar durationBar;
     private ClickNumberPickerView btnNewBidValue;
     private CollapsingToolbarLayout collapsingToolbarLayout;
-    private FloatingActionButton btnBid;
+    private FloatingActionButton btnFAB;
     private ExpandableListView categoryListView;
     private ExpandableListAdapter categoryListAdapter;
     private RatingBar rtnBar;
 
+    private String auctionId = "";
     private ArrayList<String> categoryListHeader;
     private HashMap<String, List<String>> categoryListMap;
-    private String auctionId = "";
-
+    private boolean isSeller, canDelete;
 
     @SuppressLint("RestrictedApi")
     @Override
@@ -66,37 +72,6 @@ public class AuctionActivity extends AppCompatActivity {
         setContentView(R.layout.activity_auction);
 
         //Initialize View
-        btnBid = (FloatingActionButton) findViewById(R.id.btnBid);
-        if (Common.currentUser==null)
-            btnBid.setVisibility(View.GONE);
-        else
-            btnBid.setVisibility(View.VISIBLE);
-
-        btnBid.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //pop up to approve new bid "R U Sure?"
-                AlertDialog.Builder alertDialog = new AlertDialog.Builder(AuctionActivity.this);
-                alertDialog.setCancelable(true)
-                        .setMessage(R.string.BidSubmission)
-                        //on yes post bid
-                        .setPositiveButton(R.string.YesButton, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                postBid();
-                            }
-                        })
-                        //on no return
-                        .setNegativeButton(R.string.NoButton, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.cancel();
-                            }
-                        })
-                        .show();
-            }
-        });
-
         auctionImage = (ImageView) findViewById(R.id.auctionImage);
         auctionName = (TextView) findViewById(R.id.auctionName);
         durationBar = (ProgressBar) findViewById(R.id.durationBar);
@@ -123,26 +98,137 @@ public class AuctionActivity extends AppCompatActivity {
         if (!auctionId.isEmpty()){
             getAuction();
         }
+
+        //Configure FAB
+        btnFAB = (FloatingActionButton) findViewById(R.id.btnFAB);
+        System.out.println(isSeller + " " + canDelete);
+        if (Common.currentUser==null) {
+            btnFAB.setVisibility(View.GONE);
+        }
+        else if (isSeller && canDelete) {
+            btnFAB.setImageDrawable(getResources().getDrawable(R.drawable.ic_delete_forever_white_24dp));
+            btnFAB.setVisibility(View.VISIBLE);
+        }
+        else if (isSeller && !canDelete){
+            btnFAB.setVisibility(View.GONE);
+        }
+        else {
+            btnFAB.setImageDrawable(getResources().getDrawable(R.drawable.ic_gavel_white_24dp));
+            btnFAB.setVisibility(View.VISIBLE);
+        }
+        btnFAB.setOnClickListener(FAB_ClickListener);
+
     }
 
-    private void postBid() {
-        /*final ProgressDialog mDialog = new ProgressDialog(AuctionActivity.this);
-        mDialog.setMessage("Your bid is submitting");
+    View.OnClickListener FAB_ClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            //pop up to approve action
+            if (isSeller){
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(AuctionActivity.this);
+                alertDialog.setCancelable(true)
+                        .setMessage(R.string.DeleteSubmission)
+                        //on yes post bid
+                        .setPositiveButton(R.string.YesButton, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                postDelete();
+                            }
+                        })
+                        //on no return
+                        .setNegativeButton(R.string.NoButton, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        })
+                        .show();
+                
+            }
+            else{
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(AuctionActivity.this);
+                alertDialog.setCancelable(true)
+                        .setMessage(R.string.BidSubmission)
+                        //on yes post bid
+                        .setPositiveButton(R.string.YesButton, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                postBid();
+                            }
+                        })
+                        //on no return
+                        .setNegativeButton(R.string.NoButton, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        })
+                        .show();
+            }
+        }
+    };
+
+    private void postDelete() {
+        final ProgressDialog mDialog = new ProgressDialog(AuctionActivity.this);
+        mDialog.setMessage("Αuction is being deleted");
         mDialog.show();
 
-        final Bid newBid = new Bid(Common.currentUser.getPassword(),
-                btnNewBidValue.getValue(),
-                Integer.parseInt(getIntent().getStringExtra("AuctionId")));
+        DeleteAuctionRequest deleteAuctionRequest = new DeleteAuctionRequest(auctionId, Common.token);
 
-        Call<Bid> request = RestClient.getClient().create(RestApi.class).postNewBid(newBid);
+        Call<GeneralResponse> request = RestClient.getClient().create(RestApi.class).postDeleteAuction(deleteAuctionRequest);
 
-        request.enqueue(new Callback<Bid>() {
+        request.enqueue(new Callback<GeneralResponse>() {
             @Override
-            public void onResponse(Call<Bid> request, Response<Bid> response) {
+            public void onResponse(Call<GeneralResponse> call, Response<GeneralResponse> response) {
                 mDialog.dismiss();
 
                 if (!response.isSuccessful()){
                     Toast.makeText(AuctionActivity.this, Integer.toString(response.code()), Toast.LENGTH_SHORT).show();
+                    return;
+                }else if (!response.body().getStatusCode().equals("SUCCESS")){
+                    Toast.makeText(AuctionActivity.this, response.body().getStatusMsg(), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                Toast.makeText(AuctionActivity.this, "Your auction deleted successfully", Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(AuctionActivity.this, HomeActivity.class);
+                startActivity(intent);
+                finish();
+                return;
+
+            }
+
+            @Override
+            public void onFailure(Call<GeneralResponse> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private void postBid() {
+        final ProgressDialog mDialog = new ProgressDialog(AuctionActivity.this);
+        mDialog.setMessage("Your bid is submitting");
+        mDialog.show();
+
+        DecimalFormat df = new DecimalFormat("#.00");
+        final NewBidRequest newBidRequest = new NewBidRequest(Common.token,
+                Double.parseDouble(df.format((double) btnNewBidValue.getValue())),
+                getIntent().getStringExtra("AuctionId"));
+
+        System.out.println(newBidRequest.getAuctionId() + " " + newBidRequest.getBidderToken() + " " + newBidRequest.getBidderValue());
+
+        Call<GeneralResponse> request = RestClient.getClient().create(RestApi.class).postNewBid(newBidRequest);
+
+        request.enqueue(new Callback<GeneralResponse>() {
+            @Override
+            public void onResponse(Call<GeneralResponse> request, Response<GeneralResponse> response) {
+                mDialog.dismiss();
+
+                if (!response.isSuccessful()){
+                    Toast.makeText(AuctionActivity.this, Integer.toString(response.code()), Toast.LENGTH_SHORT).show();
+                    return;
+                }else if (!response.body().getStatusCode().equals("SUCCESS")){
+                    Toast.makeText(AuctionActivity.this, response.body().getStatusMsg(), Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -151,12 +237,12 @@ public class AuctionActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<Bid> call, Throwable t) {
+            public void onFailure(Call<GeneralResponse> call, Throwable t) {
                 mDialog.dismiss();
                 Toast.makeText(AuctionActivity.this, "Unavailable services", Toast.LENGTH_SHORT).show();
                 return;
             }
-        });*/
+        });
     }
 
     private void getAuction(){
@@ -187,6 +273,21 @@ public class AuctionActivity extends AppCompatActivity {
                     return;
                 }
                 else{
+//                    sellerId = response.body().getAuction().getSeller().getId();
+                    System.out.println(response.body().getAuction().getSeller().getUsername() + " " + Common.currentUser.getUsername());
+                    if (Common.currentUser.getUsername() == response.body().getAuction().getSeller().getUsername()) {
+                        isSeller = true;
+                        if (response.body().getAuction().getBids().size() > 0) {
+                            canDelete = false;
+                        } else {
+                            canDelete = true;
+                        }
+                    }
+                    else{
+                        isSeller = false;
+                        canDelete = false;
+                    }
+
                     Picasso.get().load(response.body().getAuction().getImage()).into(auctionImage);
                     auctionName.setText(response.body().getAuction().getNameOfItem());
                     startingDate.setText(response.body().getAuction().getStartedTime());
@@ -199,13 +300,10 @@ public class AuctionActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                     durationBar.setProgress(progress);
-                    //btnNewBidValue.setPickerValue(response.body().getAuctions().get(0).getBids());
                     response.body().getAuction().getBids().sort(Comparator.comparingDouble(Bid::getBidPrice).reversed());
                     btnNewBidValue.setPickerValue(response.body().getAuction().getBids().get(0).getBidPrice().floatValue());
                     auctionDesc.setText(response.body().getAuction().getItemDescription());
-
                     initializeCategoryListViewData(response.body().getAuction().getCategories());
-
                     rtnBar.setRating(response.body().getAuction().getSeller().getSellerRating().floatValue());
                     sellerRatingNum.setText(Double.toString(response.body().getAuction().getSeller().getSellerRating()));
                     if (response.body().getAuction().getSeller().getSellerRatingVotes()!=null)
@@ -226,7 +324,6 @@ public class AuctionActivity extends AppCompatActivity {
                 List<String> categories = new ArrayList<>();
                 for (Category category : itemCategories){
                     categories.add(category.getCategoryName());
-                    System.out.println(category.getCategoryName());
                 }
 
                 categoryListMap.put(categoryListHeader.get(0), categories);
@@ -256,4 +353,5 @@ public class AuctionActivity extends AppCompatActivity {
             }
         });
     }
+
 }

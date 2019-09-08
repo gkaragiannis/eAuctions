@@ -86,8 +86,8 @@ public class SignUp extends AppCompatActivity {
                             Common.currentUser = response.body().getUser();
                             Toast.makeText(SignUp.this, "Welcome " + edtUsername.getText() + " !", Toast.LENGTH_SHORT).show();
 
-                            Intent SignUpIntent = new Intent(SignUp.this, HomeActivity.class);
-                            startActivity(SignUpIntent);
+                            Intent intent = new Intent(SignUp.this, HomeActivity.class);
+                            startActivity(intent);
                             finish();
                         }
                     }

@@ -76,6 +76,7 @@
 
     <!-- BidSubmission strings -->
     <string name="BidSubmission">Do you want to submit this bid?</string>
+    <string name="DeleteSubmission">Do you want to delete this auction?</string>
     <string name="SelectCategory">Please select corresponding category(-ies)</string>
     <string name="YesButton">Yes</string>
     <string name="NoButton">No</string>
