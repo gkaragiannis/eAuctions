@@ -38,6 +38,7 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -65,7 +66,6 @@ public class AuctionActivity extends AppCompatActivity {
     private HashMap<String, List<String>> categoryListMap;
     private boolean isSeller, canDelete;
 
-    @SuppressLint("RestrictedApi")
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,7 +89,8 @@ public class AuctionActivity extends AppCompatActivity {
         collapsingToolbarLayout.setExpandedTitleTextAppearance(R.style.ExpandedAppBar);
         collapsingToolbarLayout.setCollapsedTitleTextAppearance(R.style.CollapsedAppBar);
 
-
+        btnFAB = (FloatingActionButton) findViewById(R.id.btnFAB);
+        btnFAB.setOnClickListener(FAB_ClickListener);
 
         //Get auction id from Intent
         if (getIntent() != null){
@@ -98,26 +99,6 @@ public class AuctionActivity extends AppCompatActivity {
         if (!auctionId.isEmpty()){
             getAuction();
         }
-
-        //Configure FAB
-        btnFAB = (FloatingActionButton) findViewById(R.id.btnFAB);
-        System.out.println(isSeller + " " + canDelete);
-        if (Common.currentUser==null) {
-            btnFAB.setVisibility(View.GONE);
-        }
-        else if (isSeller && canDelete) {
-            btnFAB.setImageDrawable(getResources().getDrawable(R.drawable.ic_delete_forever_white_24dp));
-            btnFAB.setVisibility(View.VISIBLE);
-        }
-        else if (isSeller && !canDelete){
-            btnFAB.setVisibility(View.GONE);
-        }
-        else {
-            btnFAB.setImageDrawable(getResources().getDrawable(R.drawable.ic_gavel_white_24dp));
-            btnFAB.setVisibility(View.VISIBLE);
-        }
-        btnFAB.setOnClickListener(FAB_ClickListener);
-
     }
 
     View.OnClickListener FAB_ClickListener = new View.OnClickListener() {
@@ -254,7 +235,7 @@ public class AuctionActivity extends AppCompatActivity {
         Call<AuctionResponse> request = RestClient.getClient().create(RestApi.class).getAuctionsById(auctionId);
 
         request.enqueue(new Callback<AuctionResponse>() {
-            @RequiresApi(api = Build.VERSION_CODES.N)
+            @SuppressLint("RestrictedApi")
             @Override
             public void onResponse(Call<AuctionResponse> request, Response<AuctionResponse> response) {
                 if (!response.isSuccessful()){
@@ -273,19 +254,25 @@ public class AuctionActivity extends AppCompatActivity {
                     return;
                 }
                 else{
-//                    sellerId = response.body().getAuction().getSeller().getId();
-                    System.out.println(response.body().getAuction().getSeller().getUsername() + " " + Common.currentUser.getUsername());
-                    if (Common.currentUser.getUsername() == response.body().getAuction().getSeller().getUsername()) {
+
+                    //Configure FAB
+                    if (Common.currentUser == null){
+                        isSeller = false;
+                        btnFAB.setVisibility(View.GONE);
+                    }
+                    else if (Common.currentUser.getUsername().equals(response.body().getAuction().getSeller().getUsername())) {
                         isSeller = true;
                         if (response.body().getAuction().getBids().size() > 0) {
-                            canDelete = false;
+                            btnFAB.setVisibility(View.GONE);
                         } else {
-                            canDelete = true;
+                            btnFAB.setImageDrawable(getResources().getDrawable(R.drawable.ic_delete_forever_white_24dp));
+                            btnFAB.setVisibility(View.VISIBLE);
                         }
                     }
                     else{
                         isSeller = false;
-                        canDelete = false;
+                        btnFAB.setImageDrawable(getResources().getDrawable(R.drawable.ic_gavel_white_24dp));
+                        btnFAB.setVisibility(View.VISIBLE);
                     }
 
                     Picasso.get().load(response.body().getAuction().getImage()).into(auctionImage);
@@ -300,7 +287,7 @@ public class AuctionActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                     durationBar.setProgress(progress);
-                    response.body().getAuction().getBids().sort(Comparator.comparingDouble(Bid::getBidPrice).reversed());
+                    Collections.sort(response.body().getAuction().getBids(), Collections.reverseOrder());
                     btnNewBidValue.setPickerValue(response.body().getAuction().getBids().get(0).getBidPrice().floatValue());
                     auctionDesc.setText(response.body().getAuction().getItemDescription());
                     initializeCategoryListViewData(response.body().getAuction().getCategories());
@@ -308,8 +295,6 @@ public class AuctionActivity extends AppCompatActivity {
                     sellerRatingNum.setText(Double.toString(response.body().getAuction().getSeller().getSellerRating()));
                     if (response.body().getAuction().getSeller().getSellerRatingVotes()!=null)
                         sellerRatingVotes.setText("out of " + Integer.toString(response.body().getAuction().getSeller().getSellerRatingVotes()) + " votes");
-                    else
-                        sellerRatingVotes.setText("0");
                     mDialog.dismiss();
                     return;
                 }
