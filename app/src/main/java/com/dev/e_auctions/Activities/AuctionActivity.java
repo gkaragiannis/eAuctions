@@ -5,11 +5,8 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Build;
-import android.support.annotation.RequiresApi;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -22,14 +19,12 @@ import android.widget.Toast;
 
 import com.dev.e_auctions.APIRequests.DeleteAuctionRequest;
 import com.dev.e_auctions.APIRequests.NewBidRequest;
-import com.dev.e_auctions.APIResponses.AuctionListResponse;
 import com.dev.e_auctions.APIResponses.AuctionResponse;
 import com.dev.e_auctions.APIResponses.GeneralResponse;
 import com.dev.e_auctions.Adapter.ExpandableListAdapter;
 import com.dev.e_auctions.Client.RestClient;
 import com.dev.e_auctions.Common.Common;
 import com.dev.e_auctions.Interface.RestApi;
-import com.dev.e_auctions.Model.Bid;
 import com.dev.e_auctions.Model.Category;
 import com.dev.e_auctions.R;
 import com.squareup.picasso.Picasso;
@@ -39,7 +34,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -64,7 +58,6 @@ public class AuctionActivity extends AppCompatActivity {
     private String auctionId = "";
     private ArrayList<String> categoryListHeader;
     private HashMap<String, List<String>> categoryListMap;
-    private boolean isSeller, canDelete;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -82,15 +75,12 @@ public class AuctionActivity extends AppCompatActivity {
         sellerRatingNum = (TextView) findViewById(R.id.sellerRatingNum);
         sellerRatingVotes = (TextView) findViewById(R.id.sellerRatingVotes);
         categoryListView = (ExpandableListView)findViewById(R.id.auctionCategoriesELV);
-
         btnNewBidValue = (ClickNumberPickerView) findViewById(R.id.btnNewBidValue);
         collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing);
         //maybe there is no need for next 2 rows
         collapsingToolbarLayout.setExpandedTitleTextAppearance(R.style.ExpandedAppBar);
         collapsingToolbarLayout.setCollapsedTitleTextAppearance(R.style.CollapsedAppBar);
-
         btnFAB = (FloatingActionButton) findViewById(R.id.btnFAB);
-        btnFAB.setOnClickListener(FAB_ClickListener);
 
         //Get auction id from Intent
         if (getIntent() != null){
@@ -101,51 +91,53 @@ public class AuctionActivity extends AppCompatActivity {
         }
     }
 
-    View.OnClickListener FAB_ClickListener = new View.OnClickListener() {
+    View.OnClickListener bidder_FAB_ClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             //pop up to approve action
-            if (isSeller){
-                AlertDialog.Builder alertDialog = new AlertDialog.Builder(AuctionActivity.this);
-                alertDialog.setCancelable(true)
-                        .setMessage(R.string.DeleteSubmission)
-                        //on yes post bid
-                        .setPositiveButton(R.string.YesButton, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                postDelete();
-                            }
-                        })
-                        //on no return
-                        .setNegativeButton(R.string.NoButton, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.cancel();
-                            }
-                        })
-                        .show();
-                
-            }
-            else{
-                AlertDialog.Builder alertDialog = new AlertDialog.Builder(AuctionActivity.this);
-                alertDialog.setCancelable(true)
-                        .setMessage(R.string.BidSubmission)
-                        //on yes post bid
-                        .setPositiveButton(R.string.YesButton, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                postBid();
-                            }
-                        })
-                        //on no return
-                        .setNegativeButton(R.string.NoButton, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.cancel();
-                            }
-                        })
-                        .show();
-            }
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(AuctionActivity.this);
+            alertDialog.setCancelable(true)
+                    .setMessage(R.string.BidSubmission)
+                    //on yes post bid
+                    .setPositiveButton(R.string.YesButton, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            postBid();
+                        }
+                    })
+                    //on no return
+                    .setNegativeButton(R.string.NoButton, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    })
+                    .show();
+        }
+    };
+
+    View.OnClickListener seller_FAB_ClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(AuctionActivity.this);
+        alertDialog.setCancelable(true)
+                .setMessage(R.string.DeleteSubmission)
+                //on yes post bid
+                .setPositiveButton(R.string.YesButton, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        postDelete();
+                    }
+                })
+                //on no return
+                .setNegativeButton(R.string.NoButton, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                })
+                .show();
         }
     };
 
@@ -226,6 +218,36 @@ public class AuctionActivity extends AppCompatActivity {
         });
     }
 
+    private void initializeCategoryListViewData(List<Category> itemCategories) {
+        categoryListHeader = new ArrayList<>();
+        categoryListMap = new HashMap<>();
+
+        categoryListHeader.add("Categories");
+
+        List<String> categories = new ArrayList<>();
+        for (Category category : itemCategories){
+            categories.add(category.getCategoryName());
+        }
+
+        categoryListMap.put(categoryListHeader.get(0), categories);
+
+        categoryListAdapter = new ExpandableListAdapter(AuctionActivity.this, categoryListHeader, categoryListMap);
+        categoryListView.setAdapter(categoryListAdapter);
+    }
+
+    private int getProgress(String created, String ends) throws ParseException {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+
+        Date startingDate = format.parse(created);
+        Date endDate = format.parse(ends);
+        Date current = new Date();
+
+        long diff1 = endDate.getTime() - startingDate.getTime();
+        long diff2 = current.getTime() - startingDate.getTime();
+
+        return (int) ((diff2*100)/diff1);
+    }
+
     private void getAuction(){
         final ProgressDialog mDialog = new ProgressDialog(AuctionActivity.this);
 
@@ -257,22 +279,21 @@ public class AuctionActivity extends AppCompatActivity {
 
                     //Configure FAB
                     if (Common.currentUser == null){
-                        isSeller = false;
                         btnFAB.setVisibility(View.GONE);
                     }
                     else if (Common.currentUser.getUsername().equals(response.body().getAuction().getSeller().getUsername())) {
-                        isSeller = true;
                         if (response.body().getAuction().getBids().size() > 0) {
                             btnFAB.setVisibility(View.GONE);
                         } else {
                             btnFAB.setImageDrawable(getResources().getDrawable(R.drawable.ic_delete_forever_white_24dp));
                             btnFAB.setVisibility(View.VISIBLE);
+                            btnFAB.setOnClickListener(seller_FAB_ClickListener);
                         }
                     }
                     else{
-                        isSeller = false;
                         btnFAB.setImageDrawable(getResources().getDrawable(R.drawable.ic_gavel_white_24dp));
                         btnFAB.setVisibility(View.VISIBLE);
+                        btnFAB.setOnClickListener(bidder_FAB_ClickListener);
                     }
 
                     Picasso.get().load(response.body().getAuction().getImage()).into(auctionImage);
@@ -300,35 +321,6 @@ public class AuctionActivity extends AppCompatActivity {
                 }
             }
 
-            private void initializeCategoryListViewData(List<Category> itemCategories) {
-                categoryListHeader = new ArrayList<>();
-                categoryListMap = new HashMap<>();
-
-                categoryListHeader.add("Categories");
-
-                List<String> categories = new ArrayList<>();
-                for (Category category : itemCategories){
-                    categories.add(category.getCategoryName());
-                }
-
-                categoryListMap.put(categoryListHeader.get(0), categories);
-
-                categoryListAdapter = new ExpandableListAdapter(AuctionActivity.this, categoryListHeader, categoryListMap);
-                categoryListView.setAdapter(categoryListAdapter);
-            }
-
-            private int getProgress(String created, String ends) throws ParseException {
-                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-
-                Date startingDate = format.parse(created);
-                Date endDate = format.parse(ends);
-                Date current = new Date();
-
-                long diff1 = endDate.getTime() - startingDate.getTime();
-                long diff2 = current.getTime() - startingDate.getTime();
-
-                return (int) ((diff2*100)/diff1);
-            }
 
             @Override
             public void onFailure(Call<AuctionResponse> request, Throwable t) {
