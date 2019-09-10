@@ -308,8 +308,13 @@ public class AuctionActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                     durationBar.setProgress(progress);
-                    Collections.sort(response.body().getAuction().getBids(), Collections.reverseOrder());
-                    btnNewBidValue.setPickerValue(response.body().getAuction().getBids().get(0).getBidPrice().floatValue());
+                    if (response.body().getAuction().getBids().size() > 0) {
+                        Collections.sort(response.body().getAuction().getBids(), Collections.reverseOrder());
+                        btnNewBidValue.setPickerValue(response.body().getAuction().getBids().get(0).getBidPrice().floatValue());
+                    }
+                    else{
+                        btnNewBidValue.setPickerValue(response.body().getAuction().getInitialPrice().floatValue());
+                    }
                     auctionDesc.setText(response.body().getAuction().getItemDescription());
                     initializeCategoryListViewData(response.body().getAuction().getCategories());
                     rtnBar.setRating(response.body().getAuction().getSeller().getSellerRating().floatValue());
