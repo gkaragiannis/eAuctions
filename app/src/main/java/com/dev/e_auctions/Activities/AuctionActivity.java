@@ -25,6 +25,7 @@ import com.dev.e_auctions.Adapter.ExpandableListAdapter;
 import com.dev.e_auctions.Client.RestClient;
 import com.dev.e_auctions.Common.Common;
 import com.dev.e_auctions.Interface.RestApi;
+import com.dev.e_auctions.Model.Auction;
 import com.dev.e_auctions.Model.Category;
 import com.dev.e_auctions.R;
 import com.squareup.picasso.Picasso;
@@ -91,6 +92,58 @@ public class AuctionActivity extends AppCompatActivity {
         }
     }
 
+
+    //UI methods
+    @SuppressLint("RestrictedApi")
+    private void viewAuction(Auction auction) {
+        //Configure FAB
+        if (Common.currentUser == null){
+            btnFAB.setVisibility(View.GONE);
+        }
+        else if (Common.currentUser.getUsername().equals(auction.getSeller().getUsername())) {
+            if (auction.getBids().size() > 0) {
+                btnFAB.setVisibility(View.GONE);
+            } else {
+                btnFAB.setImageDrawable(getResources().getDrawable(R.drawable.ic_delete_forever_white_24dp));
+                btnFAB.setVisibility(View.VISIBLE);
+                btnFAB.setOnClickListener(seller_FAB_ClickListener);
+            }
+        }
+        else{
+            btnFAB.setImageDrawable(getResources().getDrawable(R.drawable.ic_gavel_white_24dp));
+            btnFAB.setVisibility(View.VISIBLE);
+            btnFAB.setOnClickListener(bidder_FAB_ClickListener);
+        }
+
+        Picasso.get().load(auction.getImage()).into(auctionImage);
+        auctionName.setText(auction.getNameOfItem());
+        startingDate.setText(auction.getStartedTime());
+        endDate.setText(auction.getEndingTime());
+        int progress = 0;
+        try {
+            progress = getProgress(auction.getStartedTime(),
+                    auction.getEndingTime());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        durationBar.setProgress(progress);
+        if (auction.getBids().size() > 0) {
+            Collections.sort(auction.getBids(), Collections.reverseOrder());
+            btnNewBidValue.setPickerValue(auction.getBids().get(0).getBidPrice().floatValue());
+        }
+        else{
+            btnNewBidValue.setPickerValue(auction.getInitialPrice().floatValue());
+        }
+        auctionDesc.setText(auction.getItemDescription());
+        initializeCategoryListViewData(auction.getCategories());
+        rtnBar.setRating(auction.getSeller().getSellerRating().floatValue());
+        sellerRatingNum.setText(Double.toString(auction.getSeller().getSellerRating()));
+        if (auction.getSeller().getSellerRatingVotes()!=null)
+            sellerRatingVotes.setText("out of " + Integer.toString(auction.getSeller().getSellerRatingVotes()) + " votes");
+    }
+
+
+    //UI listeners
     View.OnClickListener bidder_FAB_ClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -120,26 +173,71 @@ public class AuctionActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
 
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(AuctionActivity.this);
-        alertDialog.setCancelable(true)
-                .setMessage(R.string.DeleteSubmission)
-                //on yes post bid
-                .setPositiveButton(R.string.YesButton, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        postDelete();
-                    }
-                })
-                //on no return
-                .setNegativeButton(R.string.NoButton, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                })
-                .show();
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(AuctionActivity.this);
+            alertDialog.setCancelable(true)
+                    .setMessage(R.string.DeleteSubmission)
+                    //on yes post bid
+                    .setPositiveButton(R.string.YesButton, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            postDelete();
+                        }
+                    })
+                    //on no return
+                    .setNegativeButton(R.string.NoButton, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    })
+                    .show();
         }
     };
+
+
+    //rest call methods
+    private void getAuction(){
+        final ProgressDialog mDialog = new ProgressDialog(AuctionActivity.this);
+
+        mDialog.setMessage("Please wait...");
+        mDialog.show();
+
+        Call<AuctionResponse> request = RestClient.getClient().create(RestApi.class).getAuctionsById(auctionId);
+
+        request.enqueue(new Callback<AuctionResponse>() {
+            @Override
+            public void onResponse(Call<AuctionResponse> request, Response<AuctionResponse> response) {
+                if (!response.isSuccessful()){
+                    mDialog.dismiss();
+                    Toast.makeText(AuctionActivity.this, Integer.toString(response.code()), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                else if (!response.body().getStatusCode().equals("SUCCESS")){
+                    mDialog.dismiss();
+                    Toast.makeText(AuctionActivity.this, "Auction not found", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                else if (response.body().getAuction()==null){
+                    mDialog.dismiss();
+                    Toast.makeText(AuctionActivity.this, "Unexpected Error Occurred", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                else{
+                    viewAuction(response.body().getAuction());
+                    mDialog.dismiss();
+                    return;
+                }
+            }
+
+
+            @Override
+            public void onFailure(Call<AuctionResponse> request, Throwable t) {
+                mDialog.dismiss();
+                Toast.makeText(AuctionActivity.this, "Unavailable services", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        });
+    }
 
     private void postDelete() {
         final ProgressDialog mDialog = new ProgressDialog(AuctionActivity.this);
@@ -218,6 +316,8 @@ public class AuctionActivity extends AppCompatActivity {
         });
     }
 
+
+    //utility methods
     private void initializeCategoryListViewData(List<Category> itemCategories) {
         categoryListHeader = new ArrayList<>();
         categoryListMap = new HashMap<>();
@@ -248,92 +348,5 @@ public class AuctionActivity extends AppCompatActivity {
         return (int) ((diff2*100)/diff1);
     }
 
-    private void getAuction(){
-        final ProgressDialog mDialog = new ProgressDialog(AuctionActivity.this);
-
-        mDialog.setMessage("Please wait...");
-        mDialog.show();
-
-        Call<AuctionResponse> request = RestClient.getClient().create(RestApi.class).getAuctionsById(auctionId);
-
-        request.enqueue(new Callback<AuctionResponse>() {
-            @SuppressLint("RestrictedApi")
-            @Override
-            public void onResponse(Call<AuctionResponse> request, Response<AuctionResponse> response) {
-                if (!response.isSuccessful()){
-                    mDialog.dismiss();
-                    Toast.makeText(AuctionActivity.this, Integer.toString(response.code()), Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                else if (!response.body().getStatusCode().equals("SUCCESS")){
-                    mDialog.dismiss();
-                    Toast.makeText(AuctionActivity.this, "Auction not found", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                else if (response.body().getAuction()==null){
-                    mDialog.dismiss();
-                    Toast.makeText(AuctionActivity.this, "Unexpected Error Occurred", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                else{
-
-                    //Configure FAB
-                    if (Common.currentUser == null){
-                        btnFAB.setVisibility(View.GONE);
-                    }
-                    else if (Common.currentUser.getUsername().equals(response.body().getAuction().getSeller().getUsername())) {
-                        if (response.body().getAuction().getBids().size() > 0) {
-                            btnFAB.setVisibility(View.GONE);
-                        } else {
-                            btnFAB.setImageDrawable(getResources().getDrawable(R.drawable.ic_delete_forever_white_24dp));
-                            btnFAB.setVisibility(View.VISIBLE);
-                            btnFAB.setOnClickListener(seller_FAB_ClickListener);
-                        }
-                    }
-                    else{
-                        btnFAB.setImageDrawable(getResources().getDrawable(R.drawable.ic_gavel_white_24dp));
-                        btnFAB.setVisibility(View.VISIBLE);
-                        btnFAB.setOnClickListener(bidder_FAB_ClickListener);
-                    }
-
-                    Picasso.get().load(response.body().getAuction().getImage()).into(auctionImage);
-                    auctionName.setText(response.body().getAuction().getNameOfItem());
-                    startingDate.setText(response.body().getAuction().getStartedTime());
-                    endDate.setText(response.body().getAuction().getEndingTime());
-                    int progress = 0;
-                    try {
-                        progress = getProgress(response.body().getAuction().getStartedTime(),
-                                response.body().getAuction().getEndingTime());
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                    durationBar.setProgress(progress);
-                    if (response.body().getAuction().getBids().size() > 0) {
-                        Collections.sort(response.body().getAuction().getBids(), Collections.reverseOrder());
-                        btnNewBidValue.setPickerValue(response.body().getAuction().getBids().get(0).getBidPrice().floatValue());
-                    }
-                    else{
-                        btnNewBidValue.setPickerValue(response.body().getAuction().getInitialPrice().floatValue());
-                    }
-                    auctionDesc.setText(response.body().getAuction().getItemDescription());
-                    initializeCategoryListViewData(response.body().getAuction().getCategories());
-                    rtnBar.setRating(response.body().getAuction().getSeller().getSellerRating().floatValue());
-                    sellerRatingNum.setText(Double.toString(response.body().getAuction().getSeller().getSellerRating()));
-                    if (response.body().getAuction().getSeller().getSellerRatingVotes()!=null)
-                        sellerRatingVotes.setText("out of " + Integer.toString(response.body().getAuction().getSeller().getSellerRatingVotes()) + " votes");
-                    mDialog.dismiss();
-                    return;
-                }
-            }
-
-
-            @Override
-            public void onFailure(Call<AuctionResponse> request, Throwable t) {
-                mDialog.dismiss();
-                Toast.makeText(AuctionActivity.this, "Unavailable services", Toast.LENGTH_SHORT).show();
-                return;
-            }
-        });
-    }
 
 }
