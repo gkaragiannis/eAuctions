@@ -315,7 +315,7 @@ public class AuctionActivity extends AppCompatActivity {
 
         DecimalFormat df = new DecimalFormat("#.00");
         final NewBidRequest newBidRequest = new NewBidRequest(Common.token,
-                Double.parseDouble(df.format((double) btnNewBidValue.getValue())),
+                df.format((double) btnNewBidValue.getValue()),
                 getIntent().getStringExtra("AuctionId"));
 
         System.out.println(newBidRequest.getAuctionId() + " " + newBidRequest.getBidderToken() + " " + newBidRequest.getBidderValue());
@@ -328,7 +328,7 @@ public class AuctionActivity extends AppCompatActivity {
                 mDialog.dismiss();
 
                 if (!response.isSuccessful()){
-                    Toast.makeText(AuctionActivity.this, Integer.toString(response.code()), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AuctionActivity.this, response.body().getStatusMsg(), Toast.LENGTH_SHORT).show();
                     return;
                 }else if (!response.body().getStatusCode().equals("SUCCESS")){
                     Toast.makeText(AuctionActivity.this, response.body().getStatusMsg(), Toast.LENGTH_SHORT).show();

@@ -60,7 +60,7 @@ public interface RestApi {
 
 
     /*-- BIDS --*/
-    @POST("bids/newbidin")
+    @POST("bids/newbid")
     Call<GeneralResponse> postNewBid(@Body NewBidRequest newBidRequest);
 
 
