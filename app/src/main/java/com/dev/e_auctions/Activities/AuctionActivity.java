@@ -94,27 +94,8 @@ public class AuctionActivity extends AppCompatActivity {
 
 
     //UI methods
-    @SuppressLint("RestrictedApi")
     private void viewAuction(Auction auction) {
-        //Configure FAB
-        if (Common.currentUser == null){
-            btnFAB.setVisibility(View.GONE);
-        }
-        else if (Common.currentUser.getUsername().equals(auction.getSeller().getUsername())) {
-            if (auction.getBids().size() > 0) {
-                btnFAB.setVisibility(View.GONE);
-            } else {
-                btnFAB.setImageDrawable(getResources().getDrawable(R.drawable.ic_delete_forever_white_24dp));
-                btnFAB.setVisibility(View.VISIBLE);
-                btnFAB.setOnClickListener(seller_FAB_ClickListener);
-            }
-        }
-        else{
-            btnFAB.setImageDrawable(getResources().getDrawable(R.drawable.ic_gavel_white_24dp));
-            btnFAB.setVisibility(View.VISIBLE);
-            btnFAB.setOnClickListener(bidder_FAB_ClickListener);
-        }
-
+        configureFAB(auction);
         Picasso.get().load(auction.getImage()).into(auctionImage);
         auctionName.setText(auction.getNameOfItem());
         startingDate.setText(auction.getStartedTime());
@@ -140,6 +121,57 @@ public class AuctionActivity extends AppCompatActivity {
         sellerRatingNum.setText(Double.toString(auction.getSeller().getSellerRating()));
         if (auction.getSeller().getSellerRatingVotes()!=null)
             sellerRatingVotes.setText("out of " + Integer.toString(auction.getSeller().getSellerRatingVotes()) + " votes");
+    }
+
+    @SuppressLint("RestrictedApi")
+    private void configureFAB(Auction auction) {
+        if (Common.currentUser == null){
+            btnFAB.setVisibility(View.GONE);
+        }
+        else if (Common.currentUser.getUsername().equals(auction.getSeller().getUsername())) {
+            if (auction.getBids().size() > 0) {
+                btnFAB.setVisibility(View.GONE);
+            } else {
+                btnFAB.setImageDrawable(getResources().getDrawable(R.drawable.ic_delete_forever_white_24dp));
+                btnFAB.setVisibility(View.VISIBLE);
+                btnFAB.setOnClickListener(seller_FAB_ClickListener);
+            }
+        }
+        else{
+            btnFAB.setImageDrawable(getResources().getDrawable(R.drawable.ic_gavel_white_24dp));
+            btnFAB.setVisibility(View.VISIBLE);
+            btnFAB.setOnClickListener(bidder_FAB_ClickListener);
+        }
+    }
+
+    private void initializeCategoryListViewData(List<Category> itemCategories) {
+        categoryListHeader = new ArrayList<>();
+        categoryListMap = new HashMap<>();
+
+        categoryListHeader.add("Categories");
+
+        List<String> categories = new ArrayList<>();
+        for (Category category : itemCategories){
+            categories.add(category.getCategoryName());
+        }
+
+        categoryListMap.put(categoryListHeader.get(0), categories);
+
+        categoryListAdapter = new ExpandableListAdapter(AuctionActivity.this, categoryListHeader, categoryListMap);
+        categoryListView.setAdapter(categoryListAdapter);
+    }
+
+    private int getProgress(String created, String ends) throws ParseException {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+
+        Date startingDate = format.parse(created);
+        Date endDate = format.parse(ends);
+        Date current = new Date();
+
+        long diff1 = endDate.getTime() - startingDate.getTime();
+        long diff2 = current.getTime() - startingDate.getTime();
+
+        return (int) ((diff2*100)/diff1);
     }
 
 
@@ -315,38 +347,5 @@ public class AuctionActivity extends AppCompatActivity {
             }
         });
     }
-
-
-    //utility methods
-    private void initializeCategoryListViewData(List<Category> itemCategories) {
-        categoryListHeader = new ArrayList<>();
-        categoryListMap = new HashMap<>();
-
-        categoryListHeader.add("Categories");
-
-        List<String> categories = new ArrayList<>();
-        for (Category category : itemCategories){
-            categories.add(category.getCategoryName());
-        }
-
-        categoryListMap.put(categoryListHeader.get(0), categories);
-
-        categoryListAdapter = new ExpandableListAdapter(AuctionActivity.this, categoryListHeader, categoryListMap);
-        categoryListView.setAdapter(categoryListAdapter);
-    }
-
-    private int getProgress(String created, String ends) throws ParseException {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-
-        Date startingDate = format.parse(created);
-        Date endDate = format.parse(ends);
-        Date current = new Date();
-
-        long diff1 = endDate.getTime() - startingDate.getTime();
-        long diff2 = current.getTime() - startingDate.getTime();
-
-        return (int) ((diff2*100)/diff1);
-    }
-
 
 }
