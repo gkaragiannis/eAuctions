@@ -58,9 +58,7 @@ public class SignIn extends AppCompatActivity {
                         //To disappear progressDialog
                         mDialog.dismiss();
 
-                        //add extra condition if empty List
                         if (!response.isSuccessful()){
-                            //floating message
                             Toast.makeText(SignIn.this, Integer.toString(response.code()), Toast.LENGTH_SHORT).show();
                             return;
                         }
