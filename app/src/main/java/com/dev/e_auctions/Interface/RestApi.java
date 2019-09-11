@@ -4,6 +4,8 @@ import com.dev.e_auctions.APIRequests.AuctionByFieldRequest;
 import com.dev.e_auctions.APIRequests.DeleteAuctionRequest;
 import com.dev.e_auctions.APIRequests.NewAcutionRequest;
 import com.dev.e_auctions.APIRequests.NewBidRequest;
+import com.dev.e_auctions.APIRequests.NewMessageRequest;
+import com.dev.e_auctions.APIRequests.RateUserRequest;
 import com.dev.e_auctions.APIRequests.SignInRequest;
 import com.dev.e_auctions.APIRequests.SignUpRequest;
 import com.dev.e_auctions.APIResponses.AllCategoriesResponse;
@@ -32,6 +34,9 @@ public interface RestApi {
 
     @POST("users/registernewuser")
     Call<UsersResponse> postSignUp(@Body SignUpRequest signUpRequest);
+
+    @POST("users/rateuser")
+    Call<GeneralResponse> postRateUser(@Body RateUserRequest rateUserRequest);
 
 
     /*-- AUCTIONS --*/
@@ -62,6 +67,10 @@ public interface RestApi {
     /*-- BIDS --*/
     @POST("bids/newbid")
     Call<GeneralResponse> postNewBid(@Body NewBidRequest newBidRequest);
+
+    /*-- MESSAGES --*/
+    @POST("/message/newmessage")
+    Call<GeneralResponse> postNewMessage(@Body NewMessageRequest newMessageRequest);
 
 
     //old

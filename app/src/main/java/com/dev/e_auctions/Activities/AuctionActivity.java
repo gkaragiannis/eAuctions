@@ -2,6 +2,7 @@ package com.dev.e_auctions.Activities;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -9,7 +10,11 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
 import android.view.View;
+import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -19,6 +24,8 @@ import android.widget.Toast;
 
 import com.dev.e_auctions.APIRequests.DeleteAuctionRequest;
 import com.dev.e_auctions.APIRequests.NewBidRequest;
+import com.dev.e_auctions.APIRequests.NewMessageRequest;
+import com.dev.e_auctions.APIRequests.RateUserRequest;
 import com.dev.e_auctions.APIResponses.AuctionResponse;
 import com.dev.e_auctions.APIResponses.GeneralResponse;
 import com.dev.e_auctions.Adapter.ExpandableListAdapter;
@@ -94,7 +101,7 @@ public class AuctionActivity extends AppCompatActivity {
 
 
     //UI methods
-    private void viewAuction(Auction auction) {
+    private void viewAuction(Auction auction) throws ParseException {
         configureFAB(auction);
         Picasso.get().load(auction.getImage()).into(auctionImage);
         auctionName.setText(auction.getNameOfItem());
@@ -121,27 +128,89 @@ public class AuctionActivity extends AppCompatActivity {
         sellerRatingNum.setText(Double.toString(auction.getSeller().getSellerRating()));
         if (auction.getSeller().getSellerRatingVotes()!=null)
             sellerRatingVotes.setText("out of " + Integer.toString(auction.getSeller().getSellerRatingVotes()) + " votes");
+        if (progress >= 100)
+            ratingDialog(auction);
     }
 
     @SuppressLint("RestrictedApi")
-    private void configureFAB(Auction auction) {
+    private void configureFAB(Auction auction) throws ParseException {
+        Date currentDate = new Date();
+        Date endDate = new SimpleDateFormat("yyyy-MM-dd hh:mm").parse(auction.getEndingTime());
+
+        //Check user role
         if (Common.currentUser == null){
+            //guest
             btnFAB.setVisibility(View.GONE);
+            return;
         }
-        else if (Common.currentUser.getUsername().equals(auction.getSeller().getUsername())) {
-            if (auction.getBids().size() > 0) {
-                btnFAB.setVisibility(View.GONE);
-            } else {
-                btnFAB.setImageDrawable(getResources().getDrawable(R.drawable.ic_delete_forever_white_24dp));
+        else if (endDate.compareTo(currentDate) > 0){
+            //auction is stil active
+            if (Common.currentUser.getUsername().equals(auction.getSeller().getUsername())) {
+                //user is seller
+                if (auction.getBids().size() > 0) {
+                    btnFAB.setVisibility(View.GONE);
+                    return;
+                } else {
+                    btnFAB.setImageDrawable(getResources().getDrawable(R.drawable.ic_delete_forever_white_24dp));
+                    btnFAB.setOnClickListener(seller_FAB_ClickListener);
+                }
+            }
+            else{
+                //user is bidder
+                btnFAB.setImageDrawable(getResources().getDrawable(R.drawable.ic_gavel_white_24dp));
+                btnFAB.setOnClickListener(bidder_FAB_ClickListener);
+            }
+            btnFAB.setVisibility(View.VISIBLE);
+            return;
+        }
+        else {
+            //auction is inactive
+            if ((Common.currentUser.getUsername().equals(auction.getSeller().getUsername()) ||
+                    Common.currentUser.getUsername().equals(auction.getBids().get(0).getBidder().getUsername())) &&
+                    auction.getBids().size() > 0) {
+                //if user is seller or buyer and there are bids
+                btnFAB.setImageDrawable(getResources().getDrawable(R.drawable.ic_chat_bubble_white_24dp));
+                //btnFAB.setOnClickListener(messenger_FAB_ClickListener);
+                btnFAB.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        messageDialog(auction);
+                    }
+                });
                 btnFAB.setVisibility(View.VISIBLE);
-                btnFAB.setOnClickListener(seller_FAB_ClickListener);
+            }
+            else{
+                btnFAB.setVisibility(View.GONE);
             }
         }
-        else{
-            btnFAB.setImageDrawable(getResources().getDrawable(R.drawable.ic_gavel_white_24dp));
-            btnFAB.setVisibility(View.VISIBLE);
-            btnFAB.setOnClickListener(bidder_FAB_ClickListener);
+    }
+
+    private void messageDialog(Auction auction) {
+        Dialog messagingDialog = new Dialog(AuctionActivity.this);
+        messagingDialog.setContentView(R.layout.messaging_dialog);
+        messagingDialog.setCancelable(true);
+        messagingDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+
+        TextView messageReceiver = (TextView) messagingDialog.findViewById(R.id.messageReceiver);
+        if (Common.currentUser.getUsername().equals(auction.getSeller().getUsername())){
+            messageReceiver.setText("To " + auction.getBids().get(0).getBidder().getUsername());
         }
+        else if (Common.currentUser.getUsername().equals(auction.getBids().get(0).getBidder().getUsername())){
+            messageReceiver.setText("To " + auction.getSeller().getUsername());
+        }
+        EditText messageSubject = (EditText) messagingDialog.findViewById(R.id.messageSubject);
+        EditText messageBody = (EditText) messagingDialog.findViewById(R.id.messageBody);
+
+        Button messageSendBtn = (Button) messagingDialog.findViewById(R.id.messageSendBtn);
+        messageSendBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO: make sent message call
+                sentMessage(auction, messageSubject.getText().toString(), messageBody.getText().toString());
+                //messagingDialog.dismiss();
+            }
+        });
+        messagingDialog.show();
     }
 
     private void initializeCategoryListViewData(List<Category> itemCategories) {
@@ -162,7 +231,7 @@ public class AuctionActivity extends AppCompatActivity {
     }
 
     private int getProgress(String created, String ends) throws ParseException {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm");
 
         Date startingDate = format.parse(created);
         Date endDate = format.parse(ends);
@@ -174,6 +243,46 @@ public class AuctionActivity extends AppCompatActivity {
         return (int) ((diff2*100)/diff1);
     }
 
+    private void ratingDialog(Auction auction) {
+        boolean isSeller = false;
+        boolean isBuyer = false;
+        Dialog rankDialog = new Dialog(AuctionActivity.this);
+
+        if (Common.currentUser == null){
+            return;
+        }
+
+        if (Common.currentUser.getUsername().equals(auction.getSeller().getUsername()) ||
+                Common.currentUser.getUsername().equals(auction.getBids().get(0).getBidder().getUsername())) {
+            //if user is seller or buyer
+            rankDialog.setContentView(R.layout.rating_dialog);
+            rankDialog.setCancelable(true);
+            rankDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+            RatingBar ratingBar = (RatingBar)rankDialog.findViewById(R.id.ratingDialogBar);
+
+            TextView ratingDialogHeader = (TextView) rankDialog.findViewById(R.id.ratingDialogHeader);
+
+            Button btnRankDialog = (Button) rankDialog.findViewById(R.id.rank_dialog_button);
+            btnRankDialog.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //TODO: make rating call
+                    postRateUser(auction, ratingBar.getRating());
+                    rankDialog.dismiss();
+                }
+            });
+
+            if (Common.currentUser.getUsername().equals(auction.getSeller().getUsername())) {
+                //rate bidder
+                ratingDialogHeader.setText("Please rate the buyer");
+            }
+            else{
+                //rate seller
+                ratingDialogHeader.setText("Please rate the seller");
+            }
+            rankDialog.show();
+        }
+    }
 
     //UI listeners
     View.OnClickListener bidder_FAB_ClickListener = new View.OnClickListener() {
@@ -226,7 +335,6 @@ public class AuctionActivity extends AppCompatActivity {
         }
     };
 
-
     //rest call methods
     private void getAuction(){
         final ProgressDialog mDialog = new ProgressDialog(AuctionActivity.this);
@@ -234,11 +342,11 @@ public class AuctionActivity extends AppCompatActivity {
         mDialog.setMessage("Please wait...");
         mDialog.show();
 
-        Call<AuctionResponse> request = RestClient.getClient().create(RestApi.class).getAuctionsById(auctionId);
+        Call<AuctionResponse> call = RestClient.getClient().create(RestApi.class).getAuctionsById(auctionId);
 
-        request.enqueue(new Callback<AuctionResponse>() {
+        call.enqueue(new Callback<AuctionResponse>() {
             @Override
-            public void onResponse(Call<AuctionResponse> request, Response<AuctionResponse> response) {
+            public void onResponse(Call<AuctionResponse> call, Response<AuctionResponse> response) {
                 if (!response.isSuccessful()){
                     mDialog.dismiss();
                     Toast.makeText(AuctionActivity.this, Integer.toString(response.code()), Toast.LENGTH_SHORT).show();
@@ -255,7 +363,14 @@ public class AuctionActivity extends AppCompatActivity {
                     return;
                 }
                 else{
-                    viewAuction(response.body().getAuction());
+                    try {
+                        viewAuction(response.body().getAuction());
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                        mDialog.dismiss();
+                        Toast.makeText(AuctionActivity.this, "Unexpected Error Occurred", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                     mDialog.dismiss();
                     return;
                 }
@@ -263,7 +378,7 @@ public class AuctionActivity extends AppCompatActivity {
 
 
             @Override
-            public void onFailure(Call<AuctionResponse> request, Throwable t) {
+            public void onFailure(Call<AuctionResponse> call, Throwable t) {
                 mDialog.dismiss();
                 Toast.makeText(AuctionActivity.this, "Unavailable services", Toast.LENGTH_SHORT).show();
                 return;
@@ -278,9 +393,9 @@ public class AuctionActivity extends AppCompatActivity {
 
         DeleteAuctionRequest deleteAuctionRequest = new DeleteAuctionRequest(auctionId, Common.token);
 
-        Call<GeneralResponse> request = RestClient.getClient().create(RestApi.class).postDeleteAuction(deleteAuctionRequest);
+        Call<GeneralResponse> call = RestClient.getClient().create(RestApi.class).postDeleteAuction(deleteAuctionRequest);
 
-        request.enqueue(new Callback<GeneralResponse>() {
+        call.enqueue(new Callback<GeneralResponse>() {
             @Override
             public void onResponse(Call<GeneralResponse> call, Response<GeneralResponse> response) {
                 mDialog.dismiss();
@@ -318,24 +433,23 @@ public class AuctionActivity extends AppCompatActivity {
                 df.format((double) btnNewBidValue.getValue()),
                 getIntent().getStringExtra("AuctionId"));
 
-        System.out.println(newBidRequest.getAuctionId() + " " + newBidRequest.getBidderToken() + " " + newBidRequest.getBidderValue());
+        Call<GeneralResponse> call = RestClient.getClient().create(RestApi.class).postNewBid(newBidRequest);
 
-        Call<GeneralResponse> request = RestClient.getClient().create(RestApi.class).postNewBid(newBidRequest);
-
-        request.enqueue(new Callback<GeneralResponse>() {
+        call.enqueue(new Callback<GeneralResponse>() {
             @Override
-            public void onResponse(Call<GeneralResponse> request, Response<GeneralResponse> response) {
+            public void onResponse(Call<GeneralResponse> call, Response<GeneralResponse> response) {
                 mDialog.dismiss();
 
                 if (!response.isSuccessful()){
                     Toast.makeText(AuctionActivity.this, response.body().getStatusMsg(), Toast.LENGTH_SHORT).show();
                     return;
-                }else if (!response.body().getStatusCode().equals("SUCCESS")){
+                }
+                else if (!response.body().getStatusCode().equals("SUCCESS")){
                     Toast.makeText(AuctionActivity.this, response.body().getStatusMsg(), Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                Toast.makeText(AuctionActivity.this, "Your bid is submitted", Toast.LENGTH_LONG).show();
+                Toast.makeText(AuctionActivity.this, "Your bid submitted", Toast.LENGTH_LONG).show();
                 return;
             }
 
@@ -344,6 +458,78 @@ public class AuctionActivity extends AppCompatActivity {
                 mDialog.dismiss();
                 Toast.makeText(AuctionActivity.this, "Unavailable services", Toast.LENGTH_SHORT).show();
                 return;
+            }
+        });
+    }
+
+    private void postRateUser(Auction auction, float rating) {
+        final ProgressDialog mDialog = new ProgressDialog(AuctionActivity.this);
+        mDialog.setMessage("Your rating is submitting");
+        mDialog.show();
+
+        RateUserRequest rateUserRequest = new RateUserRequest(Common.token, null, null, (int) rating);
+
+        Call<GeneralResponse> call = RestClient.getClient().create(RestApi.class).postRateUser(rateUserRequest);
+
+        call.enqueue(new Callback<GeneralResponse>() {
+            @Override
+            public void onResponse(Call<GeneralResponse> call, Response<GeneralResponse> response) {
+                mDialog.dismiss();
+
+                if (!response.isSuccessful()){
+                    Toast.makeText(AuctionActivity.this, response.body().getStatusMsg(), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                else if (!response.body().getStatusCode().equals("SUCCESS")){
+                    Toast.makeText(AuctionActivity.this, response.body().getStatusMsg(), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                Toast.makeText(AuctionActivity.this, "Your rating submitted", Toast.LENGTH_LONG).show();
+                return;
+            }
+
+            @Override
+            public void onFailure(Call<GeneralResponse> call, Throwable t) {
+                mDialog.dismiss();
+                Toast.makeText(AuctionActivity.this, "Unavailable services", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+    }
+
+    private void sentMessage(Auction auction, String messageSubject, String messageBody) {
+        final ProgressDialog mDialog = new ProgressDialog(AuctionActivity.this);
+        mDialog.setMessage("Your message is sending");
+        mDialog.show();
+
+        //TODO: need changes
+        NewMessageRequest newMessageRequest = new NewMessageRequest(Common.token, null, messageSubject, messageBody);
+
+        Call<GeneralResponse> call = RestClient.getClient().create(RestApi.class).postNewMessage(newMessageRequest);
+
+        call.enqueue(new Callback<GeneralResponse>() {
+            @Override
+            public void onResponse(Call<GeneralResponse> call, Response<GeneralResponse> response) {
+                mDialog.dismiss();
+
+                if (!response.isSuccessful()){
+                    Toast.makeText(AuctionActivity.this, response.body().getStatusMsg(), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                else if (!response.body().getStatusCode().equals("SUCCESS")){
+                    Toast.makeText(AuctionActivity.this, response.body().getStatusMsg(), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                Toast.makeText(AuctionActivity.this, "Your message sent", Toast.LENGTH_LONG).show();
+                return;
+            }
+
+            @Override
+            public void onFailure(Call<GeneralResponse> call, Throwable t) {
+                mDialog.dismiss();
+                Toast.makeText(AuctionActivity.this, "Unavailable services", Toast.LENGTH_SHORT).show();
             }
         });
     }
