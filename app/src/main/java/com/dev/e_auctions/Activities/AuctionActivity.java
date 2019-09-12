@@ -10,9 +10,7 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.Editable;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
@@ -205,9 +203,8 @@ public class AuctionActivity extends AppCompatActivity {
         messageSendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO: make sent message call
-                sentMessage(auction, messageSubject.getText().toString(), messageBody.getText().toString());
-                //messagingDialog.dismiss();
+                sendMessage(auction, messageSubject.getText().toString(), messageBody.getText().toString());
+                messagingDialog.dismiss();
             }
         });
         messagingDialog.show();
@@ -441,7 +438,7 @@ public class AuctionActivity extends AppCompatActivity {
                 mDialog.dismiss();
 
                 if (!response.isSuccessful()){
-                    Toast.makeText(AuctionActivity.this, response.body().getStatusMsg(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AuctionActivity.this, Integer.toString(response.code()), Toast.LENGTH_SHORT).show();
                     return;
                 }
                 else if (!response.body().getStatusCode().equals("SUCCESS")){
@@ -463,11 +460,22 @@ public class AuctionActivity extends AppCompatActivity {
     }
 
     private void postRateUser(Auction auction, float rating) {
+        int ratedUserId = 0;
         final ProgressDialog mDialog = new ProgressDialog(AuctionActivity.this);
         mDialog.setMessage("Your rating is submitting");
         mDialog.show();
 
-        RateUserRequest rateUserRequest = new RateUserRequest(Common.token, null, null, (int) rating);
+        if (Common.currentUser.getUsername().equals(auction.getSeller().getUsername())){
+            ratedUserId = auction.getBids().get(0).getBidder().getId();
+        }
+        else if (Common.currentUser.getUsername().equals(auction.getBids().get(0).getBidder().getUsername())){
+            ratedUserId = auction.getSeller().getId();
+        }
+        else{
+            Toast.makeText(AuctionActivity.this, "Sorry, you have not permission to send message for this auction", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        RateUserRequest rateUserRequest = new RateUserRequest(Common.token, ratedUserId, Integer.valueOf(auctionId), (int) rating);
 
         Call<GeneralResponse> call = RestClient.getClient().create(RestApi.class).postRateUser(rateUserRequest);
 
@@ -475,9 +483,9 @@ public class AuctionActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<GeneralResponse> call, Response<GeneralResponse> response) {
                 mDialog.dismiss();
-
+                //TODO: 400
                 if (!response.isSuccessful()){
-                    Toast.makeText(AuctionActivity.this, response.body().getStatusMsg(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AuctionActivity.this, Integer.toString(response.code()), Toast.LENGTH_SHORT).show();
                     return;
                 }
                 else if (!response.body().getStatusCode().equals("SUCCESS")){
@@ -498,13 +506,12 @@ public class AuctionActivity extends AppCompatActivity {
 
     }
 
-    private void sentMessage(Auction auction, String messageSubject, String messageBody) {
+    private void sendMessage(Auction auction, String messageSubject, String messageBody) {
         final ProgressDialog mDialog = new ProgressDialog(AuctionActivity.this);
         mDialog.setMessage("Your message is sending");
         mDialog.show();
 
-        //TODO: need changes
-        NewMessageRequest newMessageRequest = new NewMessageRequest(Common.token, null, messageSubject, messageBody);
+        NewMessageRequest newMessageRequest = new NewMessageRequest(Common.token, Integer.valueOf(auctionId), messageSubject, messageBody);
 
         Call<GeneralResponse> call = RestClient.getClient().create(RestApi.class).postNewMessage(newMessageRequest);
 

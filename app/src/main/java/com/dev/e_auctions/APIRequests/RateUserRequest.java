@@ -5,14 +5,14 @@ import com.dev.e_auctions.Model.User;
 
 public class RateUserRequest {
     private String userToken;
-    private User userToBeRated;
-    private Auction auction;
+    private int userToBeRatedId;
+    private int auctionId;
     private int rate;
 
-    public RateUserRequest(String userToken, User userToBeRated, Auction auction, int rate) {
+    public RateUserRequest(String userToken, int userToBeRatedId, int auctionId, int rate) {
         this.userToken = userToken;
-        this.userToBeRated = userToBeRated;
-        this.auction = auction;
+        this.userToBeRatedId = userToBeRatedId;
+        this.auctionId = auctionId;
         this.rate = rate;
     }
 
@@ -20,12 +20,12 @@ public class RateUserRequest {
         return userToken;
     }
 
-    public User getUserToBeRated() {
-        return userToBeRated;
+    public int getUserToBeRatedId() {
+        return userToBeRatedId;
     }
 
-    public Auction getAuction() {
-        return auction;
+    public int getAuctionId() {
+        return auctionId;
     }
 
     public int getRate() {
@@ -36,12 +36,12 @@ public class RateUserRequest {
         this.userToken = userToken;
     }
 
-    public void setUserToBeRated(User userToBeRated) {
-        this.userToBeRated = userToBeRated;
+    public void setUserToBeRated(int userToBeRatedId) {
+        this.userToBeRatedId = userToBeRatedId;
     }
 
-    public void setAuction(Auction auction) {
-        this.auction = auction;
+    public void setAuction(int auctionId) {
+        this.auctionId = auctionId;
     }
 
     public void setRate(int rate) {
