@@ -139,6 +139,12 @@ public class SignUp extends AppCompatActivity {
 
                                 }
                             });
+                            try {
+                                thread.start();
+                                thread.join();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
 
                             Intent intent = new Intent(SignUp.this, HomeActivity.class);
                             startActivity(intent);

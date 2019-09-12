@@ -16,16 +16,14 @@ public class Auction {
     private List<Category> categories;
     private String imagePath;
 
+
+
     public Integer getId() {
         return id;
     }
 
     public String getNameOfItem() {
         return nameOfItem;
-    }
-
-    public String getImage() {
-        return imagePath;
     }
 
     public User getSeller() {
@@ -62,5 +60,9 @@ public class Auction {
 
     public List<Category> getCategories() {
         return categories;
+    }
+
+    public String getImage() {
+        return imagePath;
     }
 }
