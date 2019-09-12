@@ -54,7 +54,6 @@ public class SignUp extends AppCompatActivity {
                 mDialog.setMessage("Please wait...");
                 mDialog.show();
 
-                //TODO: some check for fields completion
                 if (!edtPassword.getText().toString().equals(edtConfirmPass.getText().toString())){
                     mDialog.dismiss();
                     Toast.makeText(SignUp.this, "Passwords do not match", Toast.LENGTH_LONG).show();
