@@ -163,9 +163,13 @@ public class AuctionActivity extends AppCompatActivity {
         }
         else {
             //auction is inactive
-            if ((Common.currentUser.getUsername().equals(auction.getSeller().getUsername()) ||
+            if (auction.getBids().size()==0){
+                btnFAB.setVisibility(View.GONE);
+            }
+            else if ((Common.currentUser.getUsername().equals(auction.getSeller().getUsername()) ||
                     Common.currentUser.getUsername().equals(auction.getBids().get(0).getBidder().getUsername())) &&
-                    auction.getBids().size() > 0) {
+                    !auction.getBids().isEmpty()) {
+//                    auction.getBids().size() > 0) {
                 //if user is seller or buyer and there are bids
                 btnFAB.setImageDrawable(getResources().getDrawable(R.drawable.ic_chat_bubble_white_24dp));
                 //btnFAB.setOnClickListener(messenger_FAB_ClickListener);
@@ -245,7 +249,7 @@ public class AuctionActivity extends AppCompatActivity {
         boolean isBuyer = false;
         Dialog rankDialog = new Dialog(AuctionActivity.this);
 
-        if (Common.currentUser == null){
+        if (Common.currentUser == null || auction.getBids().size() == 0){
             return;
         }
 

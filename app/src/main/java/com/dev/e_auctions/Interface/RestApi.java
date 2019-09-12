@@ -12,6 +12,7 @@ import com.dev.e_auctions.APIResponses.AllCategoriesResponse;
 import com.dev.e_auctions.APIResponses.AuctionListResponse;
 import com.dev.e_auctions.APIResponses.AuctionResponse;
 import com.dev.e_auctions.APIResponses.GeneralResponse;
+import com.dev.e_auctions.APIResponses.NewAuctionResponse;
 import com.dev.e_auctions.APIResponses.UsersResponse;
 import com.dev.e_auctions.Model.Auction;
 import com.dev.e_auctions.Model.Category;
@@ -47,7 +48,7 @@ public interface RestApi {
     Call<AuctionListResponse> getOpenAuctions();
 
     @POST("auctions/newauction")
-    Call<GeneralResponse> postNewAuction(@Body NewAcutionRequest newAcutionRequest);
+    Call<NewAuctionResponse> postNewAuction(@Body NewAcutionRequest newAcutionRequest);
 
     @GET("auctions/getauctionbyid")
     Call<AuctionResponse> getAuctionsById(@Query("auctionId") String id);
