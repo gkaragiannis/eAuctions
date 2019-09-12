@@ -6,14 +6,15 @@ import com.dev.e_auctions.APIRequests.NewAcutionRequest;
 import com.dev.e_auctions.APIRequests.NewBidRequest;
 import com.dev.e_auctions.APIRequests.NewMessageRequest;
 import com.dev.e_auctions.APIRequests.RateUserRequest;
-import com.dev.e_auctions.APIRequests.SignInRequest;
-import com.dev.e_auctions.APIRequests.SignUpRequest;
+import com.dev.e_auctions.APIRequests.AuthenticateUserRequest;
+import com.dev.e_auctions.APIRequests.RegisterNewUserRequest;
 import com.dev.e_auctions.APIResponses.AllCategoriesResponse;
 import com.dev.e_auctions.APIResponses.AuctionListResponse;
 import com.dev.e_auctions.APIResponses.AuctionResponse;
 import com.dev.e_auctions.APIResponses.GeneralResponse;
 import com.dev.e_auctions.APIResponses.NewAuctionResponse;
-import com.dev.e_auctions.APIResponses.UsersResponse;
+import com.dev.e_auctions.APIResponses.AuthenticateUserResponse;
+import com.dev.e_auctions.APIResponses.RegisterNewUserResponse;
 import com.dev.e_auctions.Model.Auction;
 import com.dev.e_auctions.Model.Category;
 import com.dev.e_auctions.Model.Image;
@@ -31,10 +32,10 @@ public interface RestApi {
 
     /*-- USERS --*/
     @POST("users/authenticateuser")
-    Call<UsersResponse> postSignIn(@Body SignInRequest signInRequest);
+    Call<AuthenticateUserResponse> postSignIn(@Body AuthenticateUserRequest signInRequest);
 
     @POST("users/registernewuser")
-    Call<UsersResponse> postSignUp(@Body SignUpRequest signUpRequest);
+    Call<RegisterNewUserResponse> postSignUp(@Body RegisterNewUserRequest signUpRequest);
 
     @POST("users/rateuser")
     Call<GeneralResponse> postRateUser(@Body RateUserRequest rateUserRequest);

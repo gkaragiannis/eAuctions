@@ -8,8 +8,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.dev.e_auctions.APIRequests.SignInRequest;
-import com.dev.e_auctions.APIResponses.UsersResponse;
+import com.dev.e_auctions.APIRequests.AuthenticateUserRequest;
+import com.dev.e_auctions.APIResponses.AuthenticateUserResponse;
 import com.dev.e_auctions.Client.RestClient;
 import com.dev.e_auctions.Common.Common;
 import com.dev.e_auctions.Interface.RestApi;
@@ -43,18 +43,18 @@ public class SignIn extends AppCompatActivity {
                 mDialog.setMessage("Please wait...");
                 mDialog.show();
 
-                if (edtUsername.getText().toString().equals("") || edtPassword.getText().toString().equals("")){
+                if (edtUsername.getText().toString().isEmpty() || edtPassword.getText().toString().isEmpty()){
                     mDialog.dismiss();
                     Toast.makeText(SignIn.this, "Missing username and/or password", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                SignInRequest signInRequest = new SignInRequest(edtUsername.getText().toString(), edtPassword.getText().toString());
-                Call<UsersResponse> call = RestClient.getClient().create(RestApi.class).postSignIn(signInRequest);
+                AuthenticateUserRequest signInRequest = new AuthenticateUserRequest(edtUsername.getText().toString(), edtPassword.getText().toString());
+                Call<AuthenticateUserResponse> call = RestClient.getClient().create(RestApi.class).postSignIn(signInRequest);
 
-                call.enqueue(new Callback<UsersResponse>() {
+                call.enqueue(new Callback<AuthenticateUserResponse>() {
                     @Override
-                    public void onResponse(Call<UsersResponse> call, Response<UsersResponse> response) {
+                    public void onResponse(Call<AuthenticateUserResponse> call, Response<AuthenticateUserResponse> response) {
                         //To disappear progressDialog
                         mDialog.dismiss();
 
@@ -80,7 +80,7 @@ public class SignIn extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onFailure(Call<UsersResponse> call, Throwable t) {
+                    public void onFailure(Call<AuthenticateUserResponse> call, Throwable t) {
                         mDialog.dismiss();
                         Toast.makeText(SignIn.this, "Unavailable services", Toast.LENGTH_SHORT).show();
                         return;

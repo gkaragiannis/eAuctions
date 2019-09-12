@@ -1,11 +1,11 @@
 package com.dev.e_auctions.APIRequests;
 
-public class SignInRequest {
+public class AuthenticateUserRequest {
 
     private String username;
     private String password;
 
-    public SignInRequest(String username, String password) {
+    public AuthenticateUserRequest(String username, String password) {
         this.username = username;
         this.password = password;
     }

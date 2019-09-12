@@ -9,8 +9,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.dev.e_auctions.APIRequests.SignUpRequest;
-import com.dev.e_auctions.APIResponses.UsersResponse;
+import com.dev.e_auctions.APIRequests.RegisterNewUserRequest;
+import com.dev.e_auctions.APIRequests.AuthenticateUserRequest;
+import com.dev.e_auctions.APIResponses.AuthenticateUserResponse;
+import com.dev.e_auctions.APIResponses.RegisterNewUserResponse;
 import com.dev.e_auctions.Client.RestClient;
 import com.dev.e_auctions.Common.Common;
 import com.dev.e_auctions.Interface.RestApi;
@@ -52,8 +54,25 @@ public class SignUp extends AppCompatActivity {
                 mDialog.setMessage("Please wait...");
                 mDialog.show();
 
+                //TODO: some check for fields completion
+                if (!edtPassword.getText().toString().equals(edtConfirmPass.getText().toString())){
+                    mDialog.dismiss();
+                    Toast.makeText(SignUp.this, "Passwords do not match", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                if (edtUsername.getText().toString().isEmpty() || edtPassword.getText().toString().isEmpty() ||
+                        edtConfirmPass.getText().toString().isEmpty() || edtFirstName.getText().toString().isEmpty() ||
+                        edtLastName.getText().toString().isEmpty() || edtTaxId.getText().toString().isEmpty() ||
+                        edtEmail.getText().toString().isEmpty() || edtPhone.getText().toString().isEmpty() ||
+                        edtAddress.getText().toString().isEmpty() || edtCity.getText().toString().isEmpty() ||
+                        edtCountry.getText().toString().isEmpty()){
+                    mDialog.dismiss();
+                    Toast.makeText(SignUp.this, "All fields are required", Toast.LENGTH_LONG).show();
+                    return;
+                }
+
                 //Some code here for log in
-                final SignUpRequest signUpRequest = new SignUpRequest(edtUsername.getText().toString(),
+                final RegisterNewUserRequest registerNewUserRequest = new RegisterNewUserRequest(edtUsername.getText().toString(),
                         edtPassword.getText().toString(),
                         edtFirstName.getText().toString(),
                         edtLastName.getText().toString(),
@@ -66,11 +85,11 @@ public class SignUp extends AppCompatActivity {
                 );
 
 
-                Call<UsersResponse> call = RestClient.getClient().create(RestApi.class).postSignUp(signUpRequest);
+                Call<RegisterNewUserResponse> call = RestClient.getClient().create(RestApi.class).postSignUp(registerNewUserRequest);
 
-                call.enqueue(new Callback<UsersResponse>() {
+                call.enqueue(new Callback<RegisterNewUserResponse>() {
                     @Override
-                    public void onResponse(Call<UsersResponse> call, Response<UsersResponse> response) {
+                    public void onResponse(Call<RegisterNewUserResponse> call, Response<RegisterNewUserResponse> response) {
                         mDialog.dismiss();
 
                         if (!response.isSuccessful()){
@@ -83,8 +102,44 @@ public class SignUp extends AppCompatActivity {
                         }
                         else {
                             Common.token = response.body().getToken();
-                            Common.currentUser = response.body().getUser();
-                            Toast.makeText(SignUp.this, "Welcome " + edtUsername.getText() + " !", Toast.LENGTH_SHORT).show();
+//                            Common.currentUser = response.body().getUser();
+                            Thread thread = new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    AuthenticateUserRequest authenticateUserRequest = new AuthenticateUserRequest(edtUsername.getText().toString(),edtPassword.getText().toString());
+
+                                    Call<AuthenticateUserResponse> call =  RestClient.getClient().create(RestApi.class).postSignIn(authenticateUserRequest);
+
+                                    call.enqueue(new Callback<AuthenticateUserResponse>() {
+                                        @Override
+                                        public void onResponse(Call<AuthenticateUserResponse> call, Response<AuthenticateUserResponse> response) {
+                                            if (!response.isSuccessful()){
+                                                Toast.makeText(SignUp.this, Integer.toString(response.code()), Toast.LENGTH_SHORT).show();
+                                                return;
+                                            }
+                                            else if (!response.body().getStatusCode().equals("SUCCESS")){
+                                                Toast.makeText(SignUp.this, response.body().getStatusMsg(), Toast.LENGTH_SHORT).show();
+                                                return;
+                                            }
+                                            else{
+                                                Common.currentUser = response.body().getUser();
+                                                Common.token = response.body().getToken();
+                                                mDialog.dismiss();
+                                                Toast.makeText(SignUp.this, "Welcome " + edtUsername.getText() + " !", Toast.LENGTH_SHORT).show();
+                                                return;
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onFailure(Call<AuthenticateUserResponse> call, Throwable t) {
+                                            mDialog.dismiss();
+                                            Toast.makeText(SignUp.this, "Unavailable services", Toast.LENGTH_SHORT).show();
+                                            return;
+                                        }
+                                    });
+
+                                }
+                            });
 
                             Intent intent = new Intent(SignUp.this, HomeActivity.class);
                             startActivity(intent);
@@ -93,7 +148,7 @@ public class SignUp extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onFailure(Call<UsersResponse> call, Throwable t) {
+                    public void onFailure(Call<RegisterNewUserResponse> call, Throwable t) {
                         mDialog.dismiss();
                         Toast.makeText(SignUp.this, "Unavailable services", Toast.LENGTH_SHORT).show();
                         return;
