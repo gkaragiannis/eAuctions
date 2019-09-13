@@ -6,17 +6,7 @@ import java.util.List;
 
 public class AllCategoriesResponse extends GeneralResponse{
 
-    /*private String statusCode;
-    private String statusMsg;*/
     private List<Category> categories;
-
-    /*public String getStatusCode() {
-        return statusCode;
-    }
-
-    public String getStatusMsg() {
-        return statusMsg;
-    }*/
 
     public List<Category> getCategories() {
         return categories;

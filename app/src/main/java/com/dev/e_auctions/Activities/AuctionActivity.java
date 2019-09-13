@@ -123,7 +123,8 @@ public class AuctionActivity extends AppCompatActivity {
         auctionDesc.setText(auction.getItemDescription());
         initializeCategoryListViewData(auction.getCategories());
         rtnBar.setRating(auction.getSeller().getSellerRating().floatValue());
-        sellerRatingNum.setText(Double.toString(auction.getSeller().getSellerRating()));
+        //TODO: fix ratingNum view
+        sellerRatingNum.setText(Double.toString(Math.round(auction.getSeller().getBidderRating())));
         if (auction.getSeller().getSellerRatingVotes()!=null)
             sellerRatingVotes.setText("out of " + Integer.toString(auction.getSeller().getSellerRatingVotes()) + " votes");
         if (progress >= 100)

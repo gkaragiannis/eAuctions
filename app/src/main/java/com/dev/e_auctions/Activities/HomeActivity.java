@@ -301,7 +301,7 @@ public class HomeActivity extends AppCompatActivity
 
             //prepare for call
             if (strings[0].equals("All")) {
-                request = RestClient.getClient().create(RestApi.class).getOpenAuctions();
+                request = RestClient.getClient().create(RestApi.class).getAllAuctions();
             }
             /*else if (strings[0].equals("ByCategory")) {
                 request = RestClient.getClient().create(RestApi.class).getAuctionsByCategory(strings[1]);
@@ -359,9 +359,6 @@ public class HomeActivity extends AppCompatActivity
             if (getAuctionList() != null && getAuctionList().size() > 0){
                 for (Auction auction : getAuctionList()){
                     menuItems.add(new MenuItem(auction.getNameOfItem(), auction.getImage(), auction.getId()));
-                    System.out.println("name: " + auction.getNameOfItem() +
-                            "\n image: " + auction.getImage() +
-                            "\n id: " + auction.getId());
                 }
             }
 

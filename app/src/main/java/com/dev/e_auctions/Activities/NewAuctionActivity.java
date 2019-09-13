@@ -2,6 +2,7 @@ package com.dev.e_auctions.Activities;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -19,8 +20,12 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.dev.e_auctions.APIRequests.NewAcutionRequest;
 import com.dev.e_auctions.APIResponses.AllCategoriesResponse;
+import com.dev.e_auctions.APIResponses.GeneralResponse;
+import com.dev.e_auctions.APIResponses.NewAuctionResponse;
 import com.dev.e_auctions.Client.RestClient;
+import com.dev.e_auctions.Common.Common;
 import com.dev.e_auctions.Interface.RestApi;
 import com.dev.e_auctions.Model.Category;
 import com.dev.e_auctions.R;
@@ -28,8 +33,12 @@ import com.dev.e_auctions.R;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
+import pl.polak.clicknumberpicker.ClickNumberPickerView;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -42,9 +51,10 @@ public class NewAuctionActivity extends AppCompatActivity {
     private int day, month, year;
     private boolean[] checkItems;
     private String[] categories;
+    private int[] categoryIds;
     private static final int PICK_IMAGE_REQUEST = 777;
     private Bitmap bitmap;
-
+    private ClickNumberPickerView btnNewBidStartingPrice;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,9 +64,19 @@ public class NewAuctionActivity extends AppCompatActivity {
         edtTextCategory = (EditText) findViewById(R.id.newAuctionCategory);
         edtTextCategory.setOnClickListener(CategoryClickListener);
         edtTextDescription = (EditText) findViewById(R.id.newAuctionDescription);
-        newAuctionImage = (ImageView) findViewById(R.id.newAuctionImage);
 
-        //Set Calendary elements
+        newAuctionImage = (ImageView) findViewById(R.id.newAuctionImage);
+        Button btnLoadImage = (Button) findViewById(R.id.btnLoadImage);
+        btnLoadImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selectImage();
+            }
+        });
+
+        btnNewBidStartingPrice = (ClickNumberPickerView) findViewById(R.id.btnNewBidStartingPrice);
+
+        //Set Calendar elements
         day = mCalendar.get(Calendar.DAY_OF_MONTH);
         month = mCalendar.get(Calendar.MONTH);
         year = mCalendar.get(Calendar.YEAR);
@@ -66,15 +86,14 @@ public class NewAuctionActivity extends AppCompatActivity {
         edtTextEndDate = (EditText) findViewById(R.id.newAuctionEndDate);
         edtTextEndDate.setOnClickListener(EndDateClickListener);
 
-        Button btnLoadImage = (Button) findViewById(R.id.btnLoadImage);
-        btnLoadImage.setOnClickListener(new View.OnClickListener() {
+        Button btnSubmitAuction = (Button) findViewById(R.id.btnSubmitNewAuction);
+        btnSubmitAuction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                selectImage();
+                submitAuction();
             }
         });
-
-        Button btnSubmitAuction = (Button) findViewById(R.id.btnSubmitNewAuction);
+//        btnSubmitAuction.setOnClickListener(SubmitAuctionClickListener);
         /*btnSubmitAuction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -156,28 +175,91 @@ public class NewAuctionActivity extends AppCompatActivity {
             }
         });*/
 
-        Call<AllCategoriesResponse> request = RestClient.getClient().create(RestApi.class).getCategories();
-        request.enqueue(new Callback<AllCategoriesResponse>() {
+        getCategories();
+
+    }
+
+    //TODO: complete submitAuction
+    private void submitAuction() {
+        final int[] auctionId = null;
+        List<Category> itemCategories = new ArrayList<>();
+
+        final ProgressDialog mDialog = new ProgressDialog(NewAuctionActivity.this);
+        mDialog.setMessage("Please wait...");
+        mDialog.show();
+
+        for (int position = 0; position < categories.length; position++){
+            if (checkItems[position] == true){
+                itemCategories.add(new Category(categoryIds[position], categories[position]));
+            }
+        }
+
+        DecimalFormat df = new DecimalFormat("#.00");
+        double initialPrice = Math.round(btnNewBidStartingPrice.getValue()*100)/100;
+        NewAcutionRequest newAcutionRequest = new NewAcutionRequest(Common.token,
+                edtTextName.getText().toString(),
+                itemCategories,
+                edtTextStartingDate.getText().toString(),
+                edtTextEndDate.getText().toString(),
+                edtTextDescription.getText().toString(),
+                initialPrice);
+
+        Call<NewAuctionResponse> call = RestClient.getClient().create(RestApi.class).postNewAuction(newAcutionRequest);
+
+        call.enqueue(new Callback<NewAuctionResponse>() {
             @Override
-            public void onResponse(Call<AllCategoriesResponse> request, Response<AllCategoriesResponse> response) {
+            public void onResponse(Call<NewAuctionResponse> call, Response<NewAuctionResponse> response) {
+                if (!response.isSuccessful()){
+                    Toast.makeText(NewAuctionActivity.this, Integer.toString(response.code()), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                else if (!response.body().getStatusMsg().equals("SUCCESS")){
+                    Toast.makeText(NewAuctionActivity.this, response.body().getStatusMsg(), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                else{
+                    auctionId[0] = response.body().getAuctionId();
+                    System.out.println("New auction with id=" + auctionId[0]);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<NewAuctionResponse> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private void getCategories() {
+        Call<AllCategoriesResponse> call = RestClient.getClient().create(RestApi.class).getCategories();
+
+        call.enqueue(new Callback<AllCategoriesResponse>() {
+            @Override
+            public void onResponse(Call<AllCategoriesResponse> call, Response<AllCategoriesResponse> response) {
 
                 if (!response.isSuccessful()){
                     Toast.makeText(NewAuctionActivity.this, Integer.toString(response.code()), Toast.LENGTH_SHORT).show();
                     return;
                 }
+                else if (response.body().getStatusMsg().equals("SUCCESS")){
+                    Toast.makeText(NewAuctionActivity.this, response.body().getStatusMsg(), Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
                 categories = new String[response.body().getCategories().size()];
+                categoryIds = new int[response.body().getCategories().size()];
                 checkItems = new boolean[response.body().getCategories().size()];
                 int position = 0;
                 for (Category category : response.body().getCategories()){
                     categories[position] = category.getCategoryName();
+                    categoryIds[position] = category.getCategoryId();
                     checkItems[position] = false;
                     position++;
                 }
             }
 
             @Override
-            public void onFailure(Call<AllCategoriesResponse> request, Throwable t) {
+            public void onFailure(Call<AllCategoriesResponse> call, Throwable t) {
                 Toast.makeText(NewAuctionActivity.this, "Unavailable services", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -187,7 +269,6 @@ public class NewAuctionActivity extends AppCompatActivity {
     View.OnClickListener CategoryClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-
 
             AlertDialog.Builder alertDialog = new AlertDialog.Builder(NewAuctionActivity.this);
             alertDialog.setCancelable(false)
@@ -298,4 +379,5 @@ public class NewAuctionActivity extends AppCompatActivity {
         byte[] imgByte = byteArrayOutputStream.toByteArray();
         return Base64.encodeToString(imgByte, Base64.DEFAULT);
     }
+
 }

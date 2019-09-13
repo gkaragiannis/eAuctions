@@ -69,7 +69,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     @Override
     public void onBindViewHolder(@NonNull MenuItemViewHolder menuItemViewHolder, int position) {
         final MenuItem currentMenuListItem = mMenuItemList.get(position);
-
+        System.out.println(currentMenuListItem.getImage());
         Picasso.get().load(currentMenuListItem.getImage()).into(menuItemViewHolder.imgMenuItemView);
         menuItemViewHolder.txtMenuItemName.setText(currentMenuListItem.getName());
         menuItemViewHolder.setMenuItemClickListener(new MenuItemClickListener() {

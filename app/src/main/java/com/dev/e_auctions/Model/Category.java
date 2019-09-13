@@ -5,6 +5,11 @@ public class Category {
     private String categoryName;
     private String imagePath;
 
+    public Category(Integer categoryId, String categoryName) {
+        this.categoryId = categoryId;
+        this.categoryName = categoryName;
+    }
+
     public Integer getCategoryId() {
         return categoryId;
     }
