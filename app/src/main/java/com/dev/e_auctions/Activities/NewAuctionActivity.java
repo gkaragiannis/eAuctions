@@ -3,6 +3,7 @@ package com.dev.e_auctions.Activities;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
+import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -18,6 +19,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.dev.e_auctions.APIRequests.NewAcutionRequest;
@@ -38,23 +40,27 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import pl.polak.clicknumberpicker.ClickNumberPickerListener;
 import pl.polak.clicknumberpicker.ClickNumberPickerView;
+import pl.polak.clicknumberpicker.PickerClickType;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static android.app.TimePickerDialog.*;
 
 public class NewAuctionActivity extends AppCompatActivity {
 
     private Calendar mCalendar = Calendar.getInstance();
     private EditText edtTextName, edtTextDescription, edtTextCategory, edtTextStartingDate, edtTextEndDate;
     private ImageView newAuctionImage;
-    private int day, month, year;
+    private int day, month, year, hourOfDay, minute;
     private boolean[] checkItems;
     private String[] categories;
     private int[] categoryIds;
     private static final int PICK_IMAGE_REQUEST = 777;
     private Bitmap bitmap;
-    private ClickNumberPickerView btnNewBidStartingPrice;
+    private ClickNumberPickerView btnNewAuctionStartingPrice;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,12 +80,15 @@ public class NewAuctionActivity extends AppCompatActivity {
             }
         });
 
-        btnNewBidStartingPrice = (ClickNumberPickerView) findViewById(R.id.btnNewBidStartingPrice);
+        btnNewAuctionStartingPrice = (ClickNumberPickerView) findViewById(R.id.btnNewAuctionStartingPrice);
+
 
         //Set Calendar elements
         day = mCalendar.get(Calendar.DAY_OF_MONTH);
         month = mCalendar.get(Calendar.MONTH);
         year = mCalendar.get(Calendar.YEAR);
+        hourOfDay = mCalendar.get(Calendar.HOUR_OF_DAY);
+        minute = mCalendar.get(Calendar.MINUTE);
 
         edtTextStartingDate = (EditText) findViewById(R.id.newAuctionStartingDate);
         edtTextStartingDate.setOnClickListener(StartingDateClickListener);
@@ -195,7 +204,7 @@ public class NewAuctionActivity extends AppCompatActivity {
         }
 
         DecimalFormat df = new DecimalFormat("#.00");
-        double initialPrice = Math.round(btnNewBidStartingPrice.getValue()*100)/100;
+        double initialPrice = Math.round(btnNewAuctionStartingPrice.getValue()*100)/100;
         NewAcutionRequest newAcutionRequest = new NewAcutionRequest(Common.token,
                 edtTextName.getText().toString(),
                 itemCategories,
@@ -319,6 +328,17 @@ public class NewAuctionActivity extends AppCompatActivity {
     View.OnClickListener StartingDateClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+
+            TimePickerDialog.OnTimeSetListener timeSetListener = new OnTimeSetListener() {
+                @Override
+                public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                    String start = edtTextStartingDate.getText().toString();
+                    edtTextStartingDate.setText(start + " " + hourOfDay + ":" + minute);
+                }
+            };
+            TimePickerDialog timePickerDialog = new TimePickerDialog(NewAuctionActivity.this, timeSetListener, hourOfDay, minute, true);
+            timePickerDialog.show();
+
             DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
                 @Override
                 public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
@@ -326,7 +346,6 @@ public class NewAuctionActivity extends AppCompatActivity {
                     edtTextStartingDate.setText(year + "-" + month + "-" + dayOfMonth);
                 }
             };
-
             DatePickerDialog datePickerDialog = new DatePickerDialog(NewAuctionActivity.this, dateSetListener, year, month, day);
             datePickerDialog.show();
         }
@@ -335,6 +354,17 @@ public class NewAuctionActivity extends AppCompatActivity {
     View.OnClickListener EndDateClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+
+            TimePickerDialog.OnTimeSetListener timeSetListener = new OnTimeSetListener() {
+                @Override
+                public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                    String end = edtTextEndDate.getText().toString();
+                    edtTextEndDate.setText(end + " " + hourOfDay + ":" + minute);
+                }
+            };
+            TimePickerDialog timePickerDialog = new TimePickerDialog(NewAuctionActivity.this, timeSetListener, hourOfDay, minute, true);
+            timePickerDialog.show();
+
             DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
                 @Override
                 public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
