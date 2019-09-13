@@ -241,7 +241,7 @@ public class NewAuctionActivity extends AppCompatActivity {
                     Toast.makeText(NewAuctionActivity.this, Integer.toString(response.code()), Toast.LENGTH_SHORT).show();
                     return;
                 }
-                else if (response.body().getStatusMsg().equals("SUCCESS")){
+                else if (!response.body().getStatusCode().equals("SUCCESS")){
                     Toast.makeText(NewAuctionActivity.this, response.body().getStatusMsg(), Toast.LENGTH_SHORT).show();
                     return;
                 }
