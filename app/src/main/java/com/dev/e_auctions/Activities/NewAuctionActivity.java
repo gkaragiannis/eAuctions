@@ -36,8 +36,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import pl.polak.clicknumberpicker.ClickNumberPickerListener;
@@ -99,7 +101,11 @@ public class NewAuctionActivity extends AppCompatActivity {
         btnSubmitAuction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                submitAuction();
+                try {
+                    submitAuction();
+                } catch (Throwable throwable) {
+                    throwable.printStackTrace();
+                }
             }
         });
 //        btnSubmitAuction.setOnClickListener(SubmitAuctionClickListener);
@@ -189,7 +195,7 @@ public class NewAuctionActivity extends AppCompatActivity {
     }
 
     //TODO: complete submitAuction
-    private void submitAuction() {
+    private void submitAuction() throws Throwable {
         final int[] auctionId = null;
         List<Category> itemCategories = new ArrayList<>();
 
@@ -197,6 +203,30 @@ public class NewAuctionActivity extends AppCompatActivity {
         mDialog.setMessage("Please wait...");
         mDialog.show();
 
+        //Validate data
+        if (edtTextName.getText().toString().isEmpty() || edtTextCategory.getText().toString().isEmpty() ||
+                edtTextStartingDate.getText().toString().isEmpty() || edtTextEndDate.getText().toString().isEmpty() ||
+                edtTextDescription.getText().toString().isEmpty()){
+            mDialog.dismiss();
+            Toast.makeText(NewAuctionActivity.this, "All fields are required", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        Date startingDate = new SimpleDateFormat("yyyy-mm-dd HH:mm").parse(edtTextStartingDate.getText().toString());
+        Date endingDate = new SimpleDateFormat("yyyy-mm-dd HH:mm").parse(edtTextEndDate.getText().toString());
+        Date currentDate = new Date();
+        if (endingDate.compareTo(startingDate) < 0){
+            mDialog.dismiss();
+            Toast.makeText(NewAuctionActivity.this, "Ending Date should be later than Starting Date", Toast.LENGTH_LONG).show();
+            return;
+        }
+        else if (currentDate.compareTo(startingDate) > 0){
+            mDialog.dismiss();
+            Toast.makeText(NewAuctionActivity.this, "Starting Date should be later than Current Date", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        //prepare new auction request
         for (int position = 0; position < categories.length; position++){
             if (checkItems[position] == true){
                 itemCategories.add(new Category(categoryIds[position], categories[position]));
@@ -222,7 +252,7 @@ public class NewAuctionActivity extends AppCompatActivity {
                     Toast.makeText(NewAuctionActivity.this, Integer.toString(response.code()), Toast.LENGTH_SHORT).show();
                     return;
                 }
-                else if (!response.body().getStatusMsg().equals("SUCCESS")){
+                else if (!response.body().getStatusCode().equals("SUCCESS")){
                     Toast.makeText(NewAuctionActivity.this, response.body().getStatusMsg(), Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -234,9 +264,12 @@ public class NewAuctionActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<NewAuctionResponse> call, Throwable t) {
-
+                Toast.makeText(NewAuctionActivity.this, "Unavailable services", Toast.LENGTH_SHORT).show();
+                return;
             }
         });
+
+
     }
 
     private void getCategories() {
