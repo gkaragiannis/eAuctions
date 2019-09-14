@@ -12,9 +12,9 @@ public class NewAcutionRequest {
     private String startedTime;
     private String endingTime;
     private String itemDescription;
-    private Double initialPrice;
+    private String initialPrice;
 
-    public NewAcutionRequest(String token, String nameOfItem, List<Category> categories, String startedTime, String endingTime, String itemDescription, Double initialPrice) {
+    public NewAcutionRequest(String token, String nameOfItem, List<Category> categories, String startedTime, String endingTime, String itemDescription, String initialPrice) {
         this.token = token;
         this.nameOfItem = nameOfItem;
         this.categories = categories;

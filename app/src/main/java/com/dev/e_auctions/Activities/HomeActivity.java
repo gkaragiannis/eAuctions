@@ -241,7 +241,10 @@ public class HomeActivity extends AppCompatActivity
         } else if (id == R.id.nav_category) {
             new HttpRequestCategoriesTask().execute();
             toolbar.setTitle(R.string.category);
-        } else if (id == R.id.nav_new_auction) {
+        } else if (id == R.id.nav_messages) {
+            Intent mailbox = new Intent(HomeActivity.this, MailBoxActivity.class);
+            startActivity(mailbox);
+        }else if (id == R.id.nav_new_auction) {
             startActivity(new Intent(HomeActivity.this, NewAuctionActivity.class));
         } else if (id == R.id.nav_my_auction) {
             new HttpRequestAuctionsTask().execute("BySellerId");
