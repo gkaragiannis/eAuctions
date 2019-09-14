@@ -124,7 +124,7 @@ public class AuctionActivity extends AppCompatActivity {
         initializeCategoryListViewData(auction.getCategories());
         rtnBar.setRating(auction.getSeller().getSellerRating().floatValue());
         //TODO: fix ratingNum view
-        sellerRatingNum.setText(Double.toString(Math.round(auction.getSeller().getBidderRating())));
+        sellerRatingNum.setText(Double.toString(auction.getSeller().getSellerRating()));
         if (auction.getSeller().getSellerRatingVotes()!=null)
             sellerRatingVotes.setText("out of " + Integer.toString(auction.getSeller().getSellerRatingVotes()) + " votes");
         if (progress >= 100)
@@ -337,7 +337,7 @@ public class AuctionActivity extends AppCompatActivity {
         }
     };
 
-    //rest call methods
+    //REST call methods
     private void getAuction(){
         final ProgressDialog mDialog = new ProgressDialog(AuctionActivity.this);
 
