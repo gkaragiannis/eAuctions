@@ -10,6 +10,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -23,6 +24,7 @@ import android.widget.ImageView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.dev.e_auctions.APIRequests.DeleteAuctionRequest;
 import com.dev.e_auctions.APIRequests.NewAcutionRequest;
 import com.dev.e_auctions.APIResponses.AllCategoriesResponse;
 import com.dev.e_auctions.APIResponses.GeneralResponse;
@@ -35,10 +37,9 @@ import com.dev.e_auctions.R;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.text.DecimalFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -66,7 +67,9 @@ public class NewAuctionActivity extends AppCompatActivity {
     private static final int PICK_IMAGE_REQUEST = 777;
     private Bitmap bitmap;
     private ClickNumberPickerView btnNewAuctionStartingPrice;
-    private String filePath;
+    private String[] filePath;
+    private Uri selectedImage;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -121,10 +124,10 @@ public class NewAuctionActivity extends AppCompatActivity {
     //TODO: complete submitAuction
     private void submitAuction() throws Throwable {
         List<Category> itemCategories = new ArrayList<>();
-        String auctionId = null;
-        boolean imageUploaded;
+        /*String auctionId = null;
+        boolean imageUploaded;*/
 
-        final ProgressDialog mDialog = new ProgressDialog(NewAuctionActivity.this);
+        ProgressDialog mDialog = new ProgressDialog(NewAuctionActivity.this);
         mDialog.setMessage("Please wait...");
         mDialog.show();
 
@@ -162,15 +165,14 @@ public class NewAuctionActivity extends AppCompatActivity {
                 df.format((double) btnNewAuctionStartingPrice.getValue()));
 
         postNewAuction(newAcutionRequest);
-        if (Common.auctionId == null){
-            mDialog.dismiss();
-            Toast.makeText(NewAuctionActivity.this, "New Auction created successfully with Id: " + auctionId, Toast.LENGTH_SHORT).show();
-            return;
-        }
+//        new HttpPostNewAuctionTask().execute(newAcutionRequest);
+//        System.out.println("from Common Id: " + Common.auctionId);
 
-        imageUploaded = postUploadImage(Common.auctionId, filePath);
-        if (imageUploaded)
+
+//        imageUploaded = postUploadImage(Common.auctionId, filePath);
+        /*if (imageUploaded)
             System.out.println("Alleluia");
+        mDialog.dismiss();*/
         mDialog.dismiss();
     }
 
@@ -213,10 +215,11 @@ public class NewAuctionActivity extends AppCompatActivity {
     private void postNewAuction(NewAcutionRequest newAcutionRequest) {
 
         Call<NewAuctionResponse> call = RestClient.getClient().create(RestApi.class).postNewAuction(newAcutionRequest);
-        System.out.println("Trying auction");
+
         call.enqueue(new Callback<NewAuctionResponse>() {
             @Override
             public void onResponse(Call<NewAuctionResponse> call, Response<NewAuctionResponse> response) {
+                boolean mitsos;
                 if (!response.isSuccessful()){
                     Toast.makeText(NewAuctionActivity.this, response.body().getStatusMsg(), Toast.LENGTH_SHORT).show();
                     return;
@@ -227,6 +230,8 @@ public class NewAuctionActivity extends AppCompatActivity {
                 }
 
                 Common.auctionId = Integer.toString(response.body().getAuctionId());
+                System.out.println("New Auction created successfully with Id: " + Common.auctionId);
+                mitsos = postUploadImage();
             }
 
             @Override
@@ -237,12 +242,12 @@ public class NewAuctionActivity extends AppCompatActivity {
         });
     }
 
-    private boolean postUploadImage(String auctionId, String filePath) {
-        File file = new File(filePath);
+    private boolean postUploadImage() {
+        File file = new File(filePath[0]);
         System.out.println("Starting image upload");
         RequestBody imagePart = RequestBody.create(MediaType.parse("image/*"), file);
         RequestBody tokenPart = RequestBody.create(MediaType.parse("text/plain"), Common.token);
-        RequestBody auctionIdPart = RequestBody.create(MediaType.parse("text/plain"), auctionId);
+        RequestBody auctionIdPart = RequestBody.create(MediaType.parse("text/plain"), Common.auctionId);
         Call<GeneralResponse> call = RestClient.getClient().create(RestApi.class).postUploadImage(imagePart, tokenPart, auctionIdPart);
 
         call.enqueue(new Callback<GeneralResponse>() {
@@ -251,10 +256,12 @@ public class NewAuctionActivity extends AppCompatActivity {
                 System.out.println("On response image upload");
                 if (!response.isSuccessful()){
                     Toast.makeText(NewAuctionActivity.this, Integer.toString(response.code()), Toast.LENGTH_LONG).show();
+                    postDelete();
                     return;
                 }
                 else if (!response.body().getStatusCode().equals("SUCCESS")){
                     Toast.makeText(NewAuctionActivity.this, response.body().getStatusMsg(), Toast.LENGTH_LONG).show();
+                    postDelete();
                     return;
                 }
 
@@ -265,11 +272,50 @@ public class NewAuctionActivity extends AppCompatActivity {
             public void onFailure(Call<GeneralResponse> call, Throwable t) {
                 System.out.println("On failure image upload");
                 Toast.makeText(NewAuctionActivity.this, "Unavailable services", Toast.LENGTH_SHORT).show();
+                postDelete();
                 return;
             }
         });
         return true;
     }
+
+    private void postDelete() {
+        final ProgressDialog mDialog = new ProgressDialog(NewAuctionActivity.this);
+        mDialog.setMessage("Αuction is being deleted");
+        mDialog.show();
+
+        DeleteAuctionRequest deleteAuctionRequest = new DeleteAuctionRequest(Common.auctionId, Common.token);
+
+        Call<GeneralResponse> call = RestClient.getClient().create(RestApi.class).postDeleteAuction(deleteAuctionRequest);
+
+        call.enqueue(new Callback<GeneralResponse>() {
+            @Override
+            public void onResponse(Call<GeneralResponse> call, Response<GeneralResponse> response) {
+                mDialog.dismiss();
+
+                if (!response.isSuccessful()){
+                    Toast.makeText(NewAuctionActivity.this, Integer.toString(response.code()), Toast.LENGTH_SHORT).show();
+                    return;
+                }else if (!response.body().getStatusCode().equals("SUCCESS")){
+                    Toast.makeText(NewAuctionActivity.this, response.body().getStatusMsg(), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                Toast.makeText(NewAuctionActivity.this, "Auction didn't created due to network error.", Toast.LENGTH_LONG).show();
+                /*Intent intent = new Intent(NewAuctionActivity.this, HomeActivity.class);
+                startActivity(intent);
+                finish();*/
+                return;
+
+            }
+
+            @Override
+            public void onFailure(Call<GeneralResponse> call, Throwable t) {
+
+            }
+        });
+    }
+
 
     View.OnClickListener CategoryClickListener = new View.OnClickListener() {
         @Override
@@ -383,7 +429,7 @@ public class NewAuctionActivity extends AppCompatActivity {
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);*/
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setType("image/*");
-        String[] mimeTypes = {"image/jpeg", "image/png"};
+        String[] mimeTypes = {"image/jpeg", "image/jpg"};
         intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
         startActivityForResult(intent,GALLERY_REQUEST_CODE);
     }
@@ -406,12 +452,20 @@ public class NewAuctionActivity extends AppCompatActivity {
         }*/
         if (requestCode == GALLERY_REQUEST_CODE && resultCode == RESULT_OK && data != null && data.getData() != null){
             //display image
-            Uri selectedImage = data.getData();
+            selectedImage = data.getData();
             newAuctionImage.setImageURI(selectedImage);
             newAuctionImage.setVisibility(View.VISIBLE);
 
             //retrieve absolute path
-            filePath = MediaStore.Images.Media.DATA;
+            filePath = new String[]{MediaStore.Images.Media.DATA};
+            Cursor cursor = getContentResolver().query(selectedImage, filePath, null, null, null);
+            cursor.moveToFirst();
+            //Get the column index of MediaStore.Images.Media.DATA
+            int columnIndex = cursor.getColumnIndex(filePath[0]);
+            //Gets the String value in the column
+            String imgDecodableString = cursor.getString(columnIndex);
+            cursor.close();
+            System.out.println(filePath[0]);
             /*Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null, null);
             cursor.moveToFirst();
             int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
@@ -429,4 +483,91 @@ public class NewAuctionActivity extends AppCompatActivity {
         return Base64.encodeToString(imgByte, Base64.DEFAULT);
     }
 
+    private class HttpPostNewAuctionTask extends AsyncTask<NewAcutionRequest, Void, NewAuctionResponse> {
+
+        @Override
+        protected NewAuctionResponse doInBackground(NewAcutionRequest... newAcutionRequests) {
+            Call<NewAuctionResponse> call = RestClient.getClient().create(RestApi.class).postNewAuction(newAcutionRequests[0]);
+            Response<NewAuctionResponse> response = null;
+            try {
+                response = call.execute();
+
+                if (!response.isSuccessful()){
+                    Toast.makeText(NewAuctionActivity.this, response.body().getStatusMsg(), Toast.LENGTH_SHORT).show();
+                    return null;
+                }
+                else if (!response.body().getStatusCode().equals("SUCCESS")){
+                    Toast.makeText(NewAuctionActivity.this, response.body().getStatusMsg(), Toast.LENGTH_SHORT).show();
+                    return null;
+                }
+                else{
+                    Common.auctionId = Integer.toString(response.body().getAuctionId());
+                    System.out.println("from response Id: " + response.body().getAuctionId());
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return response.body();
+        }
+
+        @Override
+        protected void onPostExecute(NewAuctionResponse newAuctionResponse) {
+            new HttpPostUploadImageTask().execute(newAuctionResponse);
+        }
+    }
+
+
+    private class HttpPostUploadImageTask extends  AsyncTask<NewAuctionResponse, Void, GeneralResponse>{
+        @Override
+        protected GeneralResponse doInBackground(NewAuctionResponse... newAuctionResponses) {
+            Response<GeneralResponse> response = null;
+            File file = new File(filePath[0]);
+            System.out.println("Starting image upload");
+            RequestBody imagePart = RequestBody.create(MediaType.parse("image/*"), file);
+            RequestBody tokenPart = RequestBody.create(MediaType.parse("text/plain"), Common.token);
+            RequestBody auctionIdPart = RequestBody.create(MediaType.parse("text/plain"), Integer.toString(newAuctionResponses[0].getAuctionId()));
+            Call<GeneralResponse> call = RestClient.getClient().create(RestApi.class).postUploadImage(imagePart, tokenPart, auctionIdPart);
+
+            try {
+                response = call.execute();
+
+                if (!response.isSuccessful()){
+                    Toast.makeText(NewAuctionActivity.this, Integer.toString(response.code()), Toast.LENGTH_LONG).show();
+                    System.out.println("Not successgul call " + Integer.toString(response.code()));
+                    return null;
+                }
+                else if (!response.body().getStatusCode().equals("SUCCESS")){
+                    Toast.makeText(NewAuctionActivity.this, response.body().getStatusMsg(), Toast.LENGTH_LONG).show();
+                    System.out.println(response.body().getStatusMsg());
+                    return null;
+                }
+                else {
+                    Toast.makeText(NewAuctionActivity.this, "New Auction created successfully with Id: " + Common.auctionId, Toast.LENGTH_SHORT).show();
+
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            if (response == null)
+                return null;
+            else
+                return response.body();
+        }
+
+        @Override
+        protected void onPostExecute(GeneralResponse generalResponse) {
+            if (generalResponse == null) {
+//                new HttpPostDeleteAuctionTask.execute();
+                System.out.println("Skata");
+            }
+            else if (generalResponse.getStatusCode().equals("SUCCESS")) {
+                System.out.println("Aliluia");
+            }
+            else
+                System.out.println("Skata");
+        }
+    }
 }

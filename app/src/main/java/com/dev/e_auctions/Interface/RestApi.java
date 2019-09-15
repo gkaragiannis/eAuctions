@@ -21,11 +21,14 @@ import com.dev.e_auctions.Model.Image;
 
 import java.util.List;
 
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.GET;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.Part;
 import retrofit2.http.Query;
 
 public interface RestApi {
@@ -74,18 +77,10 @@ public interface RestApi {
     @POST("/message/newmessage")
     Call<GeneralResponse> postNewMessage(@Body NewMessageRequest newMessageRequest);
 
+    /*-- IMAGES --*/
+    @Multipart
+    @POST("/image/upload")
+    Call<GeneralResponse> postUploadImage (@Part("file") RequestBody file , @Part("token") RequestBody token, @Part("auctionId") RequestBody auctionId);
 
-    //old
-    @GET("auctions")
-    Call<List<Auction>> getAuctionsByCategory(@Query("category") String categoryString);
-
-    @GET("auctions")
-    Call<List<Auction>> getAuctionsByBidderId(@Query("bidder_id") String tokenString);
-
-    @POST("categories")
-    Call<List<Category>> postCategories(@Body List<Category> categoryList);
-
-    @POST("scripts/uploadImage.php")
-    Call<Image>  uploadImage(@Field("title") String title, @Field("image") String image);
 
 }
