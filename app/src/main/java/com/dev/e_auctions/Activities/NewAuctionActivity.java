@@ -6,9 +6,11 @@ import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -23,6 +25,7 @@ import android.widget.Toast;
 
 import com.dev.e_auctions.APIRequests.NewAcutionRequest;
 import com.dev.e_auctions.APIResponses.AllCategoriesResponse;
+import com.dev.e_auctions.APIResponses.GeneralResponse;
 import com.dev.e_auctions.APIResponses.NewAuctionResponse;
 import com.dev.e_auctions.Client.RestClient;
 import com.dev.e_auctions.Common.Common;
@@ -31,13 +34,18 @@ import com.dev.e_auctions.Model.Category;
 import com.dev.e_auctions.R;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 import pl.polak.clicknumberpicker.ClickNumberPickerView;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -58,6 +66,7 @@ public class NewAuctionActivity extends AppCompatActivity {
     private static final int PICK_IMAGE_REQUEST = 777;
     private Bitmap bitmap;
     private ClickNumberPickerView btnNewAuctionStartingPrice;
+    private String filePath;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -110,8 +119,9 @@ public class NewAuctionActivity extends AppCompatActivity {
 
     //TODO: complete submitAuction
     private void submitAuction() throws Throwable {
-        String auctionId = null;
         List<Category> itemCategories = new ArrayList<>();
+        String auctionId = null;
+        boolean imageUploaded;
 
         final ProgressDialog mDialog = new ProgressDialog(NewAuctionActivity.this);
         mDialog.setMessage("Please wait...");
@@ -126,17 +136,11 @@ public class NewAuctionActivity extends AppCompatActivity {
             return;
         }
 
-        Date startingDate = new SimpleDateFormat("yyyy-mm-dd HH:MM").parse(edtTextStartingDate.getText().toString());
-        Date endingDate = new SimpleDateFormat("yyyy-mm-dd HH:MM").parse(edtTextEndDate.getText().toString());
-        Date currentDate = new Date();
-        if (endingDate.compareTo(startingDate) < 0){
+        Date startingDate = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(edtTextStartingDate.getText().toString());
+        Date endingDate = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(edtTextEndDate.getText().toString());
+        if (startingDate.getTime() > endingDate.getTime()){
             mDialog.dismiss();
             Toast.makeText(NewAuctionActivity.this, "Ending Date should be later than Starting Date", Toast.LENGTH_LONG).show();
-            return;
-        }
-        else if (currentDate.compareTo(startingDate) > 0){
-            mDialog.dismiss();
-            Toast.makeText(NewAuctionActivity.this, "Starting Date should be later than Current Date", Toast.LENGTH_LONG).show();
             return;
         }
 
@@ -155,71 +159,19 @@ public class NewAuctionActivity extends AppCompatActivity {
                 edtTextStartingDate.getText().toString(),
                 edtTextEndDate.getText().toString(),
                 edtTextDescription.getText().toString(),
-                df.format(btnNewAuctionStartingPrice.getValue()));
+                df.format((double) btnNewAuctionStartingPrice.getValue()));
 
         auctionId = postNewAuction(newAcutionRequest);
-        if (auctionId != null){
-//            postUploadImage(auctionId, )
-        }
-        else{
+        if (auctionId == null){
             mDialog.dismiss();
             return;
         }
-        /*Call<NewAuctionResponse> call = RestClient.getClient().create(RestApi.class).postNewAuction(newAcutionRequest);
 
-        call.enqueue(new Callback<NewAuctionResponse>() {
-            @Override
-            public void onResponse(Call<NewAuctionResponse> call, Response<NewAuctionResponse> response) {
-                if (!response.isSuccessful()){
-                    Toast.makeText(NewAuctionActivity.this, Integer.toString(response.code()), Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                else if (!response.body().getStatusCode().equals("SUCCESS")){
-                    Toast.makeText(NewAuctionActivity.this, response.body().getStatusMsg(), Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                System.out.println(response.body().getAuctionId());
-                auctionId[0] = Integer.toString(response.body().getAuctionId());
-                System.out.println("New auction with id=" + auctionId[0]);
-            }
-
-            @Override
-            public void onFailure(Call<NewAuctionResponse> call, Throwable t) {
-                Toast.makeText(NewAuctionActivity.this, "Unavailable services", Toast.LENGTH_SHORT).show();
-                return;
-            }
-        });*/
-
-
-    }
-
-    private String postNewAuction(NewAcutionRequest newAcutionRequest) {
-        final String[] auctionId = {null};
-        Call<NewAuctionResponse> call = RestClient.getClient().create(RestApi.class).postNewAuction(newAcutionRequest);
-
-        call.enqueue(new Callback<NewAuctionResponse>() {
-            @Override
-            public void onResponse(Call<NewAuctionResponse> call, Response<NewAuctionResponse> response) {
-                if (!response.isSuccessful()){
-                    Toast.makeText(NewAuctionActivity.this, Integer.toString(response.code()), Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                else if (!response.body().getStatusCode().equals("SUCCESS")){
-                    Toast.makeText(NewAuctionActivity.this, response.body().getStatusMsg(), Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                System.out.println(response.body().getAuctionId());
-                auctionId[0] = Integer.toString(response.body().getAuctionId());
-                System.out.println("New auction with id=" + auctionId[0]);
-            }
-
-            @Override
-            public void onFailure(Call<NewAuctionResponse> call, Throwable t) {
-                Toast.makeText(NewAuctionActivity.this, "Unavailable services", Toast.LENGTH_SHORT).show();
-                return;
-            }
-        });
-        return auctionId[0];
+        imageUploaded = postUploadImage(auctionId, filePath);
+        mDialog.dismiss();
+        if (imageUploaded)
+            System.out.println("Yeah");
+        Toast.makeText(NewAuctionActivity.this, "New Auction created successfully with Id: " + auctionId, Toast.LENGTH_SHORT).show();
     }
 
     private void getCategories() {
@@ -258,7 +210,57 @@ public class NewAuctionActivity extends AppCompatActivity {
         });
     }
 
+    private String postNewAuction(NewAcutionRequest newAcutionRequest) {
+        final String[] auctionId = {null};
+        Call<NewAuctionResponse> call = RestClient.getClient().create(RestApi.class).postNewAuction(newAcutionRequest);
+        System.out.println("Trying auction");
+        call.enqueue(new Callback<NewAuctionResponse>() {
+            @Override
+            public void onResponse(Call<NewAuctionResponse> call, Response<NewAuctionResponse> response) {
+                if (!response.isSuccessful()){
+                    Toast.makeText(NewAuctionActivity.this, response.body().getStatusMsg(), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                else if (!response.body().getStatusCode().equals("SUCCESS")){
+                    Toast.makeText(NewAuctionActivity.this, response.body().getStatusMsg(), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                System.out.println(response.body().getAuctionId());
+                auctionId[0] = Integer.toString(response.body().getAuctionId());
+            }
 
+            @Override
+            public void onFailure(Call<NewAuctionResponse> call, Throwable t) {
+                Toast.makeText(NewAuctionActivity.this, "Unavailable services", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        });
+        return auctionId[0];
+    }
+
+    private boolean postUploadImage(String auctionId, String filePath) {
+        File file = new File(filePath);
+
+        RequestBody imagePart = RequestBody.create(MediaType.parse("image/*"), file);
+        RequestBody tokenPart = RequestBody.create(MediaType.parse("text/plain"), Common.token);
+        RequestBody auctionIdPart = RequestBody.create(MediaType.parse("text/plain"), auctionId);
+        Call<GeneralResponse> call = RestClient.getClient().create(RestApi.class).postUploadImage(imagePart, tokenPart, auctionIdPart);
+
+        call.enqueue(new Callback<GeneralResponse>() {
+            @Override
+            public void onResponse(Call<GeneralResponse> call, Response<GeneralResponse> response) {
+                if (!response.isSuccessful()){
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GeneralResponse> call, Throwable t) {
+
+            }
+        });
+        return true;
+    }
 
     View.OnClickListener CategoryClickListener = new View.OnClickListener() {
         @Override
@@ -318,7 +320,7 @@ public class NewAuctionActivity extends AppCompatActivity {
                 @Override
                 public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                     String start = edtTextStartingDate.getText().toString();
-                    edtTextStartingDate.setText(start + " " + hourOfDay + ":" + minute);
+                    edtTextStartingDate.setText(start + " " + String.format("%02d",hourOfDay) + ":" + String.format("%02d",minute));
                 }
             };
             TimePickerDialog timePickerDialog = new TimePickerDialog(NewAuctionActivity.this, timeSetListener, hourOfDay, minute, true);
@@ -328,10 +330,11 @@ public class NewAuctionActivity extends AppCompatActivity {
                 @Override
                 public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                     month++;
-                    edtTextStartingDate.setText(year + "-" + month + "-" + dayOfMonth);
+                    edtTextStartingDate.setText(year + "-" + String.format("%02d",month) + "-" + String.format("%02d",dayOfMonth));
                 }
             };
             DatePickerDialog datePickerDialog = new DatePickerDialog(NewAuctionActivity.this, dateSetListener, year, month, day);
+            datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis());
             datePickerDialog.show();
         }
     };
@@ -344,7 +347,7 @@ public class NewAuctionActivity extends AppCompatActivity {
                 @Override
                 public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                     String end = edtTextEndDate.getText().toString();
-                    edtTextEndDate.setText(end + " " + hourOfDay + ":" + minute);
+                    edtTextEndDate.setText(end + " " + String.format("%02d",hourOfDay) + ":" + String.format("%02d",minute));
                 }
             };
             TimePickerDialog timePickerDialog = new TimePickerDialog(NewAuctionActivity.this, timeSetListener, hourOfDay, minute, true);
@@ -354,11 +357,12 @@ public class NewAuctionActivity extends AppCompatActivity {
                 @Override
                 public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                     month++;
-                    edtTextEndDate.setText(year + "-" + month + "-" + dayOfMonth);
+                    edtTextEndDate.setText(year + "-" + String.format("%02d",month) + "-" + String.format("%02d",dayOfMonth));
                 }
             };
 
             DatePickerDialog datePickerDialog = new DatePickerDialog(NewAuctionActivity.this, dateSetListener, year, month, day);
+            datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis());
             datePickerDialog.show();
         }
     };
@@ -392,10 +396,20 @@ public class NewAuctionActivity extends AppCompatActivity {
             }
         }*/
         if (requestCode == GALLERY_REQUEST_CODE && resultCode == RESULT_OK && data != null && data.getData() != null){
-            //data.getData returns the content URI for the selected Image
+            //display image
             Uri selectedImage = data.getData();
             newAuctionImage.setImageURI(selectedImage);
             newAuctionImage.setVisibility(View.VISIBLE);
+
+            //retrieve absolute path
+            filePath = MediaStore.Images.Media.DATA;
+            /*Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null, null);
+            cursor.moveToFirst();
+            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+            String imgDecodableString = cursor.getString(columnIndex);
+            cursor.close();
+            // Set the Image in ImageView after decoding the String
+            imageView.setImageBitmap(BitmapFactory.decodeFile(imgDecodableString));*/
         }
     }
 
