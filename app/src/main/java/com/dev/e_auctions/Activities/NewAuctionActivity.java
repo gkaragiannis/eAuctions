@@ -101,6 +101,7 @@ public class NewAuctionActivity extends AppCompatActivity {
         edtTextEndDate = (EditText) findViewById(R.id.newAuctionEndDate);
         edtTextEndDate.setOnClickListener(EndDateClickListener);
 
+        Common.auctionId = null;
         Button btnSubmitAuction = (Button) findViewById(R.id.btnSubmitNewAuction);
         btnSubmitAuction.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -152,7 +153,6 @@ public class NewAuctionActivity extends AppCompatActivity {
         }
 
         DecimalFormat df = new DecimalFormat("#.00");
-        //double initialPrice = Math.round(btnNewAuctionStartingPrice.getValue()*100)/100;
         NewAcutionRequest newAcutionRequest = new NewAcutionRequest(Common.token,
                 edtTextName.getText().toString(),
                 itemCategories,
@@ -161,17 +161,17 @@ public class NewAuctionActivity extends AppCompatActivity {
                 edtTextDescription.getText().toString(),
                 df.format((double) btnNewAuctionStartingPrice.getValue()));
 
-        auctionId = postNewAuction(newAcutionRequest);
-        if (auctionId == null){
+        postNewAuction(newAcutionRequest);
+        if (Common.auctionId == null){
             mDialog.dismiss();
+            Toast.makeText(NewAuctionActivity.this, "New Auction created successfully with Id: " + auctionId, Toast.LENGTH_SHORT).show();
             return;
         }
 
-        imageUploaded = postUploadImage(auctionId, filePath);
-        mDialog.dismiss();
+        imageUploaded = postUploadImage(Common.auctionId, filePath);
         if (imageUploaded)
-            System.out.println("Yeah");
-        Toast.makeText(NewAuctionActivity.this, "New Auction created successfully with Id: " + auctionId, Toast.LENGTH_SHORT).show();
+            System.out.println("Alleluia");
+        mDialog.dismiss();
     }
 
     private void getCategories() {
@@ -210,8 +210,8 @@ public class NewAuctionActivity extends AppCompatActivity {
         });
     }
 
-    private String postNewAuction(NewAcutionRequest newAcutionRequest) {
-        final String[] auctionId = {null};
+    private void postNewAuction(NewAcutionRequest newAcutionRequest) {
+
         Call<NewAuctionResponse> call = RestClient.getClient().create(RestApi.class).postNewAuction(newAcutionRequest);
         System.out.println("Trying auction");
         call.enqueue(new Callback<NewAuctionResponse>() {
@@ -225,8 +225,8 @@ public class NewAuctionActivity extends AppCompatActivity {
                     Toast.makeText(NewAuctionActivity.this, response.body().getStatusMsg(), Toast.LENGTH_SHORT).show();
                     return;
                 }
-                System.out.println(response.body().getAuctionId());
-                auctionId[0] = Integer.toString(response.body().getAuctionId());
+
+                Common.auctionId = Integer.toString(response.body().getAuctionId());
             }
 
             @Override
@@ -235,12 +235,11 @@ public class NewAuctionActivity extends AppCompatActivity {
                 return;
             }
         });
-        return auctionId[0];
     }
 
     private boolean postUploadImage(String auctionId, String filePath) {
         File file = new File(filePath);
-
+        System.out.println("Starting image upload");
         RequestBody imagePart = RequestBody.create(MediaType.parse("image/*"), file);
         RequestBody tokenPart = RequestBody.create(MediaType.parse("text/plain"), Common.token);
         RequestBody auctionIdPart = RequestBody.create(MediaType.parse("text/plain"), auctionId);
@@ -249,14 +248,24 @@ public class NewAuctionActivity extends AppCompatActivity {
         call.enqueue(new Callback<GeneralResponse>() {
             @Override
             public void onResponse(Call<GeneralResponse> call, Response<GeneralResponse> response) {
+                System.out.println("On response image upload");
                 if (!response.isSuccessful()){
-
+                    Toast.makeText(NewAuctionActivity.this, Integer.toString(response.code()), Toast.LENGTH_LONG).show();
+                    return;
                 }
+                else if (!response.body().getStatusCode().equals("SUCCESS")){
+                    Toast.makeText(NewAuctionActivity.this, response.body().getStatusMsg(), Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+                Toast.makeText(NewAuctionActivity.this, "New Auction created successfully with Id: " + Common.auctionId, Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onFailure(Call<GeneralResponse> call, Throwable t) {
-
+                System.out.println("On failure image upload");
+                Toast.makeText(NewAuctionActivity.this, "Unavailable services", Toast.LENGTH_SHORT).show();
+                return;
             }
         });
         return true;

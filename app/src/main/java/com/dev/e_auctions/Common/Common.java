@@ -8,5 +8,6 @@ import java.util.ArrayList;
 public class Common {
     public static String token;
     public static User currentUser;
+    public static String auctionId;
     //public static ArrayList<MenuItem> menuItemList = new ArrayList<>();
 }
