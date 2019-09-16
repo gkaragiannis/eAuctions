@@ -259,7 +259,7 @@
                     android:layout_margin="8dp"
                     android:layout_marginLeft="8dp"
                     android:layout_marginRight="8dp"
-                    android:background="@color/btnSignUp"
+                    android:background="@color/colorPrimary"
                     android:ellipsize="end"
                     android:shadowColor="@android:color/black"
                     android:text="@string/submitAuction"
