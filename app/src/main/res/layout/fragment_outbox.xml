@@ -7,7 +7,7 @@
     tools:context=".Fragments.OutboxFragment">
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/frg_inbox_rec_view"
+        android:id="@+id/frg_outbox_rec_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 

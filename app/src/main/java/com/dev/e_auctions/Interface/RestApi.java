@@ -86,6 +86,9 @@ public interface RestApi {
     @POST("/message/getinbox")
     Call<GetMessagesResponse> postGetInbox(@Body GetMessagesRequest token);
 
+    @POST("/message/getsent")
+    Call<GetMessagesResponse> postGetOutbox(@Body GetMessagesRequest token);
+
     /*-- IMAGES --*/
     @Multipart
     @POST("/image/upload")
