@@ -2,7 +2,7 @@
 <android.support.v7.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     app:cardUseCompatPadding="true"
     android:layout_margin="15dp"
@@ -10,14 +10,14 @@
     android:background="@color/colorPrimary">
 
     <LinearLayout
-        android:layout_width="360dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
         android:orientation="vertical"
         android:padding="5dp"
         android:paddingTop="10dp">
 
-        <LinearLayout
+        <!--<LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="horizontal"
@@ -32,7 +32,6 @@
                 android:textColor="@color/colorPrimary"
                 android:textSize="18sp" />
 
-
             <Button
                 android:id="@+id/messageSendBtn"
                 android:layout_width="36dp"
@@ -41,7 +40,34 @@
                 android:background="@color/transpanert"
                 android:foreground="@drawable/ic_send_green_24dp" />
 
-        </LinearLayout>
+        </LinearLayout>-->
+
+        <RelativeLayout
+            android:id="@+id/realtiveLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <Button
+                android:id="@+id/messageSendBtn"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="@color/transpanert"
+                android:foreground="@drawable/ic_send_green_24dp"
+                android:layout_alignParentRight="true"/>
+
+            <TextView
+                android:id="@+id/messageReceiver"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="To Mitsos"
+                android:textColor="@color/colorPrimary"
+                android:textSize="18sp"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@id/messageSendBtn"
+                android:layout_toStartOf="@id/messageSendBtn"
+                android:layout_alignParentLeft="true"/>
+
+        </RelativeLayout>
 
         <EditText
             android:id="@+id/messageSubject"
