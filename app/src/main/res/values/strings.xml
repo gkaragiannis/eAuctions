@@ -39,6 +39,7 @@
     <string name="search">Search</string>
     <string name="auctions">All Auctions</string>
     <string name="category">Categories</string>
+    <string name="messages">Messages</string>
     <string name="newAuction">Create New Auction</string>
     <string name="myAuction">My Auctions</string>
     <string name="participateAuction">Participating Auctions</string>
@@ -82,5 +83,11 @@
     <string name="NoButton">No</string>
     <string name="OkButton">OK</string>
     <string name="CancelButton">CANCEL</string>
+    <string name="title_activity_mail_box">MailBoxActivity</string>
+    <string name="inbox">Inbox</string>
+    <string name="outbox">Outbox</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

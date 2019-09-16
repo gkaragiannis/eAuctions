@@ -2,6 +2,7 @@ package com.dev.e_auctions.Interface;
 
 import com.dev.e_auctions.APIRequests.AuctionByFieldRequest;
 import com.dev.e_auctions.APIRequests.DeleteAuctionRequest;
+import com.dev.e_auctions.APIRequests.GetMessagesRequest;
 import com.dev.e_auctions.APIRequests.NewAcutionRequest;
 import com.dev.e_auctions.APIRequests.NewBidRequest;
 import com.dev.e_auctions.APIRequests.NewMessageRequest;
@@ -12,6 +13,7 @@ import com.dev.e_auctions.APIResponses.AllCategoriesResponse;
 import com.dev.e_auctions.APIResponses.AuctionListResponse;
 import com.dev.e_auctions.APIResponses.AuctionResponse;
 import com.dev.e_auctions.APIResponses.GeneralResponse;
+import com.dev.e_auctions.APIResponses.GetMessagesResponse;
 import com.dev.e_auctions.APIResponses.NewAuctionResponse;
 import com.dev.e_auctions.APIResponses.AuthenticateUserResponse;
 import com.dev.e_auctions.APIResponses.RegisterNewUserResponse;
@@ -80,6 +82,9 @@ public interface RestApi {
     /*-- MESSAGES --*/
     @POST("/message/newmessage")
     Call<GeneralResponse> postNewMessage(@Body NewMessageRequest newMessageRequest);
+
+    @POST("/message/getinbox")
+    Call<GetMessagesResponse> postGetInbox(@Body GetMessagesRequest token);
 
     /*-- IMAGES --*/
     @Multipart

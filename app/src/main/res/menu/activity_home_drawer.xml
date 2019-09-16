@@ -21,6 +21,10 @@
             android:id="@+id/nav_category"
             android:icon="@drawable/ic_style_black_24dp"
             android:title="@string/category" />
+        <item
+            android:id="@+id/nav_messages"
+            android:icon="@drawable/ic_email_black_24dp"
+            android:title="@string/messages" />
     </group>
 
     <group android:id="@+id/memberGroup"
