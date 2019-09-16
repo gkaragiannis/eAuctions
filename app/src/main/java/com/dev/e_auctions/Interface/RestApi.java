@@ -20,15 +20,19 @@ import com.dev.e_auctions.Model.Category;
 import com.dev.e_auctions.Model.Image;
 
 import java.util.List;
+import java.util.Map;
 
+import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
+import retrofit2.http.PartMap;
 import retrofit2.http.Query;
 
 public interface RestApi {
@@ -80,7 +84,12 @@ public interface RestApi {
     /*-- IMAGES --*/
     @Multipart
     @POST("/image/upload")
-    Call<GeneralResponse> postUploadImage (@Part("file") RequestBody file , @Part("token") RequestBody token, @Part("auctionId") RequestBody auctionId);
+//    Call<GeneralResponse> postUploadImage (@Part("file") RequestBody file , @Part("token") RequestBody token, @Part("auctionId") RequestBody auctionId);
+    Call<GeneralResponse> postUploadImage (@Header("Content-Type") String content,
+                                           @Part MultipartBody.Part file ,
+                                           @Part("token") String token,
+                                           @Part("auctionId") long auctionId);
+//    Call<GeneralResponse> postUploadImage (@PartMap Map<String, RequestBody> map);
 
 
 }

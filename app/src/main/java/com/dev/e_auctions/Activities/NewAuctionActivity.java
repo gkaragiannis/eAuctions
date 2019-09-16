@@ -43,9 +43,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import pl.polak.clicknumberpicker.ClickNumberPickerView;
 import retrofit2.Call;
@@ -67,7 +70,7 @@ public class NewAuctionActivity extends AppCompatActivity {
     private static final int PICK_IMAGE_REQUEST = 777;
     private Bitmap bitmap;
     private ClickNumberPickerView btnNewAuctionStartingPrice;
-    private String[] filePath;
+    private String filePath;
     private Uri selectedImage;
 
     @Override
@@ -243,12 +246,23 @@ public class NewAuctionActivity extends AppCompatActivity {
     }
 
     private boolean postUploadImage() {
-        File file = new File(filePath[0]);
+        File file = new File(filePath);
         System.out.println("Starting image upload");
-        RequestBody imagePart = RequestBody.create(MediaType.parse("image/*"), file);
-        RequestBody tokenPart = RequestBody.create(MediaType.parse("text/plain"), Common.token);
-        RequestBody auctionIdPart = RequestBody.create(MediaType.parse("text/plain"), Common.auctionId);
-        Call<GeneralResponse> call = RestClient.getClient().create(RestApi.class).postUploadImage(imagePart, tokenPart, auctionIdPart);
+        /*RequestBody imagePart = RequestBody.create(MediaType.parse("image/*"), file.getAbsolutePath());
+        RequestBody tokenPart = RequestBody.create(MediaType.parse("multipart/form-data"), Common.token);
+        RequestBody auctionIdPart = RequestBody.create(MediaType.parse("multipart/form-data"), Common.auctionId);*/
+
+//        Map<String, RequestBody> map = new HashMap<>();
+//        RequestBody requestBody = RequestBody.create(MediaType.parse("*/*"), file);
+//        map.put("file\"; filename=\"" + file.getName() + "\"", requestBody);
+//        map.put("form-data; name=\"token\"",requestBody);
+        System.out.println(file.getName());
+        System.out.println(file.getAbsolutePath());
+        MultipartBody.Part imagePart = null;
+        RequestBody mitsos = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+        imagePart = MultipartBody.Part.createFormData("file", file.getName(), mitsos);
+        Call<GeneralResponse> call = RestClient.getClient().create(RestApi.class).postUploadImage("multipart/form-data",
+                imagePart, Common.token, Long.parseLong(Common.auctionId));
 
         call.enqueue(new Callback<GeneralResponse>() {
             @Override
@@ -301,7 +315,7 @@ public class NewAuctionActivity extends AppCompatActivity {
                     return;
                 }
 
-                Toast.makeText(NewAuctionActivity.this, "Auction didn't created due to network error.", Toast.LENGTH_LONG).show();
+                Toast.makeText(NewAuctionActivity.this, "Auction couldn't be created due to network error.", Toast.LENGTH_LONG).show();
                 /*Intent intent = new Intent(NewAuctionActivity.this, HomeActivity.class);
                 startActivity(intent);
                 finish();*/
@@ -427,7 +441,7 @@ public class NewAuctionActivity extends AppCompatActivity {
         intent.setType("image/*")
                 .setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);*/
-        Intent intent = new Intent(Intent.ACTION_PICK);
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         intent.setType("image/*");
         String[] mimeTypes = {"image/jpeg", "image/jpg"};
         intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
@@ -456,7 +470,17 @@ public class NewAuctionActivity extends AppCompatActivity {
             newAuctionImage.setImageURI(selectedImage);
             newAuctionImage.setVisibility(View.VISIBLE);
 
-            //retrieve absolute path
+            String[] filePathColumn = {MediaStore.Images.Media.DATA};
+
+            Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null, null);
+            assert cursor != null;
+            cursor.moveToFirst();
+            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+            filePath = cursor.getString(columnIndex);
+            cursor.close();
+
+
+            /*//retrieve absolute path
             filePath = new String[]{MediaStore.Images.Media.DATA};
             Cursor cursor = getContentResolver().query(selectedImage, filePath, null, null, null);
             cursor.moveToFirst();
@@ -465,7 +489,7 @@ public class NewAuctionActivity extends AppCompatActivity {
             //Gets the String value in the column
             String imgDecodableString = cursor.getString(columnIndex);
             cursor.close();
-            System.out.println(filePath[0]);
+            System.out.println(filePath[0]);*/
             /*Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null, null);
             cursor.moveToFirst();
             int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
@@ -483,7 +507,7 @@ public class NewAuctionActivity extends AppCompatActivity {
         return Base64.encodeToString(imgByte, Base64.DEFAULT);
     }
 
-    private class HttpPostNewAuctionTask extends AsyncTask<NewAcutionRequest, Void, NewAuctionResponse> {
+    /*private class HttpPostNewAuctionTask extends AsyncTask<NewAcutionRequest, Void, NewAuctionResponse> {
 
         @Override
         protected NewAuctionResponse doInBackground(NewAcutionRequest... newAcutionRequests) {
@@ -569,5 +593,5 @@ public class NewAuctionActivity extends AppCompatActivity {
             else
                 System.out.println("Skata");
         }
-    }
+    }*/
 }
