@@ -35,7 +35,7 @@
                     android:title="@string/myAuction" />
                 <item
                     android:id="@+id/nav_participate_auction"
-                    android:icon="@drawable/ic_poll_black_24dp"
+                    android:icon="@drawable/ic_visibility_black_24dp"
                     android:title="@string/participateAuction" />
                 <item
                     android:id="@+id/nav_messages"

@@ -42,7 +42,7 @@
     <string name="messages">Messages</string>
     <string name="newAuction">Create New Auction</string>
     <string name="myAuction">My Auctions</string>
-    <string name="participateAuction">Participating Auctions</string>
+    <string name="participateAuction">Bidding Auctions</string>
     <string name="savedAuction">Saved Auctions</string>
     <string name="logout">Log out</string>
     <string name="profile">My Profile</string>
