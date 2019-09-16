@@ -21,10 +21,6 @@
             android:id="@+id/nav_category"
             android:icon="@drawable/ic_style_black_24dp"
             android:title="@string/category" />
-        <item
-            android:id="@+id/nav_messages"
-            android:icon="@drawable/ic_email_black_24dp"
-            android:title="@string/messages" />
     </group>
 
     <group android:id="@+id/memberGroup"
@@ -41,6 +37,10 @@
                     android:id="@+id/nav_participate_auction"
                     android:icon="@drawable/ic_poll_black_24dp"
                     android:title="@string/participateAuction" />
+                <item
+                    android:id="@+id/nav_messages"
+                    android:icon="@drawable/ic_email_black_24dp"
+                    android:title="@string/messages" />
                 <item
                     android:id="@+id/nav_logout"
                     android:icon="@drawable/ic_exit_to_app_black_24dp"
