@@ -16,6 +16,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -34,6 +35,8 @@ import com.dev.e_auctions.Common.Common;
 import com.dev.e_auctions.Interface.RestApi;
 import com.dev.e_auctions.Model.Category;
 import com.dev.e_auctions.R;
+import com.dev.e_auctions.Utilities.Utils;
+import com.google.gson.GsonBuilder;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -50,12 +53,14 @@ import java.util.Map;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
+import okhttp3.internal.Util;
 import pl.polak.clicknumberpicker.ClickNumberPickerView;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 import static android.app.TimePickerDialog.*;
+import static android.text.TextUtils.isEmpty;
 
 public class NewAuctionActivity extends AppCompatActivity {
 
@@ -165,9 +170,14 @@ public class NewAuctionActivity extends AppCompatActivity {
                 edtTextStartingDate.getText().toString(),
                 edtTextEndDate.getText().toString(),
                 edtTextDescription.getText().toString(),
-                df.format((double) btnNewAuctionStartingPrice.getValue()));
+                df.format((double) btnNewAuctionStartingPrice.getValue()).replace(",","."));
 
         postNewAuction(newAcutionRequest);
+        Log.d("auction ","the new auction request is "+ Utils.gson.toJson(newAcutionRequest));
+
+
+
+
 //        new HttpPostNewAuctionTask().execute(newAcutionRequest);
 //        System.out.println("from Common Id: " + Common.auctionId);
 
@@ -222,9 +232,14 @@ public class NewAuctionActivity extends AppCompatActivity {
         call.enqueue(new Callback<NewAuctionResponse>() {
             @Override
             public void onResponse(Call<NewAuctionResponse> call, Response<NewAuctionResponse> response) {
-                boolean mitsos;
+                boolean hasImage;
+                Log.d("auction ", "the response was "+Utils.gson.toJson(response));
                 if (!response.isSuccessful()){
-                    Toast.makeText(NewAuctionActivity.this, response.body().getStatusMsg(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(NewAuctionActivity.this, "ups something wen wrong", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                else if(null == response.body()){
+                    Toast.makeText(NewAuctionActivity.this, "ups something wen wrong", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 else if (!response.body().getStatusCode().equals("SUCCESS")){
@@ -234,7 +249,12 @@ public class NewAuctionActivity extends AppCompatActivity {
 
                 Common.auctionId = Integer.toString(response.body().getAuctionId());
                 System.out.println("New Auction created successfully with Id: " + Common.auctionId);
-                mitsos = postUploadImage();
+
+               if(!(null == newAuctionImage.getDrawable())){
+                   postUploadImage();
+               }
+                Toast.makeText(NewAuctionActivity.this, "Auction registered successfully", Toast.LENGTH_SHORT).show();
+
             }
 
             @Override
@@ -246,6 +266,9 @@ public class NewAuctionActivity extends AppCompatActivity {
     }
 
     private boolean postUploadImage() {
+
+        Log.d("auction UploadImg", "The imageView is "+newAuctionImage);
+
         File file = new File(filePath);
         System.out.println("Starting image upload");
         /*RequestBody imagePart = RequestBody.create(MediaType.parse("image/*"), file.getAbsolutePath());
