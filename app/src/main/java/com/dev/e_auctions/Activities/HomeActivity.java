@@ -253,7 +253,7 @@ public class HomeActivity extends AppCompatActivity
             new HttpRequestAuctionsTask().execute("ByBidderId");
             toolbar.setTitle(R.string.participateAuction);
         } else if (id == R.id.nav_logout) {
-            Intent signIn = new Intent(HomeActivity.this, SignIn.class);
+            Intent signIn = new Intent(HomeActivity.this, SignInActivity.class);
             signIn.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             Common.currentUser = null;
             finish();

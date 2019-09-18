@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         btnSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent signUpIntent = new Intent(MainActivity.this, SignUp.class);
+                Intent signUpIntent = new Intent(MainActivity.this, SignUpActivity.class);
                 startActivity(signUpIntent);
             }
         });
@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent signInIntent = new Intent(MainActivity.this, SignIn.class);
+                Intent signInIntent = new Intent(MainActivity.this, SignInActivity.class);
                 startActivity(signInIntent);
             }
         });

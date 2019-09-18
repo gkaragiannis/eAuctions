@@ -1,5 +1,8 @@
 package com.dev.e_auctions.APIRequests;
 
+/**
+ * Implements a request for
+ */
 public class AuctionByFieldRequest {
     private String fieldName, fieldValue;
 

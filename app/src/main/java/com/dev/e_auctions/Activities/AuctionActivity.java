@@ -65,6 +65,10 @@ public class AuctionActivity extends AppCompatActivity {
     private ArrayList<String> categoryListHeader;
     private HashMap<String, List<String>> categoryListMap;
 
+    /**
+     * AuctionActivity's onCreate method
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -99,6 +103,12 @@ public class AuctionActivity extends AppCompatActivity {
 
 
     //UI methods
+
+    /**
+     * Method to display auction item
+     * @param auction The auction item to display
+     * @throws ParseException
+     */
     private void viewAuction(Auction auction) throws ParseException {
         configureFAB(auction);
         Picasso.get().load(auction.getImage()).into(auctionImage);
@@ -131,6 +141,12 @@ public class AuctionActivity extends AppCompatActivity {
             ratingDialog(auction);
     }
 
+    /**
+     * Method to configure FAB upon user's role
+     * <p>User Role: bidder, buyer, seller</p>
+     * @param auction The displayed auction item
+     * @throws ParseException
+     */
     @SuppressLint("RestrictedApi")
     private void configureFAB(Auction auction) throws ParseException {
         Date currentDate = new Date();
@@ -188,6 +204,11 @@ public class AuctionActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Method to display messaging dialog and send new message on auction's partner
+     * <p>User Role: buyer, seller</p>
+     * @param auction The auction
+     */
     private void messageDialog(Auction auction) {
         Dialog messagingDialog = new Dialog(AuctionActivity.this);
         messagingDialog.setContentView(R.layout.messaging_dialog);
@@ -215,6 +236,10 @@ public class AuctionActivity extends AppCompatActivity {
         messagingDialog.show();
     }
 
+    /**
+     * Method to view categories on ExpandableListAdapter
+     * @param itemCategories
+     */
     private void initializeCategoryListViewData(List<Category> itemCategories) {
         categoryListHeader = new ArrayList<>();
         categoryListMap = new HashMap<>();
@@ -232,8 +257,15 @@ public class AuctionActivity extends AppCompatActivity {
         categoryListView.setAdapter(categoryListAdapter);
     }
 
+    /**
+     * Method to estimate auction's progress in percentage
+     * @param created Auction's starting date as String with yyyy-MM-dd HH:mm
+     * @param ends Auction's end date as String with yyyy-MM-dd HH:mm
+     * @return An integer represents the progress
+     * @throws ParseException
+     */
     private int getProgress(String created, String ends) throws ParseException {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
         Date startingDate = format.parse(created);
         Date endDate = format.parse(ends);
@@ -245,9 +277,12 @@ public class AuctionActivity extends AppCompatActivity {
         return (int) ((diff2*100)/diff1);
     }
 
+    /**
+     * Method to display a rating dialog to rate auction's partner
+     * <p>User Role: buyer, seller</p>
+     * @param auction
+     */
     private void ratingDialog(Auction auction) {
-        boolean isSeller = false;
-        boolean isBuyer = false;
         Dialog rankDialog = new Dialog(AuctionActivity.this);
 
         if (Common.currentUser == null || auction.getBids().size() == 0){
@@ -287,6 +322,10 @@ public class AuctionActivity extends AppCompatActivity {
     }
 
     //UI listeners
+    /**
+     * FAB's ClickListener for bidder
+     * <p>User Role: bidder</p>
+     */
     View.OnClickListener bidder_FAB_ClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -312,6 +351,10 @@ public class AuctionActivity extends AppCompatActivity {
         }
     };
 
+    /**
+     * FAB's ClickListener for seller
+     * <p>User Role: seller</p>
+     */
     View.OnClickListener seller_FAB_ClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -338,6 +381,11 @@ public class AuctionActivity extends AppCompatActivity {
     };
 
     //REST call methods
+
+    /**
+     * Implements the GET method to request an auction by auctionId
+     * <p>User Role: bidder, buyer, guest, seller</p>
+     */
     private void getAuction(){
         final ProgressDialog mDialog = new ProgressDialog(AuctionActivity.this);
 
@@ -388,6 +436,10 @@ public class AuctionActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Implements the POST method to delete an auction by auctionId
+     * <p>User Role: seller</p>
+     */
     private void postDelete() {
         final ProgressDialog mDialog = new ProgressDialog(AuctionActivity.this);
         mDialog.setMessage("Αuction is being deleted");
@@ -425,6 +477,10 @@ public class AuctionActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Implements the POST method to create a new bid for auction
+     * <p>User Role: bidder</p>
+     */
     private void postBid() {
         final ProgressDialog mDialog = new ProgressDialog(AuctionActivity.this);
         mDialog.setMessage("Your bid is submitting");
@@ -464,6 +520,12 @@ public class AuctionActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Implements the POST method to rate a user (seller/bidder)
+     * <p>User Role: buyer, seller</p>
+     * @param auction Related auction item
+     * @param rating Rating value
+     */
     private void postRateUser(Auction auction, float rating) {
         int ratedUserId = 0;
         final ProgressDialog mDialog = new ProgressDialog(AuctionActivity.this);
@@ -511,6 +573,13 @@ public class AuctionActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Implements the POST method to send a new message
+     * <p>User Role: buyer, seller</p>
+     * @param auction Related auction item
+     * @param messageSubject The messages subject
+     * @param messageBody The actual message
+     */
     private void sendMessage(Auction auction, String messageSubject, String messageBody) {
         final ProgressDialog mDialog = new ProgressDialog(AuctionActivity.this);
         mDialog.setMessage("Your message is sending");

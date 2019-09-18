@@ -3,6 +3,7 @@ package com.dev.e_auctions.Interface;
 import com.dev.e_auctions.APIRequests.AuctionByFieldRequest;
 import com.dev.e_auctions.APIRequests.DeleteAuctionRequest;
 import com.dev.e_auctions.APIRequests.GetMessagesRequest;
+import com.dev.e_auctions.APIRequests.MarkMessageAsReadRequest;
 import com.dev.e_auctions.APIRequests.NewAcutionRequest;
 import com.dev.e_auctions.APIRequests.NewBidRequest;
 import com.dev.e_auctions.APIRequests.NewMessageRequest;
@@ -89,14 +90,17 @@ public interface RestApi {
     @POST("/message/getsent")
     Call<GetMessagesResponse> postGetOutbox(@Body GetMessagesRequest token);
 
+    @POST("/message/markmessageasread")
+    Call<GeneralResponse> postMarkMessageAsRead(@Body MarkMessageAsReadRequest markMessageAsReadRequest);
+
     /*-- IMAGES --*/
     @Multipart
     @POST("/image/upload")
 //    Call<GeneralResponse> postUploadImage (@Part("file") RequestBody file , @Part("token") RequestBody token, @Part("auctionId") RequestBody auctionId);
     Call<GeneralResponse> postUploadImage (@Header("Content-Type") String content,
                                            @Part MultipartBody.Part file ,
-                                           @Part("token") String token,
-                                           @Part("auctionId") long auctionId);
+                                           @Part("token") RequestBody token,
+                                           @Part("auctionId") RequestBody auctionId);
 //    Call<GeneralResponse> postUploadImage (@PartMap Map<String, RequestBody> map);
 
 

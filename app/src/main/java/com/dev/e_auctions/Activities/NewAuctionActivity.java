@@ -281,12 +281,16 @@ public class NewAuctionActivity extends AppCompatActivity {
 //        map.put("form-data; name=\"token\"",requestBody);
         System.out.println(file.getName());
         System.out.println(file.getAbsolutePath());
-        MultipartBody.Part imagePart = null;
-        RequestBody mitsos = RequestBody.create(MediaType.parse("multipart/form-data"), file);
-        imagePart = MultipartBody.Part.createFormData("file", file.getName(), mitsos);
-        Call<GeneralResponse> call = RestClient.getClient().create(RestApi.class).postUploadImage("multipart/form-data",
-                imagePart, Common.token, Long.parseLong(Common.auctionId));
 
+        RequestBody image = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+        RequestBody token = RequestBody.create(MultipartBody.FORM, Common.token);
+        RequestBody auctionId = RequestBody.create(MultipartBody.FORM, Common.auctionId);
+
+        MultipartBody.Part body = MultipartBody.Part.createFormData("file", file.getName(), image);
+
+        Call<GeneralResponse> call = RestClient.getClient().create(RestApi.class).postUploadImage("multipart/form-data",
+                body, token, auctionId);
+        
         call.enqueue(new Callback<GeneralResponse>() {
             @Override
             public void onResponse(Call<GeneralResponse> call, Response<GeneralResponse> response) {

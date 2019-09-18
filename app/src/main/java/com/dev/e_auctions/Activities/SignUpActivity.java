@@ -23,7 +23,7 @@ import retrofit2.Response;
 
 import com.dev.e_auctions.R;
 
-public class SignUp extends AppCompatActivity {
+public class SignUpActivity extends AppCompatActivity {
 
     EditText edtUsername, edtPassword, edtConfirmPass, edtFirstName, edtLastName, edtTaxId,
             edtEmail, edtPhone, edtAddress, edtCity, edtCountry;
@@ -50,13 +50,13 @@ public class SignUp extends AppCompatActivity {
         btnSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final ProgressDialog mDialog = new ProgressDialog(SignUp.this);
+                final ProgressDialog mDialog = new ProgressDialog(SignUpActivity.this);
                 mDialog.setMessage("Please wait...");
                 mDialog.show();
 
                 if (!edtPassword.getText().toString().equals(edtConfirmPass.getText().toString())){
                     mDialog.dismiss();
-                    Toast.makeText(SignUp.this, "Passwords do not match", Toast.LENGTH_LONG).show();
+                    Toast.makeText(SignUpActivity.this, "Passwords do not match", Toast.LENGTH_LONG).show();
                     return;
                 }
                 if (edtUsername.getText().toString().isEmpty() || edtPassword.getText().toString().isEmpty() ||
@@ -66,7 +66,7 @@ public class SignUp extends AppCompatActivity {
                         edtAddress.getText().toString().isEmpty() || edtCity.getText().toString().isEmpty() ||
                         edtCountry.getText().toString().isEmpty()){
                     mDialog.dismiss();
-                    Toast.makeText(SignUp.this, "All fields are required", Toast.LENGTH_LONG).show();
+                    Toast.makeText(SignUpActivity.this, "All fields are required", Toast.LENGTH_LONG).show();
                     return;
                 }
 
@@ -92,11 +92,11 @@ public class SignUp extends AppCompatActivity {
                         mDialog.dismiss();
 
                         if (!response.isSuccessful()){
-                            Toast.makeText(SignUp.this, Integer.toString(response.code()), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(SignUpActivity.this, Integer.toString(response.code()), Toast.LENGTH_SHORT).show();
                             return;
                         }
                         else if (!response.body().getStatusCode().equals("SUCCESS")){
-                            Toast.makeText(SignUp.this, response.body().getStatusMsg(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(SignUpActivity.this, response.body().getStatusMsg(), Toast.LENGTH_SHORT).show();
                             return;
                         }
                         else {
@@ -113,18 +113,18 @@ public class SignUp extends AppCompatActivity {
                                         @Override
                                         public void onResponse(Call<AuthenticateUserResponse> call, Response<AuthenticateUserResponse> response) {
                                             if (!response.isSuccessful()){
-                                                Toast.makeText(SignUp.this, Integer.toString(response.code()), Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(SignUpActivity.this, Integer.toString(response.code()), Toast.LENGTH_SHORT).show();
                                                 return;
                                             }
                                             else if (!response.body().getStatusCode().equals("SUCCESS")){
-                                                Toast.makeText(SignUp.this, response.body().getStatusMsg(), Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(SignUpActivity.this, response.body().getStatusMsg(), Toast.LENGTH_SHORT).show();
                                                 return;
                                             }
                                             else{
                                                 Common.currentUser = response.body().getUser();
                                                 Common.token = response.body().getToken();
                                                 mDialog.dismiss();
-                                                Toast.makeText(SignUp.this, "Welcome " + edtUsername.getText() + " !", Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(SignUpActivity.this, "Welcome " + edtUsername.getText() + " !", Toast.LENGTH_SHORT).show();
                                                 return;
                                             }
                                         }
@@ -132,7 +132,7 @@ public class SignUp extends AppCompatActivity {
                                         @Override
                                         public void onFailure(Call<AuthenticateUserResponse> call, Throwable t) {
                                             mDialog.dismiss();
-                                            Toast.makeText(SignUp.this, "Unavailable services", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(SignUpActivity.this, "Unavailable services", Toast.LENGTH_SHORT).show();
                                             return;
                                         }
                                     });
@@ -146,7 +146,7 @@ public class SignUp extends AppCompatActivity {
                                 e.printStackTrace();
                             }
 
-                            Intent intent = new Intent(SignUp.this, HomeActivity.class);
+                            Intent intent = new Intent(SignUpActivity.this, HomeActivity.class);
                             startActivity(intent);
                             finish();
                         }
@@ -155,7 +155,7 @@ public class SignUp extends AppCompatActivity {
                     @Override
                     public void onFailure(Call<RegisterNewUserResponse> call, Throwable t) {
                         mDialog.dismiss();
-                        Toast.makeText(SignUp.this, "Unavailable services", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(SignUpActivity.this, "Unavailable services", Toast.LENGTH_SHORT).show();
                         return;
                     }
                 });
