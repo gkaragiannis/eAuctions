@@ -26,11 +26,13 @@ import com.dev.e_auctions.APIRequests.NewMessageRequest;
 import com.dev.e_auctions.APIRequests.RateUserRequest;
 import com.dev.e_auctions.APIResponses.AuctionResponse;
 import com.dev.e_auctions.APIResponses.GeneralResponse;
-import com.dev.e_auctions.Adapter.ExpandableListAdapter;
+import com.dev.e_auctions.Adapter.ExpandableBidListAdapter;
+import com.dev.e_auctions.Adapter.ExpandableCategoryListAdapter;
 import com.dev.e_auctions.Client.RestClient;
 import com.dev.e_auctions.Common.Common;
 import com.dev.e_auctions.Interface.RestApi;
 import com.dev.e_auctions.Model.Auction;
+import com.dev.e_auctions.Model.Bid;
 import com.dev.e_auctions.Model.Category;
 import com.dev.e_auctions.R;
 import com.squareup.picasso.Picasso;
@@ -44,7 +46,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import pl.polak.clicknumberpicker.ClickNumberPickerListener;
 import pl.polak.clicknumberpicker.ClickNumberPickerView;
+import pl.polak.clicknumberpicker.PickerClickType;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -52,18 +56,22 @@ import retrofit2.Response;
 public class AuctionActivity extends AppCompatActivity {
 
     private ImageView auctionImage;
-    private TextView auctionName, startingDate, endDate, auctionDesc, sellerRatingNum, sellerRatingVotes;
+    private TextView auctionName, startingDate, endDate, auctionDesc, auctionLocation, sellerRatingNum, sellerRatingVotes;
     private ProgressBar durationBar;
     private ClickNumberPickerView btnNewBidValue;
     private CollapsingToolbarLayout collapsingToolbarLayout;
     private FloatingActionButton btnFAB;
     private ExpandableListView categoryListView;
-    private ExpandableListAdapter categoryListAdapter;
+    private ExpandableCategoryListAdapter categoryListAdapter;
+    private ExpandableListView bidListView;
+    private ExpandableBidListAdapter bidListAdapter;
     private RatingBar rtnBar;
 
     private String auctionId = "";
     private ArrayList<String> categoryListHeader;
     private HashMap<String, List<String>> categoryListMap;
+    private ArrayList<String> bidListHeader;
+    private HashMap<String, List<Bid>> bidListMap;
 
     /**
      * AuctionActivity's onCreate method
@@ -81,10 +89,12 @@ public class AuctionActivity extends AppCompatActivity {
         startingDate = (TextView) findViewById(R.id.startingDate);
         endDate = (TextView) findViewById(R.id.endDate);
         auctionDesc = (TextView) findViewById(R.id.auctionDesc);
+        auctionLocation = (TextView) findViewById(R.id.auctionLocation);
         rtnBar = (RatingBar) findViewById(R.id.sellerRating);
         sellerRatingNum = (TextView) findViewById(R.id.sellerRatingNum);
         sellerRatingVotes = (TextView) findViewById(R.id.sellerRatingVotes);
         categoryListView = (ExpandableListView)findViewById(R.id.auctionCategoriesELV);
+        bidListView = (ExpandableListView)findViewById(R.id.auctionBidsELV);
         btnNewBidValue = (ClickNumberPickerView) findViewById(R.id.btnNewBidValue);
         collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing);
         //maybe there is no need for next 2 rows
@@ -126,14 +136,15 @@ public class AuctionActivity extends AppCompatActivity {
         if (auction.getBids().size() > 0) {
             Collections.sort(auction.getBids(), Collections.reverseOrder());
             btnNewBidValue.setPickerValue(auction.getBids().get(0).getBidPrice().floatValue());
+            initializeBidListViewData(auction.getBids());
         }
         else{
             btnNewBidValue.setPickerValue(auction.getInitialPrice().floatValue());
         }
         auctionDesc.setText(auction.getItemDescription());
         initializeCategoryListViewData(auction.getCategories());
+        auctionLocation.setText(auction.getItemLocation() + ", " + auction.getItemCountry());
         rtnBar.setRating(auction.getSeller().getSellerRating().floatValue());
-        //TODO: fix ratingNum view
         sellerRatingNum.setText(Double.toString(auction.getSeller().getSellerRating()));
         if (auction.getSeller().getSellerRatingVotes()!=null)
             sellerRatingVotes.setText("out of " + Integer.toString(auction.getSeller().getSellerRatingVotes()) + " votes");
@@ -237,6 +248,37 @@ public class AuctionActivity extends AppCompatActivity {
     }
 
     /**
+     * Method to view bids on ExpandableListAdapter
+     * @param itemBids
+     */
+    private void initializeBidListViewData(List<Bid> itemBids) {
+        bidListHeader = new ArrayList<>();
+        bidListMap = new HashMap<>();
+
+        bidListHeader.add("LatestBids");
+
+        List<Bid> bids = new ArrayList<>();
+        if (itemBids.size() == 0){
+            bids = null;
+        }
+        else if (itemBids.size() < 4) {
+            for (Bid bid : itemBids) {
+                bids.add(bid);
+            }
+        }
+        else {
+            for (int position = 0; position < 5; position++){
+                bids.add(itemBids.get(position));
+            }
+        }
+
+        bidListMap.put(bidListHeader.get(0), bids);
+
+        bidListAdapter = new ExpandableBidListAdapter(AuctionActivity.this, bidListHeader, bidListMap);
+        bidListView.setAdapter(bidListAdapter);
+    }
+
+    /**
      * Method to view categories on ExpandableListAdapter
      * @param itemCategories
      */
@@ -253,7 +295,7 @@ public class AuctionActivity extends AppCompatActivity {
 
         categoryListMap.put(categoryListHeader.get(0), categories);
 
-        categoryListAdapter = new ExpandableListAdapter(AuctionActivity.this, categoryListHeader, categoryListMap);
+        categoryListAdapter = new ExpandableCategoryListAdapter(AuctionActivity.this, categoryListHeader, categoryListMap);
         categoryListView.setAdapter(categoryListAdapter);
     }
 

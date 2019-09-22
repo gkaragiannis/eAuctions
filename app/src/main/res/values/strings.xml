@@ -52,6 +52,7 @@
     <string name="auctionStartingDate">Starting Date</string>
     <string name="auctionEndDate">End Date</string>
     <string name="auctionDescription">Description</string>
+    <string name="auctionlocation">Location</string>
     <string name="submitAuction">Submit Auction</string>
     <string name="price">Starting Price</string>
     <string name="duration">Duration</string>

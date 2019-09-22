@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/auctionBidsELVitemDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="start"
+            android:textColor="@color/colorPrimary"
+            android:textSize="16sp"
+            android:textStyle="italic" />
+
+        <TextView
+            android:id="@+id/auctionBidsELVitemValue"
+            android:paddingLeft="?android:attr/expandableListPreferredChildPaddingLeft"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:padding="12dp"
+            android:lineSpacingMultiplier="1.5"
+            android:textColor="@color/colorPrimary"
+            android:textSize="16sp"
+            android:layout_alignParentLeft="true"/>
+
+        <ImageView
+            android:id="@+id/euro"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:contentDescription="null"
+            app:srcCompat="@drawable/ic_euro_symbol_24dp"
+            android:layout_toEndOf="@+id/auctionBidsELVitemValue"
+            android:layout_toLeftOf="@+id/auctionBidsELVitemValue"
+            android:layout_toStartOf="@+id/auctionBidsELVitemRating"
+            android:layout_toRightOf="@+id/auctionBidsELVitemRating"/>
+
+        <TextView
+            android:id="@+id/auctionBidsELVitemRating"
+            android:paddingLeft="?android:attr/expandableListPreferredChildPaddingLeft"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:padding="12dp"
+            android:lineSpacingMultiplier="1.5"
+            android:textColor="@color/colorPrimary"
+            android:textSize="16sp"
+            android:layout_alignParentRight="true"/>
+
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>
