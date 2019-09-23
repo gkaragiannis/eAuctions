@@ -2,6 +2,7 @@ package com.dev.e_auctions.Activities;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
@@ -21,6 +22,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -68,6 +70,8 @@ public class NewAuctionActivity extends AppCompatActivity {
     private Calendar mCalendar = Calendar.getInstance();
     private EditText edtTextName, edtTextDescription, edtTextCategory, edtTextStartingDate, edtTextEndDate;
     private ImageView newAuctionImage;
+    private Button btnLoadImage;
+    private ImageButton btnNewAuctionStartingPriceEditBtn;
     private int day, month, year, hourOfDay, minute;
     private boolean[] checkItems;
     private String[] categories;
@@ -89,7 +93,7 @@ public class NewAuctionActivity extends AppCompatActivity {
         edtTextDescription = (EditText) findViewById(R.id.newAuctionDescription);
 
         newAuctionImage = (ImageView) findViewById(R.id.newAuctionImage);
-        Button btnLoadImage = (Button) findViewById(R.id.btnLoadImage);
+        btnLoadImage = (Button) findViewById(R.id.btnLoadImage);
         btnLoadImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -98,7 +102,8 @@ public class NewAuctionActivity extends AppCompatActivity {
         });
 
         btnNewAuctionStartingPrice = (ClickNumberPickerView) findViewById(R.id.btnNewAuctionStartingPrice);
-
+        btnNewAuctionStartingPriceEditBtn = (ImageButton) findViewById(R.id.newAuctionStartingPriceEditBtn);
+        btnNewAuctionStartingPriceEditBtn.setOnClickListener(EditPriceClickListener);
 
         //Set Calendar elements
         day = mCalendar.get(Calendar.DAY_OF_MONTH);
@@ -462,6 +467,30 @@ public class NewAuctionActivity extends AppCompatActivity {
             datePickerDialog.show();
         }
     };
+
+    View.OnClickListener EditPriceClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Dialog edtPriceDialog = new Dialog(NewAuctionActivity.this);
+
+            edtPriceDialog.setContentView(R.layout.price_dialog);
+            edtPriceDialog.setCancelable(true);
+            edtPriceDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+            EditText edtPriceValue = (EditText) edtPriceDialog.findViewById(R.id.edtPriceValue);
+            edtPriceValue.setText(Float.toString(btnNewAuctionStartingPrice.getValue()));
+            Button edtPriceBtn = (Button) edtPriceDialog.findViewById(R.id.edtPriceDialogBtn);
+            edtPriceBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    btnNewAuctionStartingPrice.setPickerValue(Float.valueOf(String.valueOf(edtPriceValue.getText())));
+                    edtPriceDialog.dismiss();
+                }
+            });
+            edtPriceDialog.show();
+
+        }
+    };
+
 
     private void selectImage(){
         /*Intent intent = new Intent();

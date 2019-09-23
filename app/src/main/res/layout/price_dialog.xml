@@ -15,8 +15,8 @@
         android:padding="15dp">
 
         <TextView
-            android:text="Please rate the seller"
-            android:id="@+id/ratingDialogHeader"
+            android:text="Please insert initial price"
+            android:id="@+id/edtPriceDialogHeader"
             android:textSize="24dp"
             android:textColor="@color/colorPrimary"
             android:layout_marginTop="10dp"
@@ -24,23 +24,18 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center" />
 
-        <RatingBar
-            android:id="@+id/ratingDialogBar"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            android:layout_gravity="center"
-            android:numStars="5"
-            android:stepSize="1.0"
-            android:isIndicator="false" />
-
-        <Button
-            android:id="@+id/rank_dialog_button"
+        <EditText
+            android:id="@+id/edtPriceValue"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Rate"
+            android:textAlignment="center"
+            android:inputType="numberDecimal"/>
+
+        <Button
+            android:id="@+id/edtPriceDialogBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="OK"
             android:textSize="20dp"
             android:textColor="@android:color/white"
             android:layout_margin="5dp"
