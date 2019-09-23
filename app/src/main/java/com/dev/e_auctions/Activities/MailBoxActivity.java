@@ -15,6 +15,10 @@ import com.dev.e_auctions.R;
  */
 public class MailBoxActivity extends AppCompatActivity {
 
+    TabLayout tabLayout;
+    ViewPager viewPager;
+    ViewPagerAdapter viewPagerAdapter;
+
     /**
      *
      * @param savedInstanceState
@@ -24,17 +28,15 @@ public class MailBoxActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mail_box);
 
-        TabLayout tabLayout = findViewById(R.id.msg_tab_layout);
-        ViewPager viewPager = findViewById(R.id.msg_view_pager);
+        tabLayout = findViewById(R.id.msg_tab_layout);
+        viewPager = findViewById(R.id.msg_view_pager);
 
-        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
+        viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
         viewPagerAdapter.addFragment(new InboxFragment(), "Inbox");
         viewPagerAdapter.addFragment(new OutboxFragment(), "Outbox");
 
         viewPager.setAdapter(viewPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
-
-
 
     }
 }

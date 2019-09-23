@@ -3,11 +3,14 @@ package com.dev.e_auctions.Model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.dev.e_auctions.Interface.ParcelableAndComparable;
+
 /**
  *
  */
-public class Message implements Parcelable {
-    private int messageId;
+//public class Message implements Parcelable {
+public class Message implements ParcelableAndComparable {
+    private Integer messageId;
     private String messageTime;
     private User sender;
     private User receiver;
@@ -28,7 +31,7 @@ public class Message implements Parcelable {
      *
      * @return
      */
-    public int getMessageId() {
+    public Integer getMessageId() {
         return messageId;
     }
 
@@ -96,6 +99,11 @@ public class Message implements Parcelable {
         message = in.readString();
         auctionId = in.readByte() == 0x00 ? null : in.readLong();
         read = in.readByte() != 0x00;
+    }
+
+    @Override
+    public int compareTo(Message o) {
+        return this.getMessageId().compareTo(o.getMessageId());
     }
 
     /**

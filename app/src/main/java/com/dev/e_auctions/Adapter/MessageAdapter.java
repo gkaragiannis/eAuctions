@@ -73,6 +73,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
                 intent.putExtra("message", message);
                 message.setRead();
                 context.startActivity(intent);
+                viewHolder.read_unread.setImageResource(R.drawable.ic_mail_outline_green_24dp);
             }
         });
     }
