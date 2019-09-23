@@ -42,6 +42,9 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Response;
 
+/**
+ *
+ */
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, MaterialSearchBar.OnSearchActionListener {
 
@@ -79,6 +82,10 @@ public class HomeActivity extends AppCompatActivity
 
     private SuggestionsAdapter sugestionAdapter;
 
+    /**
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -184,6 +191,9 @@ public class HomeActivity extends AppCompatActivity
         //searchAdapter = new RecyclerViewAdapter<>()
     }*/
 
+    /**
+     *
+     */
     @Override
     protected void onResume(){
         super.onResume();
@@ -192,6 +202,9 @@ public class HomeActivity extends AppCompatActivity
         searchBar.setLastSuggestions(suggestionList);*/
     }
 
+    /**
+     *
+     */
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -203,6 +216,11 @@ public class HomeActivity extends AppCompatActivity
         }
     }
 
+    /**
+     *
+     * @param menu
+     * @return
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -210,6 +228,11 @@ public class HomeActivity extends AppCompatActivity
         return true;
     }
 
+    /**
+     *
+     * @param item
+     * @return
+     */
     @Override
     public boolean onOptionsItemSelected(android.view.MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -226,6 +249,9 @@ public class HomeActivity extends AppCompatActivity
     }
 
     //Navigation Menu functionality
+    /**
+     *
+     */
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(android.view.MenuItem item) {
@@ -265,17 +291,29 @@ public class HomeActivity extends AppCompatActivity
         return true;
     }
 
+    /**
+     *
+     * @param enabled
+     */
     @Override
     public void onSearchStateChanged(boolean enabled) {
 
     }
 
+    /**
+     *
+     * @param text
+     */
     @Override
     public void onSearchConfirmed(CharSequence text) {
         searchBar.disableSearch();
         searchBar.setVisibility(View.GONE);
     }
 
+    /**
+     *
+     * @param buttonCode
+     */
     @Override
     public void onButtonClicked(int buttonCode) {
         switch (buttonCode) {
@@ -286,6 +324,9 @@ public class HomeActivity extends AppCompatActivity
         }
     }
 
+    /**
+     *
+     */
     private class HttpRequestAuctionsTask extends AsyncTask <String, Void, ArrayList<Auction>>{
 
         final ProgressDialog mDialog = new ProgressDialog(HomeActivity.this);
@@ -369,6 +410,9 @@ public class HomeActivity extends AppCompatActivity
         }
     }
 
+    /**
+     *
+     */
     private class HttpRequestCategoriesTask extends AsyncTask <Void, Void, ArrayList<Category>>{
 
         final ProgressDialog mDialog = new ProgressDialog(HomeActivity.this);

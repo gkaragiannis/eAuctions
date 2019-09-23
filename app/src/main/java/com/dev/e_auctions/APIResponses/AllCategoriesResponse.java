@@ -4,6 +4,9 @@ import com.dev.e_auctions.Model.Category;
 
 import java.util.List;
 
+/**
+ *
+ */
 public class AllCategoriesResponse extends GeneralResponse{
 
     private List<Category> categories;

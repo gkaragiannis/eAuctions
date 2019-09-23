@@ -1,5 +1,8 @@
 package com.dev.e_auctions.Model;
 
+/**
+ *
+ */
 public class Bid implements Comparable<Bid>{
     Integer bid_id;
     User bidder;
@@ -22,6 +25,11 @@ public class Bid implements Comparable<Bid>{
         return bidPrice;
     }
 
+    /**
+     *
+     * @param o
+     * @return
+     */
     @Override
     public int compareTo(Bid o) {
         return this.getBidPrice().compareTo(o.getBidPrice());

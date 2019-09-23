@@ -17,52 +17,104 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ *
+ */
 public class ExpandableBidListAdapter extends BaseExpandableListAdapter {
     private Context context;
     private List<String> listDataHeader;
     private HashMap<String, List<Bid>> listHashMap;
 
+    /**
+     *
+     * @param context
+     * @param listDataHeader
+     * @param listHashMap
+     */
     public ExpandableBidListAdapter(Context context, List<String> listDataHeader, HashMap<String, List<Bid>> listHashMap) {
         this.context = context;
         this.listDataHeader = listDataHeader;
         this.listHashMap = listHashMap;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public int getGroupCount() {
         return listDataHeader.size();
     }
 
+    /**
+     *
+     * @param groupPosition
+     * @return
+     */
     @Override
     public int getChildrenCount(int groupPosition) {
         return listHashMap.get(listDataHeader.get(groupPosition)).size();
     }
 
+    /**
+     *
+     * @param groupPosition
+     * @return
+     */
     @Override
     public Object getGroup(int groupPosition) {
         return listDataHeader.get(groupPosition);
     }
 
+    /**
+     *
+     * @param groupPosition
+     * @param childPosition
+     * @return
+     */
     @Override
     public Bid getChild(int groupPosition, int childPosition) {
         return listHashMap.get(listDataHeader.get(groupPosition)).get(childPosition);
     }
 
+    /**
+     *
+     * @param groupPosition
+     * @return
+     */
     @Override
     public long getGroupId(int groupPosition) {
         return groupPosition;
     }
 
+    /**
+     *
+     * @param groupPosition
+     * @param childPosition
+     * @return
+     */
     @Override
     public long getChildId(int groupPosition, int childPosition) {
         return childPosition;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public boolean hasStableIds() {
         return false;
     }
 
+    /**
+     *
+     * @param groupPosition
+     * @param isExpanded
+     * @param convertView
+     * @param parent
+     * @return
+     */
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
         String headerTitle = (String)getGroup(groupPosition);
@@ -82,6 +134,15 @@ public class ExpandableBidListAdapter extends BaseExpandableListAdapter {
         return convertView;
     }
 
+    /**
+     *
+     * @param groupPosition
+     * @param childPosition
+     * @param isLastChild
+     * @param convertView
+     * @param parent
+     * @return
+     */
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
         DecimalFormat df = new DecimalFormat("#.00");
@@ -107,6 +168,12 @@ public class ExpandableBidListAdapter extends BaseExpandableListAdapter {
         return convertView;
     }
 
+    /**
+     *
+     * @param groupPosition
+     * @param childPosition
+     * @return
+     */
     @Override
     public boolean isChildSelectable(int groupPosition, int childPosition) {
         return false;

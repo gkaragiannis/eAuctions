@@ -14,25 +14,33 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
+/**
+ *
+ */
 public class RestClient {
 
-//    private static String domainURL = "https://my-json-server.typicode.com/gkaragiannis/testREST/";
     private static String domainURL = "https://83.212.109.213:8080/";
-//    private static String domainURL = "https://gkarag.free.beeceptor.com/";
     private static Retrofit retrofit = null;
 
+    /**
+     *
+     * @return
+     */
     public static Retrofit getClient(){
         if (retrofit==null){
             retrofit = new Retrofit.Builder()
                     .baseUrl(domainURL)
                     .addConverterFactory(GsonConverterFactory.create())
-                    //.addConverterFactory(JacksonConverterFactory.create())
                     .client(getUnsafeOkHttpClient())
                     .build();
         }
         return retrofit;
     }
 
+    /**
+     *
+     * @return
+     */
     private static OkHttpClient getUnsafeOkHttpClient() {
         try {
             // Create a trust manager that does not validate certificate chains

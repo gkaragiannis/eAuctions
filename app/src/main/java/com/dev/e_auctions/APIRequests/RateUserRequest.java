@@ -3,12 +3,22 @@ package com.dev.e_auctions.APIRequests;
 import com.dev.e_auctions.Model.Auction;
 import com.dev.e_auctions.Model.User;
 
+/**
+ *
+ */
 public class RateUserRequest {
     private String userToken;
     private int userToBeRatedId;
     private int auctionId;
     private int rate;
 
+    /**
+     *
+     * @param userToken
+     * @param userToBeRatedId
+     * @param auctionId
+     * @param rate
+     */
     public RateUserRequest(String userToken, int userToBeRatedId, int auctionId, int rate) {
         this.userToken = userToken;
         this.userToBeRatedId = userToBeRatedId;

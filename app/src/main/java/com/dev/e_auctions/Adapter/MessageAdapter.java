@@ -4,41 +4,44 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.dev.e_auctions.APIRequests.MarkMessageAsReadRequest;
-import com.dev.e_auctions.APIResponses.GeneralResponse;
-import com.dev.e_auctions.Activities.ChatActivity;
 import com.dev.e_auctions.Activities.MessageActivity;
-import com.dev.e_auctions.Client.RestClient;
-import com.dev.e_auctions.Common.Common;
-import com.dev.e_auctions.Interface.RestApi;
-import com.dev.e_auctions.Model.MenuItem;
 import com.dev.e_auctions.Model.Message;
-import com.dev.e_auctions.Model.User;
 import com.dev.e_auctions.R;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
+/**
+ *
+ */
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHolder> {
 
     private Context context;
     private List<Message> messages;
 
+    /**
+     *
+     * @param context
+     * @param messages
+     */
     public MessageAdapter(Context context, List<Message> messages) {
         this.context = context;
         this.messages = messages;
     }
 
+    /**
+     *
+     * @param viewGroup
+     * @param i
+     * @return
+     */
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
@@ -46,6 +49,11 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         return new MessageAdapter.ViewHolder(view);
     }
 
+    /**
+     *
+     * @param viewHolder
+     * @param position
+     */
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int position) {
 
@@ -61,14 +69,18 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 Intent intent = new Intent(context, MessageActivity.class);
-                intent.putExtra("subject", message.getSubject());
+                intent.putExtra("message", message);
+                message.setRead();
                 context.startActivity(intent);
             }
         });
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public int getItemCount() {
         return messages.size();
@@ -90,20 +102,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     /**
      * Method to
      */
-    public void updateDataset(/*List<Message> newDataset*/){
-        System.out.println("prin to clear: " + messages.size());
-        /*System.out.println("prin to clear: " + newDataset.size());
-        messages.clear();
-        System.out.println("Meta to clear: " + messages.size());
-        System.out.println("Meta to clear: " + newDataset.size());
-//        messages.addAll(newDataset);
-        for (Message message : newDataset){
-            System.out.println(message.getMessageId());
-            messages.add(message);
-        }
-        System.out.println("meta to addAll: " + messages.size());
-        System.out.println("meta to addAll: " + newDataset.size());*/
+    public void updateDataset(){
         this.notifyDataSetChanged();
-        System.out.println("prin to clear: " + messages.size());
     }
 }

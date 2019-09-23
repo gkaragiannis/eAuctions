@@ -1,5 +1,8 @@
 package com.dev.e_auctions.APIRequests;
 
+/**
+ *
+ */
 public class RegisterNewUserRequest {
 
     private String username;
@@ -13,6 +16,19 @@ public class RegisterNewUserRequest {
     private String address;
     private String afm;
 
+    /**
+     *
+     * @param username
+     * @param password
+     * @param firstName
+     * @param lastName
+     * @param email
+     * @param phone
+     * @param country
+     * @param city
+     * @param address
+     * @param afm
+     */
     public RegisterNewUserRequest(String username, String password, String firstName, String lastName, String email, String phone, String country, String city, String address, String afm) {
         this.username = username;
         this.password = password;

@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 
 import com.dev.e_auctions.APIRequests.GetMessagesRequest;
 import com.dev.e_auctions.APIResponses.GetMessagesResponse;
-import com.dev.e_auctions.Activities.MailBoxActivity;
 import com.dev.e_auctions.Adapter.MessageAdapter;
 import com.dev.e_auctions.Client.RestClient;
 import com.dev.e_auctions.Common.Common;
@@ -27,13 +26,22 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-
+/**
+ *
+ */
 public class InboxFragment extends Fragment {
 
     private List<Message> messages = new ArrayList<>();
     private RecyclerView recyclerView;
     private MessageAdapter messageAdapter;
 
+    /**
+     *
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -50,39 +58,9 @@ public class InboxFragment extends Fragment {
         return view;
     }
 
-    private void getMessages() {
-
-        GetMessagesRequest getMessagesRequest = new GetMessagesRequest(Common.token);
-        Call<GetMessagesResponse> call = RestClient.getClient().create(RestApi.class).postGetInbox(getMessagesRequest);
-
-        call.enqueue(new Callback<GetMessagesResponse>() {
-            @Override
-            public void onResponse(Call<GetMessagesResponse> call, Response<GetMessagesResponse> response) {
-                if (!response.isSuccessful()){
-                    return;
-                }
-                else if (!response.body().getStatusCode().equals("SUCCESS")){
-                    return;
-                }
-                else {
-                    messages.addAll(response.body().getMessages());
-                    messageAdapter.updateDataset();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<GetMessagesResponse> call, Throwable t) {
-                System.out.println("Unavailable services");
-                return;
-            }
-        });
-
-        for (Message message : messages){
-            System.out.println(message.getSubject());
-        }
-        System.out.println(messages.size());
-    }
-
+    /**
+     *
+     */
     private class HttpGetInboxMessagesTask extends AsyncTask<Void, Void, List<Message>> {
         @Override
         protected List<Message> doInBackground(Void... voids) {

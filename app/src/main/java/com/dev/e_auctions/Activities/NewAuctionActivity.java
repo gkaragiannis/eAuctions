@@ -64,6 +64,9 @@ import retrofit2.Response;
 import static android.app.TimePickerDialog.*;
 import static android.text.TextUtils.isEmpty;
 
+/**
+ *
+ */
 public class NewAuctionActivity extends AppCompatActivity {
 
     private static final int GALLERY_REQUEST_CODE = 100;
@@ -82,6 +85,10 @@ public class NewAuctionActivity extends AppCompatActivity {
     private String filePath;
     private Uri selectedImage;
 
+    /**
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -135,6 +142,11 @@ public class NewAuctionActivity extends AppCompatActivity {
     }
 
     //TODO: complete submitAuction
+
+    /**
+     *
+     * @throws Throwable
+     */
     private void submitAuction() throws Throwable {
         List<Category> itemCategories = new ArrayList<>();
         /*String auctionId = null;
@@ -194,6 +206,9 @@ public class NewAuctionActivity extends AppCompatActivity {
         mDialog.dismiss();
     }
 
+    /**
+     *
+     */
     private void getCategories() {
         Call<AllCategoriesResponse> call = RestClient.getClient().create(RestApi.class).getCategories();
 
@@ -230,6 +245,10 @@ public class NewAuctionActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     *
+     * @param newAcutionRequest
+     */
     private void postNewAuction(NewAcutionRequest newAcutionRequest) {
 
         Call<NewAuctionResponse> call = RestClient.getClient().create(RestApi.class).postNewAuction(newAcutionRequest);
@@ -270,6 +289,10 @@ public class NewAuctionActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     *
+     * @return
+     */
     private boolean postUploadImage() {
 
         Log.d("auction UploadImg", "The imageView is "+newAuctionImage);
@@ -325,6 +348,9 @@ public class NewAuctionActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     *
+     */
     private void postDelete() {
         final ProgressDialog mDialog = new ProgressDialog(NewAuctionActivity.this);
         mDialog.setMessage("Αuction is being deleted");
@@ -362,7 +388,9 @@ public class NewAuctionActivity extends AppCompatActivity {
         });
     }
 
-
+    /**
+     *
+     */
     View.OnClickListener CategoryClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -413,6 +441,9 @@ public class NewAuctionActivity extends AppCompatActivity {
         }
     };
 
+    /**
+     *
+     */
     View.OnClickListener StartingDateClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -440,6 +471,9 @@ public class NewAuctionActivity extends AppCompatActivity {
         }
     };
 
+    /**
+     *
+     */
     View.OnClickListener EndDateClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -468,6 +502,9 @@ public class NewAuctionActivity extends AppCompatActivity {
         }
     };
 
+    /**
+     *
+     */
     View.OnClickListener EditPriceClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -491,7 +528,9 @@ public class NewAuctionActivity extends AppCompatActivity {
         }
     };
 
-
+    /**
+     *
+     */
     private void selectImage(){
         /*Intent intent = new Intent();
         intent.setType("image/*")
@@ -504,6 +543,12 @@ public class NewAuctionActivity extends AppCompatActivity {
         startActivityForResult(intent,GALLERY_REQUEST_CODE);
     }
 
+    /**
+     *
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -556,6 +601,10 @@ public class NewAuctionActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     private String imageToString(){
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);

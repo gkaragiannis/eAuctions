@@ -1,7 +1,5 @@
 package com.dev.e_auctions.Fragments;
 
-import android.content.Context;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -28,12 +26,21 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-
+/**
+ *
+ */
 public class OutboxFragment extends Fragment {
     private List<Message> messages = new ArrayList<>();
     private RecyclerView recyclerView;
     private MessageAdapter messageAdapter;
 
+    /**
+     *
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -50,39 +57,9 @@ public class OutboxFragment extends Fragment {
         return view;
     }
 
-    private void getMessages() {
-
-        GetMessagesRequest getMessagesRequest = new GetMessagesRequest(Common.token);
-        Call<GetMessagesResponse> call = RestClient.getClient().create(RestApi.class).postGetInbox(getMessagesRequest);
-
-        call.enqueue(new Callback<GetMessagesResponse>() {
-            @Override
-            public void onResponse(Call<GetMessagesResponse> call, Response<GetMessagesResponse> response) {
-                if (!response.isSuccessful()){
-                    return;
-                }
-                else if (!response.body().getStatusCode().equals("SUCCESS")){
-                    return;
-                }
-                else {
-                    messages.addAll(response.body().getMessages());
-                    messageAdapter.updateDataset();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<GetMessagesResponse> call, Throwable t) {
-                System.out.println("Unavailable services");
-                return;
-            }
-        });
-
-        for (Message message : messages){
-            System.out.println(message.getSubject());
-        }
-        System.out.println(messages.size());
-    }
-
+    /**
+     *
+     */
     private class HttpGetOutboxMessagesTask extends AsyncTask<Void, Void, List<Message>> {
         @Override
         protected List<Message> doInBackground(Void... voids) {

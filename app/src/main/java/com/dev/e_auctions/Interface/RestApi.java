@@ -41,59 +41,145 @@ import retrofit2.http.Query;
 public interface RestApi {
 
     /*-- USERS --*/
+
+    /**
+     *
+     * @param signInRequest
+     * @return
+     */
     @POST("users/authenticateuser")
     Call<AuthenticateUserResponse> postSignIn(@Body AuthenticateUserRequest signInRequest);
 
+    /**
+     *
+     * @param signUpRequest
+     * @return
+     */
     @POST("users/registernewuser")
     Call<RegisterNewUserResponse> postSignUp(@Body RegisterNewUserRequest signUpRequest);
 
+    /**
+     *
+     * @param rateUserRequest
+     * @return
+     */
     @POST("users/rateuser")
     Call<GeneralResponse> postRateUser(@Body RateUserRequest rateUserRequest);
 
 
     /*-- AUCTIONS --*/
+
+    /**
+     *
+     * @return
+     */
     @GET("auctions/allauctions")
     Call<AuctionListResponse> getAllAuctions();
 
+    /**
+     *
+     * @return
+     */
     @GET("auctions/openauctions")
     Call<AuctionListResponse> getOpenAuctions();
 
+    /**
+     *
+     * @param newAcutionRequest
+     * @return
+     */
     @POST("auctions/newauction")
     Call<NewAuctionResponse> postNewAuction(@Body NewAcutionRequest newAcutionRequest);
 
+    /**
+     *
+     * @param id
+     * @return
+     */
     @GET("auctions/getauctionbyid")
     Call<AuctionResponse> getAuctionsById(@Query("auctionId") String id);
 
+    /**
+     *
+     * @param auctionByFieldRequest
+     * @return
+     */
     @POST("/auctions/getauctionsbyfield")
     Call<AuctionListResponse> getAuctionsByField(@Body AuctionByFieldRequest auctionByFieldRequest);
 
+    /**
+     *
+     * @param deleteAuctionRequest
+     * @return
+     */
     @POST("auctions/deleteauctionbyid")
     Call<GeneralResponse> postDeleteAuction(@Body DeleteAuctionRequest deleteAuctionRequest);
 
 
     /*-- ITEMCATEGORIES --*/
+
+    /**
+     *
+     * @return
+     */
     @GET("itemcategories/allcategories")
     Call<AllCategoriesResponse> getCategories();
 
 
     /*-- BIDS --*/
+
+    /**
+     *
+     * @param newBidRequest
+     * @return
+     */
     @POST("bids/newbid")
     Call<GeneralResponse> postNewBid(@Body NewBidRequest newBidRequest);
 
     /*-- MESSAGES --*/
+
+    /**
+     *
+     * @param newMessageRequest
+     * @return
+     */
     @POST("/message/newmessage")
     Call<GeneralResponse> postNewMessage(@Body NewMessageRequest newMessageRequest);
 
+    /**
+     *
+     * @param token
+     * @return
+     */
     @POST("/message/getinbox")
     Call<GetMessagesResponse> postGetInbox(@Body GetMessagesRequest token);
 
+    /**
+     *
+     * @param token
+     * @return
+     */
     @POST("/message/getsent")
     Call<GetMessagesResponse> postGetOutbox(@Body GetMessagesRequest token);
 
+    /**
+     *
+     * @param markMessageAsReadRequest
+     * @return
+     */
     @POST("/message/markmessageasread")
     Call<GeneralResponse> postMarkMessageAsRead(@Body MarkMessageAsReadRequest markMessageAsReadRequest);
 
     /*-- IMAGES --*/
+
+    /**
+     *
+     * @param content
+     * @param file
+     * @param token
+     * @param auctionId
+     * @return
+     */
     @Multipart
     @POST("/image/upload")
 //    Call<GeneralResponse> postUploadImage (@Part("file") RequestBody file , @Part("token") RequestBody token, @Part("auctionId") RequestBody auctionId);

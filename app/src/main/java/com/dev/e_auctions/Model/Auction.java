@@ -2,6 +2,9 @@ package com.dev.e_auctions.Model;
 
 import java.util.List;
 
+/**
+ *
+ */
 public class Auction {
     private Integer id;
     private String nameOfItem;

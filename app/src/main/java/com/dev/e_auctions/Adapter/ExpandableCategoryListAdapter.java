@@ -13,52 +13,104 @@ import com.dev.e_auctions.R;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ *
+ */
 public class ExpandableCategoryListAdapter  extends BaseExpandableListAdapter {
     private Context context;
     private List<String> listDataHeader;
     private HashMap<String, List<String>> listHashMap;
 
+    /**
+     *
+     * @param context
+     * @param listDataHeader
+     * @param listHashMap
+     */
     public ExpandableCategoryListAdapter(Context context, List<String> listDataHeader, HashMap<String, List<String>> listHashMap) {
         this.context = context;
         this.listDataHeader = listDataHeader;
         this.listHashMap = listHashMap;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public int getGroupCount() {
         return listDataHeader.size();
     }
 
+    /**
+     *
+     * @param groupPosition
+     * @return
+     */
     @Override
     public int getChildrenCount(int groupPosition) {
         return listHashMap.get(listDataHeader.get(groupPosition)).size();
     }
 
+    /**
+     *
+     * @param groupPosition
+     * @return
+     */
     @Override
     public Object getGroup(int groupPosition) {
         return listDataHeader.get(groupPosition);
     }
 
+    /**
+     *
+     * @param groupPosition
+     * @param childPosition
+     * @return
+     */
     @Override
     public Object getChild(int groupPosition, int childPosition) {
         return listHashMap.get(listDataHeader.get(groupPosition)).get(childPosition);
     }
 
+    /**
+     *
+     * @param groupPosition
+     * @return
+     */
     @Override
     public long getGroupId(int groupPosition) {
         return groupPosition;
     }
 
+    /**
+     *
+     * @param groupPosition
+     * @param childPosition
+     * @return
+     */
     @Override
     public long getChildId(int groupPosition, int childPosition) {
         return childPosition;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public boolean hasStableIds() {
         return false;
     }
 
+    /**
+     *
+     * @param groupPosition
+     * @param isExpanded
+     * @param convertView
+     * @param parent
+     * @return
+     */
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
         String headerTitle = (String)getGroup(groupPosition);
@@ -80,6 +132,15 @@ public class ExpandableCategoryListAdapter  extends BaseExpandableListAdapter {
         return convertView;
     }
 
+    /**
+     *
+     * @param groupPosition
+     * @param childPosition
+     * @param isLastChild
+     * @param convertView
+     * @param parent
+     * @return
+     */
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
         final String childText = (String)getChild(groupPosition, childPosition);
@@ -92,6 +153,12 @@ public class ExpandableCategoryListAdapter  extends BaseExpandableListAdapter {
         return convertView;
     }
 
+    /**
+     *
+     * @param groupPosition
+     * @param childPosition
+     * @return
+     */
     @Override
     public boolean isChildSelectable(int groupPosition, int childPosition) {
         return false;

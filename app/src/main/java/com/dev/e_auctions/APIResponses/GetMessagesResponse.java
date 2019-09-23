@@ -4,9 +4,16 @@ import com.dev.e_auctions.Model.Message;
 
 import java.util.List;
 
+/**
+ *
+ */
 public class GetMessagesResponse extends GeneralResponse {
     private List<Message> messages;
 
+    /**
+     *
+     * @return
+     */
     public List<Message> getMessages() {
         return messages;
     }

@@ -18,16 +18,27 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
+/**
+ *
+ */
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MenuItemViewHolder> {
 
     private ArrayList<MenuItem> mMenuItemList;
     private Context context;
 
+    /**
+     *
+     * @param mMenuItemList
+     * @param context
+     */
     public RecyclerViewAdapter(ArrayList<MenuItem> mMenuItemList, Context context) {
         this.mMenuItemList = mMenuItemList;
         this.context = context;
     }
 
+    /**
+     *
+     */
     public class MenuItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         public TextView txtMenuItemName;
@@ -54,10 +65,12 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         }
     }
 
-    /*public RecyclerViewAdapter(ArrayList<MenuItem> menuItemList){
-        mMenuItemList = menuItemList;
-    }*/
-
+    /**
+     *
+     * @param parent
+     * @param viewType
+     * @return
+     */
     @NonNull
     @Override
     public MenuItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -66,6 +79,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         return menuItemViewHolder;
     }
 
+    /**
+     *
+     * @param menuItemViewHolder
+     * @param position
+     */
     @Override
     public void onBindViewHolder(@NonNull MenuItemViewHolder menuItemViewHolder, int position) {
         final MenuItem currentMenuListItem = mMenuItemList.get(position);
@@ -85,11 +103,19 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         });
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public int getItemCount() {
         return mMenuItemList.size();
     }
 
+    /**
+     *
+     * @param newDataset
+     */
     public void updateDataset(ArrayList<MenuItem> newDataset){
         mMenuItemList.clear();
         mMenuItemList.addAll(newDataset);

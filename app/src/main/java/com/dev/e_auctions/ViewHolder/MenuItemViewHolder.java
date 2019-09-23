@@ -8,6 +8,9 @@ import android.widget.TextView;
 import com.dev.e_auctions.Interface.MenuItemClickListener;
 import com.dev.e_auctions.R;
 
+/**
+ *
+ */
 public class MenuItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
     public TextView txtMenuItemName;
@@ -15,6 +18,10 @@ public class MenuItemViewHolder extends RecyclerView.ViewHolder implements View.
 
     private MenuItemClickListener menuItemClickListener;
 
+    /**
+     *
+     * @param itemView
+     */
     public MenuItemViewHolder(View itemView){
         super(itemView);
 
@@ -24,10 +31,18 @@ public class MenuItemViewHolder extends RecyclerView.ViewHolder implements View.
         itemView.setOnClickListener(this);
     }
 
+    /**
+     *
+     * @param menuItemClickListener
+     */
     public void setMenuItemClickListener(MenuItemClickListener menuItemClickListener) {
         this.menuItemClickListener = menuItemClickListener;
     }
 
+    /**
+     *
+     * @param v
+     */
     @Override
     public void onClick(View v) {
         menuItemClickListener.onClick(v, getAdapterPosition(), false);

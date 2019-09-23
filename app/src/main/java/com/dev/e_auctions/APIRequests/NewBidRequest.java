@@ -1,11 +1,20 @@
 package com.dev.e_auctions.APIRequests;
 
+/**
+ *
+ */
 public class NewBidRequest {
 
     private String bidderToken;
     private String bidderValue;
     private String auctionId;
 
+    /**
+     *
+     * @param bidderToken
+     * @param bidderValue
+     * @param auctionId
+     */
     public NewBidRequest(String bidderToken, String bidderValue, String auctionId) {
         this.bidderToken = bidderToken;
         this.bidderValue = bidderValue;

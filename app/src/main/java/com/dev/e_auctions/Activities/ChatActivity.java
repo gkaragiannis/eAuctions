@@ -1,6 +1,5 @@
 package com.dev.e_auctions.Activities;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,22 +11,19 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import com.dev.e_auctions.APIRequests.NewMessageRequest;
 import com.dev.e_auctions.APIResponses.AuctionResponse;
-import com.dev.e_auctions.APIResponses.GeneralResponse;
 import com.dev.e_auctions.Adapter.MessageAdapter;
 import com.dev.e_auctions.Client.RestClient;
-import com.dev.e_auctions.Common.Common;
 import com.dev.e_auctions.Interface.RestApi;
-import com.dev.e_auctions.Model.Auction;
 import com.dev.e_auctions.R;
-
-import java.text.ParseException;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+/**
+ *
+ */
 public class ChatActivity extends AppCompatActivity {
 
     Toolbar toolbar;
@@ -41,6 +37,11 @@ public class ChatActivity extends AppCompatActivity {
     Intent intent;
 
     String subject;
+
+    /**
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,6 +78,10 @@ public class ChatActivity extends AppCompatActivity {
 
     }
 
+    /**
+     *
+     * @param auctionId
+     */
     private void getAuction(String auctionId) {
         Call<AuctionResponse> call = RestClient.getClient().create(RestApi.class).getAuctionsById(auctionId);
 
@@ -111,6 +116,9 @@ public class ChatActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     *
+     */
     View.OnClickListener sendMessage_ClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {

@@ -12,11 +12,19 @@ import android.widget.Toast;
 
 import com.dev.e_auctions.R;
 
+/**
+ *
+ */
 public class MainActivity extends AppCompatActivity {
 
     Button btnSignUp,btnSignIn,btnGuest;
     TextView txtSlogan;
     private ConnectivityManager connectivityManager;
+
+    /**
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

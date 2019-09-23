@@ -23,12 +23,19 @@ import retrofit2.Response;
 
 import com.dev.e_auctions.R;
 
+/**
+ *
+ */
 public class SignUpActivity extends AppCompatActivity {
 
     EditText edtUsername, edtPassword, edtConfirmPass, edtFirstName, edtLastName, edtTaxId,
             edtEmail, edtPhone, edtAddress, edtCity, edtCountry;
     Button btnSignUp;
 
+    /**
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
