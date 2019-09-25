@@ -54,7 +54,7 @@ dependencies {
     implementation 'com.squareup.retrofit2:retrofit:2.6.1'
     implementation 'com.squareup.retrofit2:converter-jackson:2.6.1'
     implementation 'com.squareup.retrofit2:converter-gson:2.6.1'
-    implementation 'com.github.mancj:MaterialSearchBar:0.7.1'
+    implementation 'com.github.mancj:MaterialSearchBar:0.8.2'
     implementation 'com.alespero:expandable-cardview:0.6'
     implementation 'com.nex3z:notification-badge:0.1.0'
 
