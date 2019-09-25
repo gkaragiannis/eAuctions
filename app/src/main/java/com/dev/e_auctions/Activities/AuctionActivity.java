@@ -36,6 +36,7 @@ import com.dev.e_auctions.Model.Auction;
 import com.dev.e_auctions.Model.Bid;
 import com.dev.e_auctions.Model.Category;
 import com.dev.e_auctions.R;
+import com.dev.e_auctions.Utilities.Utils;
 import com.squareup.picasso.Picasso;
 
 import java.text.DecimalFormat;
@@ -272,7 +273,7 @@ public class AuctionActivity extends AppCompatActivity {
         if (itemBids.size() == 0){
             bids = null;
         }
-        else if (itemBids.size() < 4) {
+        else if (itemBids.size() <= 4) {
             for (Bid bid : itemBids) {
                 bids.add(bid);
             }
@@ -565,9 +566,11 @@ public class AuctionActivity extends AppCompatActivity {
         mDialog.show();
 
         DecimalFormat df = new DecimalFormat("#.00");
+        String price = String.valueOf(df.format(btnNewBidValue.getValue())).replace(",",".");
         final NewBidRequest newBidRequest = new NewBidRequest(Common.token,
-                df.format((double) btnNewBidValue.getValue()),
-                getIntent().getStringExtra("AuctionId"));
+                price,getIntent().getStringExtra("AuctionId"));
+
+        System.out.println("The request is "+ Utils.gson.toJson(newBidRequest));
 
         Call<GeneralResponse> call = RestClient.getClient().create(RestApi.class).postNewBid(newBidRequest);
 
