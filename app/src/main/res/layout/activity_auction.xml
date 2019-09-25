@@ -139,47 +139,58 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-
-                        android:layout_marginTop="8dp"
-                        android:padding="12dp"
-                        android:text="Bid Value"
-                        android:textColor="@color/colorPrimary"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
-
-                    <LinearLayout
+                    <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                        android:layout_height="wrap_content">
 
-                        <pl.polak.clicknumberpicker.ClickNumberPickerView
-                            android:id="@+id/btnNewBidValue"
-                            android:layout_width="200dp"
+                        <TextView
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
-                            android:layout_marginLeft="8dp"
                             android:layout_marginTop="8dp"
-                            android:layout_marginEnd="18dp"
-                            android:layout_marginRight="18dp"
-                            app:max_value="999999999"
-                            app:picker_corner_radius="20"
-                            app:pickers_background_color="@color/colorPrimary"
-                            app:step="0.01"
-                            app:swipe_enabled="false"
-                            app:value_background_color="@color/colorAccent"
-                            app:value_text_color="@android:color/white" />
+                            android:padding="12dp"
+                            android:text="Bid Value"
+                            android:textColor="@color/colorPrimary"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:layout_alignParentStart="true" />
+
+                        <ImageButton
+                            android:id="@+id/newAuctionStartingPriceEditBtn"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_marginTop="10dp"
+                            android:padding="18dp"
+                            android:background="@drawable/ic_border_color_black_24dp"
+                            android:layout_toStartOf="@+id/auctionBidEuro"
+                            android:layout_toLeftOf="@+id/auctionBidEuro"/>
 
                         <ImageView
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"
+                            android:id="@+id/auctionBidEuro"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:padding="18dp"
                             android:contentDescription="null"
-                            app:srcCompat="@drawable/ic_euro_symbol_24dp" />
+                            app:srcCompat="@drawable/ic_euro_symbol_24dp"
+                            android:layout_alignParentEnd="true"/>
 
-                    </LinearLayout>
+                    </RelativeLayout>
+
+                    <pl.polak.clicknumberpicker.ClickNumberPickerView
+                        android:id="@+id/btnNewBidValue"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginRight="8dp"
+                        android:layout_marginTop="8dp"
+                        app:max_value="999999999"
+                        app:picker_corner_radius="20"
+                        app:pickers_background_color="@color/colorPrimary"
+                        app:step="0.01"
+                        app:swipe_enabled="false"
+                        app:value_background_color="@color/colorAccent"
+                        app:value_text_color="@android:color/white"/>
 
                     <LinearLayout
                         android:layout_width="match_parent"
