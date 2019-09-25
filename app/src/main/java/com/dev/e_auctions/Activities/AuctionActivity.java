@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
@@ -59,6 +60,7 @@ public class AuctionActivity extends AppCompatActivity {
     private TextView auctionName, startingDate, endDate, auctionDesc, auctionLocation, sellerRatingNum, sellerRatingVotes;
     private ProgressBar durationBar;
     private ClickNumberPickerView btnNewBidValue;
+    private ImageButton btnAuctionBidEditBtn;
     private CollapsingToolbarLayout collapsingToolbarLayout;
     private FloatingActionButton btnFAB;
     private ExpandableListView categoryListView;
@@ -83,20 +85,29 @@ public class AuctionActivity extends AppCompatActivity {
         setContentView(R.layout.activity_auction);
 
         //Initialize View
+        collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing);
+
         auctionImage = (ImageView) findViewById(R.id.auctionImage);
+
+        btnNewBidValue = (ClickNumberPickerView) findViewById(R.id.btnNewBidValue);
+
         auctionName = (TextView) findViewById(R.id.auctionName);
         durationBar = (ProgressBar) findViewById(R.id.durationBar);
         startingDate = (TextView) findViewById(R.id.startingDate);
         endDate = (TextView) findViewById(R.id.endDate);
+
+        bidListView = (ExpandableListView)findViewById(R.id.auctionBidsELV);
+        btnAuctionBidEditBtn = (ImageButton) findViewById(R.id.auctionBidEditBtn);
+        btnAuctionBidEditBtn.setOnClickListener(EditBidClickListener);
+
         auctionDesc = (TextView) findViewById(R.id.auctionDesc);
+        categoryListView = (ExpandableListView)findViewById(R.id.auctionCategoriesELV);
         auctionLocation = (TextView) findViewById(R.id.auctionLocation);
+
         rtnBar = (RatingBar) findViewById(R.id.sellerRating);
         sellerRatingNum = (TextView) findViewById(R.id.sellerRatingNum);
         sellerRatingVotes = (TextView) findViewById(R.id.sellerRatingVotes);
-        categoryListView = (ExpandableListView)findViewById(R.id.auctionCategoriesELV);
-        bidListView = (ExpandableListView)findViewById(R.id.auctionBidsELV);
-        btnNewBidValue = (ClickNumberPickerView) findViewById(R.id.btnNewBidValue);
-        collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing);
+
         //maybe there is no need for next 2 rows
         collapsingToolbarLayout.setExpandedTitleTextAppearance(R.style.ExpandedAppBar);
         collapsingToolbarLayout.setCollapsedTitleTextAppearance(R.style.CollapsedAppBar);
@@ -419,6 +430,31 @@ public class AuctionActivity extends AppCompatActivity {
                         }
                     })
                     .show();
+        }
+    };
+
+    /**
+     *
+     */
+    View.OnClickListener EditBidClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Dialog edtPriceDialog = new Dialog(AuctionActivity.this);
+
+            edtPriceDialog.setContentView(R.layout.price_dialog);
+            edtPriceDialog.setCancelable(true);
+            edtPriceDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+            EditText edtPriceValue = (EditText) edtPriceDialog.findViewById(R.id.edtPriceValue);
+            edtPriceValue.setText(Float.toString(btnNewBidValue.getValue()));
+            Button edtPriceBtn = (Button) edtPriceDialog.findViewById(R.id.edtPriceDialogBtn);
+            edtPriceBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    btnNewBidValue.setPickerValue(Float.valueOf(String.valueOf(edtPriceValue.getText())));
+                    edtPriceDialog.dismiss();
+                }
+            });
+            edtPriceDialog.show();
         }
     };
 
