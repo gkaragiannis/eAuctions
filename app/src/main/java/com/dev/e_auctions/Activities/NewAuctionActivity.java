@@ -233,6 +233,10 @@ public class NewAuctionActivity extends AppCompatActivity {
     private void postNewAuction(NewAcutionRequest newAcutionRequest) {
         verifyStoragePermissions(this);
 
+        final ProgressDialog mDialog = new ProgressDialog(NewAuctionActivity.this);
+        mDialog.setMessage("Please wait...");
+        mDialog.show();
+
         Call<NewAuctionResponse> call = RestClient.getClient().create(RestApi.class).postNewAuction(newAcutionRequest);
 
         call.enqueue(new Callback<NewAuctionResponse>() {
@@ -260,6 +264,8 @@ public class NewAuctionActivity extends AppCompatActivity {
                     postUploadImage();
                 }
                 Toast.makeText(NewAuctionActivity.this, "Auction registered successfully", Toast.LENGTH_SHORT).show();
+                Intent home = new Intent(NewAuctionActivity.this, HomeActivity.class);
+                startActivity(home);
 
             }
 
@@ -269,6 +275,7 @@ public class NewAuctionActivity extends AppCompatActivity {
                 return;
             }
         });
+        mDialog.dismiss();
     }
 
     /**
