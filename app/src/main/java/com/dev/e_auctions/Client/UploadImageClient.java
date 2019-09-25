@@ -1,5 +1,10 @@
 package com.dev.e_auctions.Client;
 
+import android.util.Log;
+
+import com.dev.e_auctions.Utilities.Utils;
+
+import java.io.File;
 import java.security.cert.CertificateException;
 
 import javax.net.ssl.HostnameVerifier;
@@ -9,39 +14,54 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.converter.jackson.JacksonConverterFactory;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
-/**
- *
- */
-public class RestClient {
 
-    private static String domainURL = "https://83.212.109.213:8080/";
-    private static Retrofit retrofit = null;
+public class UploadImageClient {
 
-    /**
-     *
-     * @return The Retrofit client
-     */
-    public static Retrofit getClient(){
-        if (retrofit==null){
-            retrofit = new Retrofit.Builder()
-                    .baseUrl(domainURL)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .client(getUnsafeOkHttpClient())
-                    .build();
+
+    private static OkHttpClient client = getUnsafeOkHttpClientUploadImage();
+
+
+    public static void uploadImage(String token, String auctionId, File file) {
+
+        Log.d("Auction ", "before the body builder ");
+        RequestBody requestBody = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("token", token)
+                .addFormDataPart("auctionId", auctionId)
+                .addFormDataPart("file", file.getName(),
+                        RequestBody.create(MediaType.parse ("image/jpeg"), file))
+                .build();
+
+        System.out.println(Utils.gson.toJson(requestBody));
+
+        Log.d("Auction ", "Before the request builder");
+        Request request = new Request.Builder()
+                .url("https://83.212.109.213:8080/image/upload")
+                .post(requestBody)
+                .build();
+
+        try  {
+            Response response = client.newCall(request).execute();
+
+            if (!response.isSuccessful()) {
+                Log.d("TEST", response.toString());
+            }
+
+            System.out.println(response.body().string());
+        } catch (Exception e) {
+            Log.d("Auction ", "Not successful upload");
+            e.printStackTrace();
         }
-        return retrofit;
     }
 
-    /**
-     *
-     * @return
-     */
-    private static OkHttpClient getUnsafeOkHttpClient() {
+    private static OkHttpClient getUnsafeOkHttpClientUploadImage() {
         try {
             // Create a trust manager that does not validate certificate chains
             final TrustManager[] trustAllCerts = new TrustManager[]{
@@ -68,7 +88,7 @@ public class RestClient {
             final SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
 
             OkHttpClient.Builder builder = new OkHttpClient.Builder();
-            builder.sslSocketFactory(sslSocketFactory);
+            builder.sslSocketFactory(sslSocketFactory, (X509TrustManager) trustAllCerts[0]);
             builder.hostnameVerifier(new HostnameVerifier() {
                 @Override
                 public boolean verify(String hostname, SSLSession session) {
@@ -81,7 +101,7 @@ public class RestClient {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-    }
 
+    }
 
 }
