@@ -1,5 +1,7 @@
 package com.dev.e_auctions.Activities;
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -7,15 +9,16 @@ import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
-import android.os.AsyncTask;
+import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
@@ -39,31 +42,22 @@ import com.dev.e_auctions.Interface.RestApi;
 import com.dev.e_auctions.Model.Category;
 import com.dev.e_auctions.R;
 import com.dev.e_auctions.Utilities.Utils;
-import com.google.gson.GsonBuilder;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
-import okhttp3.internal.Util;
 import pl.polak.clicknumberpicker.ClickNumberPickerView;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static android.app.TimePickerDialog.*;
-import static android.text.TextUtils.isEmpty;
+import static android.app.TimePickerDialog.OnTimeSetListener;
 
 /**
  *
@@ -87,7 +81,6 @@ public class NewAuctionActivity extends AppCompatActivity {
     private Uri selectedImage;
 
     /**
-     *
      * @param savedInstanceState
      */
     @Override
@@ -145,7 +138,6 @@ public class NewAuctionActivity extends AppCompatActivity {
     //TODO: complete submitAuction
 
     /**
-     *
      * @throws Throwable
      */
     private void submitAuction() throws Throwable {
@@ -160,7 +152,7 @@ public class NewAuctionActivity extends AppCompatActivity {
         //Validate data
         if (edtTextName.getText().toString().isEmpty() || edtTextCategory.getText().toString().isEmpty() ||
                 edtTextStartingDate.getText().toString().isEmpty() || edtTextEndDate.getText().toString().isEmpty() ||
-                edtTextDescription.getText().toString().isEmpty()){
+                edtTextDescription.getText().toString().isEmpty()) {
             mDialog.dismiss();
             Toast.makeText(NewAuctionActivity.this, "All fields are required", Toast.LENGTH_LONG).show();
             return;
@@ -168,15 +160,15 @@ public class NewAuctionActivity extends AppCompatActivity {
 
         Date startingDate = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(edtTextStartingDate.getText().toString());
         Date endingDate = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(edtTextEndDate.getText().toString());
-        if (startingDate.getTime() > endingDate.getTime()){
+        if (startingDate.getTime() > endingDate.getTime()) {
             mDialog.dismiss();
             Toast.makeText(NewAuctionActivity.this, "Ending Date should be later than Starting Date", Toast.LENGTH_LONG).show();
             return;
         }
 
         //prepare new auction request
-        for (int position = 0; position < categories.length; position++){
-            if (checkItems[position] == true){
+        for (int position = 0; position < categories.length; position++) {
+            if (checkItems[position] == true) {
                 itemCategories.add(new Category(categoryIds[position], categories[position]));
             }
         }
@@ -188,12 +180,10 @@ public class NewAuctionActivity extends AppCompatActivity {
                 edtTextStartingDate.getText().toString(),
                 edtTextEndDate.getText().toString(),
                 edtTextDescription.getText().toString(),
-                df.format((double) btnNewAuctionStartingPrice.getValue()).replace(",","."));
+                df.format((double) btnNewAuctionStartingPrice.getValue()).replace(",", "."));
 
         postNewAuction(newAcutionRequest);
-        Log.d("auction ","the new auction request is "+ Utils.gson.toJson(newAcutionRequest));
-
-
+        Log.d("auction ", "the new auction request is " + Utils.gson.toJson(newAcutionRequest));
 
 
 //        new HttpPostNewAuctionTask().execute(newAcutionRequest);
@@ -217,11 +207,10 @@ public class NewAuctionActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<AllCategoriesResponse> call, Response<AllCategoriesResponse> response) {
 
-                if (!response.isSuccessful()){
+                if (!response.isSuccessful()) {
                     Toast.makeText(NewAuctionActivity.this, Integer.toString(response.code()), Toast.LENGTH_SHORT).show();
                     return;
-                }
-                else if (!response.body().getStatusCode().equals("SUCCESS")){
+                } else if (!response.body().getStatusCode().equals("SUCCESS")) {
                     Toast.makeText(NewAuctionActivity.this, response.body().getStatusMsg(), Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -230,7 +219,7 @@ public class NewAuctionActivity extends AppCompatActivity {
                 categoryIds = new int[response.body().getCategories().size()];
                 checkItems = new boolean[response.body().getCategories().size()];
                 int position = 0;
-                for (Category category : response.body().getCategories()){
+                for (Category category : response.body().getCategories()) {
                     categories[position] = category.getCategoryName();
                     categoryIds[position] = category.getCategoryId();
                     checkItems[position] = false;
@@ -247,10 +236,10 @@ public class NewAuctionActivity extends AppCompatActivity {
     }
 
     /**
-     *
      * @param newAcutionRequest
      */
     private void postNewAuction(NewAcutionRequest newAcutionRequest) {
+        verifyStoragePermissions(this);
 
         Call<NewAuctionResponse> call = RestClient.getClient().create(RestApi.class).postNewAuction(newAcutionRequest);
 
@@ -258,16 +247,14 @@ public class NewAuctionActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<NewAuctionResponse> call, Response<NewAuctionResponse> response) {
                 boolean hasImage;
-                Log.d("auction ", "the response was "+Utils.gson.toJson(response));
-                if (!response.isSuccessful()){
+                Log.d("auction ", "the response was " + Utils.gson.toJson(response));
+                if (!response.isSuccessful()) {
                     Toast.makeText(NewAuctionActivity.this, "ups something wen wrong", Toast.LENGTH_SHORT).show();
                     return;
-                }
-                else if(null == response.body()){
+                } else if (null == response.body()) {
                     Toast.makeText(NewAuctionActivity.this, "ups something wen wrong", Toast.LENGTH_SHORT).show();
                     return;
-                }
-                else if (!response.body().getStatusCode().equals("SUCCESS")){
+                } else if (!response.body().getStatusCode().equals("SUCCESS")) {
                     Toast.makeText(NewAuctionActivity.this, response.body().getStatusMsg(), Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -275,9 +262,11 @@ public class NewAuctionActivity extends AppCompatActivity {
                 Common.auctionId = Integer.toString(response.body().getAuctionId());
                 System.out.println("New Auction created successfully with Id: " + Common.auctionId);
 
-               if(!(null == newAuctionImage.getDrawable())){
-                   postUploadImage();
-               }
+                System.out.println("The image is null " + (null == newAuctionImage.getDrawable()));
+                if (!(null == newAuctionImage.getDrawable())) {
+                    System.out.println("Ready to upload the image");
+                    postUploadImage();
+                }
                 Toast.makeText(NewAuctionActivity.this, "Auction registered successfully", Toast.LENGTH_SHORT).show();
 
             }
@@ -291,12 +280,11 @@ public class NewAuctionActivity extends AppCompatActivity {
     }
 
     /**
-     *
      * @return
      */
     private boolean postUploadImage() {
 
-        Log.d("auction UploadImg", "The imageView is "+newAuctionImage);
+        Log.d("auction UploadImg", "The imageView is " + newAuctionImage);
 
         final File file = new File(filePath);
         System.out.println("Starting image upload");
@@ -317,7 +305,7 @@ public class NewAuctionActivity extends AppCompatActivity {
             e.printStackTrace();
             return false;
         }
-
+    }
 
 
 
@@ -388,10 +376,10 @@ public class NewAuctionActivity extends AppCompatActivity {
             public void onResponse(Call<GeneralResponse> call, Response<GeneralResponse> response) {
                 mDialog.dismiss();
 
-                if (!response.isSuccessful()){
+                if (!response.isSuccessful()) {
                     Toast.makeText(NewAuctionActivity.this, Integer.toString(response.code()), Toast.LENGTH_SHORT).show();
                     return;
-                }else if (!response.body().getStatusCode().equals("SUCCESS")){
+                } else if (!response.body().getStatusCode().equals("SUCCESS")) {
                     Toast.makeText(NewAuctionActivity.this, response.body().getStatusMsg(), Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -435,8 +423,8 @@ public class NewAuctionActivity extends AppCompatActivity {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             String edtTextCategoryValue = new String();
-                            for (int position = 0; position < categories.length; position++){
-                                if (checkItems[position] == true){
+                            for (int position = 0; position < categories.length; position++) {
+                                if (checkItems[position] == true) {
                                     if (edtTextCategoryValue.isEmpty())
                                         edtTextCategoryValue = categories[position];
                                     else
@@ -446,8 +434,7 @@ public class NewAuctionActivity extends AppCompatActivity {
                             if (!edtTextCategoryValue.isEmpty()) {
                                 edtTextCategory.setText(edtTextCategoryValue);
                                 edtTextCategory.setTextColor(getResources().getColor(R.color.colorPrimary));
-                            }
-                            else {
+                            } else {
                                 edtTextCategory.setText("Please choose at least one category");
                                 edtTextCategory.setTextColor(Color.parseColor("#FF0000"));
                             }
@@ -475,7 +462,7 @@ public class NewAuctionActivity extends AppCompatActivity {
                 @Override
                 public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                     String start = edtTextStartingDate.getText().toString();
-                    edtTextStartingDate.setText(start + " " + String.format("%02d",hourOfDay) + ":" + String.format("%02d",minute));
+                    edtTextStartingDate.setText(start + " " + String.format("%02d", hourOfDay) + ":" + String.format("%02d", minute));
                 }
             };
             TimePickerDialog timePickerDialog = new TimePickerDialog(NewAuctionActivity.this, timeSetListener, hourOfDay, minute, true);
@@ -485,7 +472,7 @@ public class NewAuctionActivity extends AppCompatActivity {
                 @Override
                 public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                     month++;
-                    edtTextStartingDate.setText(year + "-" + String.format("%02d",month) + "-" + String.format("%02d",dayOfMonth));
+                    edtTextStartingDate.setText(year + "-" + String.format("%02d", month) + "-" + String.format("%02d", dayOfMonth));
                 }
             };
             DatePickerDialog datePickerDialog = new DatePickerDialog(NewAuctionActivity.this, dateSetListener, year, month, day);
@@ -505,7 +492,7 @@ public class NewAuctionActivity extends AppCompatActivity {
                 @Override
                 public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                     String end = edtTextEndDate.getText().toString();
-                    edtTextEndDate.setText(end + " " + String.format("%02d",hourOfDay) + ":" + String.format("%02d",minute));
+                    edtTextEndDate.setText(end + " " + String.format("%02d", hourOfDay) + ":" + String.format("%02d", minute));
                 }
             };
             TimePickerDialog timePickerDialog = new TimePickerDialog(NewAuctionActivity.this, timeSetListener, hourOfDay, minute, true);
@@ -515,7 +502,7 @@ public class NewAuctionActivity extends AppCompatActivity {
                 @Override
                 public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                     month++;
-                    edtTextEndDate.setText(year + "-" + String.format("%02d",month) + "-" + String.format("%02d",dayOfMonth));
+                    edtTextEndDate.setText(year + "-" + String.format("%02d", month) + "-" + String.format("%02d", dayOfMonth));
                 }
             };
 
@@ -554,7 +541,7 @@ public class NewAuctionActivity extends AppCompatActivity {
     /**
      *
      */
-    private void selectImage(){
+    private void selectImage() {
         /*Intent intent = new Intent();
         intent.setType("image/*")
                 .setAction(Intent.ACTION_GET_CONTENT);
@@ -563,11 +550,10 @@ public class NewAuctionActivity extends AppCompatActivity {
         intent.setType("image/*");
         String[] mimeTypes = {"image/jpeg", "image/jpg"};
         intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
-        startActivityForResult(intent,GALLERY_REQUEST_CODE);
+        startActivityForResult(intent, GALLERY_REQUEST_CODE);
     }
 
     /**
-     *
      * @param requestCode
      * @param resultCode
      * @param data
@@ -588,7 +574,7 @@ public class NewAuctionActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }*/
-        if (requestCode == GALLERY_REQUEST_CODE && resultCode == RESULT_OK && data != null && data.getData() != null){
+        if (requestCode == GALLERY_REQUEST_CODE && resultCode == RESULT_OK && data != null && data.getData() != null) {
             //display image
             selectedImage = data.getData();
             newAuctionImage.setImageURI(selectedImage);
@@ -624,11 +610,45 @@ public class NewAuctionActivity extends AppCompatActivity {
         }
     }
 
+
+
+    // Storage Permissions
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static String[] PERMISSIONS_STORAGE = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
+
     /**
+     * Checks if the app has permission to write to device storage
      *
+     * If the app does not has permission then the user will be prompted to grant permissions
+     *
+     * @param activity
+     */
+    public static void verifyStoragePermissions(Activity activity) {
+        // Check if we have write permission
+        int permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            // We don't have permission so prompt the user
+            ActivityCompat.requestPermissions(
+                    activity,
+                    PERMISSIONS_STORAGE,
+                    REQUEST_EXTERNAL_STORAGE
+            );
+        }
+    }
+
+
+
+
+
+
+    /**
      * @return
      */
-    private String imageToString(){
+    private String imageToString() {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
         byte[] imgByte = byteArrayOutputStream.toByteArray();
@@ -723,3 +743,4 @@ public class NewAuctionActivity extends AppCompatActivity {
         }
     }*/
 }
+

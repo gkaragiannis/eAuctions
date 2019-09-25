@@ -21,7 +21,6 @@
             android:id="@+id/searchBar"
             android:visibility="gone"
             app:mt_navIconEnabled="true"
-            app:mt_navIconDrawable="@drawable/ic_arrow_back_black_24dp"
             app:mt_speechMode="false"
             app:mt_maxSuggestionsCount="5"/>
 

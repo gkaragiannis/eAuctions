@@ -2,6 +2,8 @@ package com.dev.e_auctions.Client;
 
 import android.util.Log;
 
+import com.dev.e_auctions.Utilities.Utils;
+
 import java.io.File;
 import java.security.cert.CertificateException;
 
@@ -14,13 +16,11 @@ import javax.net.ssl.X509TrustManager;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
-import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-import static com.dev.e_auctions.Client.RestClient.getUnsafeOkHttpClient;
 
 public class UploadImageClient {
 
@@ -38,6 +38,8 @@ public class UploadImageClient {
                 .addFormDataPart("file", file.getName(),
                         RequestBody.create(MediaType.parse ("image/jpeg"), file))
                 .build();
+
+        System.out.println(Utils.gson.toJson(requestBody));
 
         Log.d("Auction ", "Before the request builder");
         Request request = new Request.Builder()
