@@ -154,13 +154,8 @@ public class ExpandableBidListAdapter extends BaseExpandableListAdapter {
             convertView = inflater.inflate(R.layout.auction_bids_elv_item, parent, false);
         }
         TextView auctionBidsELVitemDate = (TextView) convertView.findViewById(R.id.auctionBidsELVitemDate);
-        try {
-            Date startingDate = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(childDate);
-            auctionBidsELVitemDate.setText(startingDate.toString());
-        } catch (ParseException e) {
-            e.printStackTrace();
-            auctionBidsELVitemDate.setText(childDate);
-        }
+        String[] dateParts = childDate.split("[T:]");
+        auctionBidsELVitemDate.setText(dateParts[0] + " " + dateParts[1] + ":" + dateParts[2]);
         TextView auctionBidsELVitemValue = (TextView) convertView.findViewById(R.id.auctionBidsELVitemValue);
         auctionBidsELVitemValue.setText(childValue);
         TextView auctionBidsELVitemRating = (TextView) convertView.findViewById(R.id.auctionBidsELVitemRating);
