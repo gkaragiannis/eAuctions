@@ -33,6 +33,7 @@ import com.dev.e_auctions.APIResponses.AllCategoriesResponse;
 import com.dev.e_auctions.APIResponses.GeneralResponse;
 import com.dev.e_auctions.APIResponses.NewAuctionResponse;
 import com.dev.e_auctions.Client.RestClient;
+import com.dev.e_auctions.Client.UploadImageClient;
 import com.dev.e_auctions.Common.Common;
 import com.dev.e_auctions.Interface.RestApi;
 import com.dev.e_auctions.Model.Category;
@@ -297,8 +298,30 @@ public class NewAuctionActivity extends AppCompatActivity {
 
         Log.d("auction UploadImg", "The imageView is "+newAuctionImage);
 
-        File file = new File(filePath);
+        final File file = new File(filePath);
         System.out.println("Starting image upload");
+
+
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                UploadImageClient.uploadImage(Common.token, Common.auctionId, file);
+            }
+        });
+
+        try {
+            thread.start();
+            thread.join();
+            return true;
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+
+
+
+
         /*RequestBody imagePart = RequestBody.create(MediaType.parse("image/*"), file.getAbsolutePath());
         RequestBody tokenPart = RequestBody.create(MediaType.parse("multipart/form-data"), Common.token);
         RequestBody auctionIdPart = RequestBody.create(MediaType.parse("multipart/form-data"), Common.auctionId);*/
@@ -307,46 +330,46 @@ public class NewAuctionActivity extends AppCompatActivity {
 //        RequestBody requestBody = RequestBody.create(MediaType.parse("*/*"), file);
 //        map.put("file\"; filename=\"" + file.getName() + "\"", requestBody);
 //        map.put("form-data; name=\"token\"",requestBody);
-        System.out.println(file.getName());
-        System.out.println(file.getAbsolutePath());
-
-        RequestBody image = RequestBody.create(MediaType.parse("multipart/form-data"), file);
-        RequestBody token = RequestBody.create(MultipartBody.FORM, Common.token);
-        RequestBody auctionId = RequestBody.create(MultipartBody.FORM, Common.auctionId);
-
-        MultipartBody.Part body = MultipartBody.Part.createFormData("file", file.getName(), image);
-
-        Call<GeneralResponse> call = RestClient.getClient().create(RestApi.class).postUploadImage("multipart/form-data",
-                body, token, auctionId);
-        
-        call.enqueue(new Callback<GeneralResponse>() {
-            @Override
-            public void onResponse(Call<GeneralResponse> call, Response<GeneralResponse> response) {
-                System.out.println("On response image upload");
-                if (!response.isSuccessful()){
-                    Toast.makeText(NewAuctionActivity.this, Integer.toString(response.code()), Toast.LENGTH_LONG).show();
-                    postDelete();
-                    return;
-                }
-                else if (!response.body().getStatusCode().equals("SUCCESS")){
-                    Toast.makeText(NewAuctionActivity.this, response.body().getStatusMsg(), Toast.LENGTH_LONG).show();
-                    postDelete();
-                    return;
-                }
-
-                Toast.makeText(NewAuctionActivity.this, "New Auction created successfully with Id: " + Common.auctionId, Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onFailure(Call<GeneralResponse> call, Throwable t) {
-                System.out.println("On failure image upload");
-                Toast.makeText(NewAuctionActivity.this, "Unavailable services", Toast.LENGTH_SHORT).show();
-                postDelete();
-                return;
-            }
-        });
-        return true;
-    }
+//        System.out.println(file.getName());
+//        System.out.println(file.getAbsolutePath());
+//
+//        RequestBody image = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+//        RequestBody token = RequestBody.create(MultipartBody.FORM, Common.token);
+//        RequestBody auctionId = RequestBody.create(MultipartBody.FORM, Common.auctionId);
+//
+//        MultipartBody.Part body = MultipartBody.Part.createFormData("file", file.getName(), image);
+//
+//        Call<GeneralResponse> call = RestClient.getClient().create(RestApi.class).postUploadImage("multipart/form-data",
+//                body, token, auctionId);
+//
+//        call.enqueue(new Callback<GeneralResponse>() {
+//            @Override
+//            public void onResponse(Call<GeneralResponse> call, Response<GeneralResponse> response) {
+//                System.out.println("On response image upload");
+//                if (!response.isSuccessful()){
+//                    Toast.makeText(NewAuctionActivity.this, Integer.toString(response.code()), Toast.LENGTH_LONG).show();
+//                    postDelete();
+//                    return;
+//                }
+//                else if (!response.body().getStatusCode().equals("SUCCESS")){
+//                    Toast.makeText(NewAuctionActivity.this, response.body().getStatusMsg(), Toast.LENGTH_LONG).show();
+//                    postDelete();
+//                    return;
+//                }
+//
+//                Toast.makeText(NewAuctionActivity.this, "New Auction created successfully with Id: " + Common.auctionId, Toast.LENGTH_SHORT).show();
+//            }
+//
+//            @Override
+//            public void onFailure(Call<GeneralResponse> call, Throwable t) {
+//                System.out.println("On failure image upload");
+//                Toast.makeText(NewAuctionActivity.this, "Unavailable services", Toast.LENGTH_SHORT).show();
+//                postDelete();
+//                return;
+//            }
+//        });
+//        return true;
+//    }
 
     /**
      *
