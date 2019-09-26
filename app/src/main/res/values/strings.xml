@@ -1,13 +1,18 @@
 <resources>
     <string name="app_name">e-Auctions</string>
-    <string name="slogan">Bid times 1... Bid times 2... Bid times 3... Hammer Price Auction off</string>
+    <string name="slogan">
+        Bid times 1...
+        Bid times 2...
+        Bid times 3...
+        Hammer Price Auction off
+    </string>
 
     <!-- Main Activity Strings -->
     <string name="signIn">Sign In</string>
     <string name="signUp">Sign Up</string>
     <string name="guest">Guest</string>
 
-    <!-- SignIn/SignUp Activities Strings -->
+    <!-- SignInActivity/SignUpActivity Activities Strings -->
     <string name="user">Username</string>
     <string name="pass">Password</string>
     <string name="cPass">Confirm Password</string>
@@ -32,18 +37,37 @@
 
     <string name="home">Home</string>
     <string name="search">Search</string>
+    <string name="auctions">All Auctions</string>
     <string name="category">Categories</string>
+    <string name="messages">Messages</string>
     <string name="newAuction">Create New Auction</string>
     <string name="myAuction">My Auctions</string>
-    <string name="participateAuction">Participating Auctions</string>
+    <string name="participateAuction">Bidding Auctions</string>
     <string name="savedAuction">Saved Auctions</string>
     <string name="logout">Log out</string>
     <string name="profile">My Profile</string>
 
+    <!-- (New) Auction Activity -->
+    <string name="auctionName">Name</string>
+    <string name="auctionStartingDate">Starting Date</string>
+    <string name="auctionEndDate">End Date</string>
+    <string name="auctionDescription">Description</string>
+    <string name="auctionlocation">Location</string>
+    <string name="submitAuction">Submit Auction</string>
+    <string name="price">Starting Price</string>
+    <string name="duration">Duration</string>
+    <string name="item">Auction Object</string>
+    <string name="selectImage">Select Image</string>
+    <string name="aboutSeller">About Seller</string>
+    <string name="aboutItem">About Item</string>
+    <string name="newBid">New Bid</string>
+    <string name="topBids">Top 5 Bids</string>
+    <string name="Price">Price</string>
+
     <!-- Test Strings -->
     <string name="mitsos">Mitsos</string>
     <string name="title_activity_login">Sign in</string>
-    <string name="prompt_email">Email</string>
+    <string name="prompt_email">username@domain.location</string>
     <string name="prompt_password">Password</string>
     <string name="action_sign_in">Sign in or register</string>
     <string name="action_sign_in_short">Sign in</string>
@@ -51,5 +75,21 @@
     <string name="invalid_username">Not a valid username</string>
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
+
+    <!-- BidSubmission strings -->
+    <string name="BidSubmission">Do you want to submit this bid?</string>
+    <string name="DeleteSubmission">Do you want to delete this auction?</string>
+    <string name="SelectCategory">Please select corresponding category(-ies)</string>
+    <string name="YesButton">Yes</string>
+    <string name="NoButton">No</string>
+    <string name="OkButton">OK</string>
+    <string name="CancelButton">CANCEL</string>
+    <string name="title_activity_mail_box">MailBoxActivity</string>
+    <string name="inbox">Inbox</string>
+    <string name="outbox">Outbox</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_message">MessageActivity</string>
 
 </resources>

@@ -14,16 +14,17 @@
             android:icon="@drawable/ic_search_black_24dp"
             android:title="@string/search" />
         <item
+            android:id="@+id/nav_auctions"
+            android:icon="@drawable/ic_all_inclusive_black_24dp"
+            android:title="@string/auctions"/>
+        <item
             android:id="@+id/nav_category"
             android:icon="@drawable/ic_style_black_24dp"
             android:title="@string/category" />
     </group>
 
-    <group android:id="@+id/registeredUserMenu"
-        android:checkableBehavior="single"
-        android:visible="true">
-        <item android:title="@string/profile">
-            <menu>
+    <group android:id="@+id/memberGroup"
+        android:checkableBehavior="single">
                 <item
                     android:id="@+id/nav_new_auction"
                     android:icon="@drawable/ic_add_box_black_24dp"
@@ -34,14 +35,16 @@
                     android:title="@string/myAuction" />
                 <item
                     android:id="@+id/nav_participate_auction"
-                    android:icon="@drawable/ic_poll_black_24dp"
+                    android:icon="@drawable/ic_visibility_black_24dp"
                     android:title="@string/participateAuction" />
+                <item
+                    android:id="@+id/nav_messages"
+                    android:icon="@drawable/ic_email_black_24dp"
+                    android:title="@string/messages" />
                 <item
                     android:id="@+id/nav_logout"
                     android:icon="@drawable/ic_exit_to_app_black_24dp"
                     android:title="@string/logout" />
-            </menu>
-        </item>
     </group>
 
 </menu>

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background"
-    tools:context=".MainActivity">
+    tools:context=".Activities.MainActivity">
 
     <LinearLayout
         android:orientation="vertical"
@@ -20,13 +20,13 @@
 
         <TextView
             android:id="@+id/txtSlogan"
-            android:layout_width="350dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/slogan"
-            android:textAlignment="center"
+            android:gravity="center"
             android:textColor="@android:color/white"
             android:textSize="18sp"
-            android:layout_marginLeft="25dp"/>
+            android:padding="25dp"/>
 
     </LinearLayout>
     

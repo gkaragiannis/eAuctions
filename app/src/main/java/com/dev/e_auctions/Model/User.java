@@ -1,9 +1,14 @@
 package com.dev.e_auctions.Model;
 
-public class User {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+/**
+ *
+ */
+public class User implements Parcelable {
     private Integer id;
     private String username;
-    private String password;
     private String firstName;
     private String lastName;
     private String email;
@@ -11,106 +16,204 @@ public class User {
     private String country;
     private String city;
     private String address;
-    private String afm;
+    private Double bidderRating;
+    private Integer bidderRatingVotes;
+    private Double sellerRating;
+    private Integer sellerRatingVotes;
 
-    public User(String username, String password, String firstName, String lastName, String email, String phone, String country, String city, String address, String afm) {
-        this.username = username;
-        this.password = password;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.phone = phone;
-        this.country = country;
-        this.city = city;
-        this.address = address;
-        this.afm = afm;
-    }
-
+    /**
+     *
+     * @return
+     */
     public Integer getId() {
         return id;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
+    /**
+     *
+     * @return
+     */
     public String getUsername() {
         return username;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
+    /**
+     *
+     * @return
+     */
     public String getFirstName() {
         return firstName;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
+    /**
+     *
+     * @return
+     */
     public String getLastName() {
         return lastName;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
+    /**
+     *
+     * @return
+     */
     public String getEmail() {
         return email;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
+    /**
+     *
+     * @return
+     */
     public String getPhone() {
         return phone;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
+    /**
+     *
+     * @return
+     */
     public String getCountry() {
         return country;
     }
 
-    public void setCountry(String country) {
-        this.country = country;
-    }
-
+    /**
+     *
+     * @return
+     */
     public String getCity() {
         return city;
     }
 
-    public void setCity(String city) {
-        this.city = city;
-    }
-
+    /**
+     *
+     * @return
+     */
     public String getAddress() {
         return address;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    /**
+     *
+     * @return
+     */
+    public Double getBidderRating() {
+        return bidderRating;
     }
 
-    public String getAfm() {
-        return afm;
+    /**
+     *
+     * @return
+     */
+    public Integer getBidderRatingVotes() {
+        return bidderRatingVotes;
     }
 
-    public void setAfm(String afm) {
-        this.afm = afm;
+    /**
+     *
+     * @return
+     */
+    public Double getSellerRating() {
+        return sellerRating;
     }
+
+    /**
+     *
+     * @return
+     */
+    public Integer getSellerRatingVotes() {
+        return sellerRatingVotes;
+    }
+
+    /**
+     *
+     * @param in
+     */
+    protected User(Parcel in) {
+        id = in.readByte() == 0x00 ? null : in.readInt();
+        username = in.readString();
+        firstName = in.readString();
+        lastName = in.readString();
+        email = in.readString();
+        phone = in.readString();
+        country = in.readString();
+        city = in.readString();
+        address = in.readString();
+        bidderRating = in.readByte() == 0x00 ? null : in.readDouble();
+        bidderRatingVotes = in.readByte() == 0x00 ? null : in.readInt();
+        sellerRating = in.readByte() == 0x00 ? null : in.readDouble();
+        sellerRatingVotes = in.readByte() == 0x00 ? null : in.readInt();
+    }
+
+    /**
+     *
+     * @return
+     */
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    /**
+     *
+     * @param dest
+     * @param flags
+     */
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        if (id == null) {
+            dest.writeByte((byte) (0x00));
+        } else {
+            dest.writeByte((byte) (0x01));
+            dest.writeInt(id);
+        }
+        dest.writeString(username);
+        dest.writeString(firstName);
+        dest.writeString(lastName);
+        dest.writeString(email);
+        dest.writeString(phone);
+        dest.writeString(country);
+        dest.writeString(city);
+        dest.writeString(address);
+        if (bidderRating == null) {
+            dest.writeByte((byte) (0x00));
+        } else {
+            dest.writeByte((byte) (0x01));
+            dest.writeDouble(bidderRating);
+        }
+        if (bidderRatingVotes == null) {
+            dest.writeByte((byte) (0x00));
+        } else {
+            dest.writeByte((byte) (0x01));
+            dest.writeInt(bidderRatingVotes);
+        }
+        if (sellerRating == null) {
+            dest.writeByte((byte) (0x00));
+        } else {
+            dest.writeByte((byte) (0x01));
+            dest.writeDouble(sellerRating);
+        }
+        if (sellerRatingVotes == null) {
+            dest.writeByte((byte) (0x00));
+        } else {
+            dest.writeByte((byte) (0x01));
+            dest.writeInt(sellerRatingVotes);
+        }
+    }
+
+    /**
+     *
+     */
+    @SuppressWarnings("unused")
+    public static final Parcelable.Creator<User> CREATOR = new Parcelable.Creator<User>() {
+        @Override
+        public User createFromParcel(Parcel in) {
+            return new User(in);
+        }
+
+        @Override
+        public User[] newArray(int size) {
+            return new User[size];
+        }
+    };
 }

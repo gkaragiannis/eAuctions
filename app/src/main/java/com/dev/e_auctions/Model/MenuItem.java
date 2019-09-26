@@ -1,10 +1,19 @@
 package com.dev.e_auctions.Model;
 
+/**
+ *
+ */
 public class MenuItem {
 
     private String name, image;
     private Integer id;
 
+    /**
+     *
+     * @param name
+     * @param image
+     * @param id
+     */
     public MenuItem(String name, String image, Integer id) {
         this.name = name;
         this.image = image;

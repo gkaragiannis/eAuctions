@@ -1,4 +1,4 @@
-package com.dev.e_auctions.ViewHolder;
+package com.dev.e_auctions.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,8 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.dev.e_auctions.AuctionActivity;
-import com.dev.e_auctions.HomeActivity;
+import com.dev.e_auctions.Activities.AuctionActivity;
 import com.dev.e_auctions.Interface.MenuItemClickListener;
 import com.dev.e_auctions.Model.MenuItem;
 import com.dev.e_auctions.R;
@@ -19,16 +18,27 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
+/**
+ *
+ */
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MenuItemViewHolder> {
 
     private ArrayList<MenuItem> mMenuItemList;
     private Context context;
 
+    /**
+     *
+     * @param mMenuItemList
+     * @param context
+     */
     public RecyclerViewAdapter(ArrayList<MenuItem> mMenuItemList, Context context) {
         this.mMenuItemList = mMenuItemList;
         this.context = context;
     }
 
+    /**
+     *
+     */
     public class MenuItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         public TextView txtMenuItemName;
@@ -55,10 +65,12 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         }
     }
 
-    public RecyclerViewAdapter(ArrayList<MenuItem> menuItemList){
-        mMenuItemList = menuItemList;
-    }
-
+    /**
+     *
+     * @param parent
+     * @param viewType
+     * @return
+     */
     @NonNull
     @Override
     public MenuItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -67,27 +79,46 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         return menuItemViewHolder;
     }
 
+    /**
+     *
+     * @param menuItemViewHolder
+     * @param position
+     */
     @Override
     public void onBindViewHolder(@NonNull MenuItemViewHolder menuItemViewHolder, int position) {
-        MenuItem currentMenuListItem = mMenuItemList.get(position);
-
-        Picasso.with(context).load(currentMenuListItem.getImage()).into(menuItemViewHolder.imgMenuItemView);
+        final MenuItem currentMenuListItem = mMenuItemList.get(position);
+        System.out.println(currentMenuListItem.getImage());
+        Picasso.get().load(currentMenuListItem.getImage()).into(menuItemViewHolder.imgMenuItemView);
         menuItemViewHolder.txtMenuItemName.setText(currentMenuListItem.getName());
-        /*menuItemViewHolder.setMenuItemClickListener(new MenuItemClickListener() {
+        menuItemViewHolder.setMenuItemClickListener(new MenuItemClickListener() {
             @Override
             public void onClick(View view, int position, boolean isLongClick) {
                 //Get CategoryId and send to new Activity
                 Intent newActivity = new Intent(context, AuctionActivity.class);
                 //Because CategoryId is key, so we just get the key of this item
-                newActivity.putExtra("CategoryId", adapter.getRef(position).getKey());
-                startActivity(newActivity);
+                newActivity.putExtra("AuctionId", Integer.toString(currentMenuListItem.getId()));
+                context.startActivity(newActivity);
+                return;
             }
-        });*/
+        });
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public int getItemCount() {
         return mMenuItemList.size();
     }
 
+    /**
+     *
+     * @param newDataset
+     */
+    public void updateDataset(ArrayList<MenuItem> newDataset){
+        mMenuItemList.clear();
+        mMenuItemList.addAll(newDataset);
+        this.notifyDataSetChanged();
+    }
 }

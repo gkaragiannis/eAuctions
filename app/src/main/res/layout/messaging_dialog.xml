@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    app:cardUseCompatPadding="true"
+    android:layout_margin="15dp"
+    app:cardCornerRadius="15dp"
+    android:background="@color/colorPrimary">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:orientation="vertical"
+        android:padding="5dp"
+        android:paddingTop="10dp">
+
+        <!--<LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+            <TextView
+                android:id="@+id/messageReceiver"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="To Mitsos"
+                android:textColor="@color/colorPrimary"
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/messageSendBtn"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_weight="1"
+                android:background="@color/transpanert"
+                android:foreground="@drawable/ic_send_green_24dp" />
+
+        </LinearLayout>-->
+
+        <RelativeLayout
+            android:id="@+id/realtiveLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <Button
+                android:id="@+id/messageSendBtn"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="@color/transpanert"
+                android:foreground="@drawable/ic_send_green_24dp"
+                android:layout_alignParentRight="true"/>
+
+            <TextView
+                android:id="@+id/messageReceiver"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="To Mitsos"
+                android:textColor="@color/colorPrimary"
+                android:textSize="18sp"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@id/messageSendBtn"
+                android:layout_toStartOf="@id/messageSendBtn"
+                android:layout_alignParentLeft="true"/>
+
+        </RelativeLayout>
+
+        <EditText
+            android:id="@+id/messageSubject"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:hint="Subject"
+            android:textColor="@color/colorPrimary"
+            android:textSize="22sp" />
+
+        <EditText
+            android:id="@+id/messageBody"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Type here your message"
+            android:inputType="textMultiLine"
+            android:maxLines="5"
+            android:minLines="5"
+            android:textColor="@color/colorPrimary"
+            android:textColorHint="@color/overlayBackground"
+            android:textSize="18sp" />
+
+        <!--android.support.design.widget.FloatingActionButton
+                android:id="@+id/messageFAB"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/colorPrimary"
+                android:layout_gravity="end|bottom"
+                android:src="@drawable/ic_send_white_24dp"
+                app:elevation="6dp"
+                app:layout_anchorGravity="bottom|right|end"
+                app:pressedTranslationZ="12dp"
+                app:useCompatPadding="true"
+                android:layout_weight="2"/-->
+
+    </LinearLayout>
+
+</android.support.v7.widget.CardView>
